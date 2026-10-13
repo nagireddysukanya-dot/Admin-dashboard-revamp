@@ -51,13 +51,13 @@
     subscriptionStatus: 'All',
     duration: 'All Time',
     search: '',
-    newThisMonthOnly: false
+    newThisMonthOnly: false,
+    activeSegmentTab: 'all'
   };
 
   const ALL_CUSTOMER_TYPES = ['Direct', 'Reseller', 'White-Label', 'On-Premise', 'Reseller Client', 'Channel Partners', 'Referral'];
   const ALL_PLAN_NAMES = [
-    'Pro NY', 'Starter NY (WA)', 'Starter NY', 'Pro NM (WA)', 'Pro NM',
-    'Starter NM (WA)', 'Starter NM', 'test plan', 'TESTAPICHANGE', 'Pro Trail WhatsApp', 'Pro Trial', 'Pro Trail WhatsApp Trial'
+    'Broadcast', 'Standard', 'Pro', 'AI', 'Pro Trial', 'Pro NY', 'Starter NY', 'test plan'
   ];
 
   // 218 Initial Seed Clients Data (Matching User Screenshots & Production Specs)
@@ -786,14 +786,14 @@
 
           <!-- All Core Navigation Modules -->
           <div class="sidebar-nav-container">
-            <div class="sidebar-section-title">Admin Modules</div>
+            <div class="sidebar-section-title">CLIENT MANAGEMENT</div>
 
-            <!-- 1. Client Details -->
+            <!-- 1. Client Details (DEFAULT / MAIN LANDING SCREEN) -->
             <a class="nav-link-item ${currentRoute === 'client-details' || currentRoute === 'client-details-profile' ? 'active' : ''}" onclick="window.smatApp.navigateTo('client-details')">
               <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </span>
-              <span>Clients & Directory</span>
+              <span>Client Details</span>
             </a>
 
             <!-- 2. Chatbots & Migrate Bot -->
@@ -801,34 +801,28 @@
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
               </span>
-              <span>Migrate Bot Engine</span>
+              <span>Chatbots</span>
             </a>
 
-            <!-- 3. Team & Users -->
-            <a class="nav-link-item ${currentRoute === 'users' ? 'active' : ''}" onclick="window.smatApp.navigateTo('users')">
-              <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              </span>
-              <span>Add Users & Access</span>
-            </a>
+            <div class="sidebar-section-title" style="margin-top:0.85rem;">BILLING & PLANS</div>
 
-            <!-- 4. Plan Activation -->
+            <!-- 3. Plan Activation & Matrix -->
             <a class="nav-link-item ${currentRoute === 'plans' ? 'active' : ''}" onclick="window.smatApp.navigateTo('plans')">
               <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </span>
-              <span>Plan Activation</span>
+              <span>Plan Activation & Pricing</span>
             </a>
 
-            <!-- 5. Client Subscriptions -->
+            <!-- 4. Client Subscriptions -->
             <a class="nav-link-item ${currentRoute === 'subscriptions' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscriptions')">
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
               </span>
-              <span>Client Subscriptions</span>
+              <span>Active Subscriptions</span>
             </a>
 
-            <!-- 6. Renewals -->
+            <!-- 5. Renewals & Expiries -->
             <a class="nav-link-item ${currentRoute === 'renewals' ? 'active' : ''}" onclick="window.smatApp.navigateTo('renewals')">
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
@@ -836,28 +830,38 @@
               <span>Renewals</span>
             </a>
 
-            <!-- 7. Addons -->
+            <!-- 6. Platform Addons -->
             <a class="nav-link-item ${currentRoute === 'addons' ? 'active' : ''}" onclick="window.smatApp.navigateTo('addons')">
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
               </span>
-              <span>Addons</span>
+              <span>Platform Addons</span>
             </a>
 
-            <!-- 8. Partners -->
-            <a class="nav-link-item ${currentRoute === 'partners' ? 'active' : ''}" onclick="window.smatApp.navigateTo('partners')">
-              <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"></rect><rect x="3" y="17" width="6" height="4" rx="1"></rect><rect x="15" y="17" width="6" height="4" rx="1"></rect><path d="M12 7v4"></path></svg>
-              </span>
-              <span>Partners</span>
-            </a>
-
-            <!-- 9. Coupons -->
+            <!-- 7. Coupons -->
             <a class="nav-link-item ${currentRoute === 'coupons' ? 'active' : ''}" onclick="window.smatApp.navigateTo('coupons')">
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
               </span>
-              <span>Coupons</span>
+              <span>Discount Coupons</span>
+            </a>
+
+            <div class="sidebar-section-title" style="margin-top:0.85rem;">TEAM & PARTNERS</div>
+
+            <!-- 8. Team & Users -->
+            <a class="nav-link-item ${currentRoute === 'users' ? 'active' : ''}" onclick="window.smatApp.navigateTo('users')">
+              <span class="nav-link-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </span>
+              <span>Team & Users</span>
+            </a>
+
+            <!-- 9. Agency Partners -->
+            <a class="nav-link-item ${currentRoute === 'partners' ? 'active' : ''}" onclick="window.smatApp.navigateTo('partners')">
+              <span class="nav-link-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"></rect><rect x="3" y="17" width="6" height="4" rx="1"></rect><rect x="15" y="17" width="6" height="4" rx="1"></rect><path d="M12 7v4"></path></svg>
+              </span>
+              <span>Agency Partners</span>
             </a>
           </div>
 
@@ -885,15 +889,6 @@
 
             <div class="header-right-group">
               <div id="header-details-actions" class="details-top-actions-group" style="display:none;"></div>
-              
-              <button class="btn-sync-address" onclick="window.smatApp.triggerSyncAddress()">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="1 4 1 10 7 10"></polyline>
-                  <polyline points="23 20 23 14 17 14"></polyline>
-                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-                </svg>
-                Sync Customer Address
-              </button>
 
               <!-- Profile Pill Dropdown Trigger -->
               <div class="user-profile-header" onclick="window.smatApp.toggleUserMenu()">
@@ -934,6 +929,7 @@
       </div>
 
       <div id="modal-container"></div>
+      <div id="drawer-container"></div>
       <div id="toast-container"></div>
     `;
 
@@ -965,13 +961,15 @@
 
     const titleEl = $('#header-page-title');
     const titles = {
+      'overview': 'Operations Command Center & Executive Hub',
       'client-details': 'Client Details',
       'client-details-profile': 'Client Profile Details View',
+      'impersonation': 'Client Portal Impersonation Console',
       'chatbots': 'Bot Migration Engine & Workflows',
       'users': 'Team & Role-Based Access Control',
       'plans': 'Plan Activation & Pricing Subscriptions',
       'subscriptions': 'Active Client Subscriptions',
-      'renewals': 'Subscription Renewals',
+      'renewals': 'Subscription Renewals & Expiries',
       'addons': 'Platform Addons & Integrations',
       'partners': 'Agency & Channel Partners Directory',
       'coupons': 'Discount Coupons & Vouchers'
@@ -981,16 +979,22 @@
     const viewport = $('#route-viewport');
     if (!viewport) return;
 
-    if (route === 'client-details') {
+    if (route === 'overview') {
+      renderOverviewView(viewport);
+    } else if (route === 'client-details') {
       renderClientDetailsView(viewport);
     } else if (route === 'client-details-profile') {
       renderClientDetailsProfileView(viewport);
+    } else if (route === 'impersonation') {
+      renderImpersonationView(viewport);
     } else if (route === 'chatbots') {
       renderChatbotsView(viewport);
     } else if (route === 'users') {
       renderUsersView(viewport);
     } else if (route === 'plans') {
       renderPlansView(viewport);
+    } else if (route === 'addons') {
+      renderAddonsView(viewport);
     } else if (route === 'subscriptions') {
       renderClientSubscriptionsView(viewport);
     } else if (route === 'renewals') {
@@ -1005,12 +1009,435 @@
   }
 
   // =========================================================================
-  // 3. MODULE 1: CLIENT DETAILS TABLE & 15 FILTERS
+  // 3. EXECUTIVE OPERATIONS COMMAND CENTER (OVERVIEW HUB)
+  // =========================================================================
+  function renderOverviewView(container) {
+    const totalClients = clientsData.length;
+    const activeClients = clientsData.filter(c => c.subscription_status === 'Active').length;
+    const trialClients = clientsData.filter(c => c.subscription_status === 'Trial' || (!c.subscription_status && (c.plan_name || '').toLowerCase().includes('trial'))).length;
+    const expiringClients = clientsData.filter(c => typeof c.days_left === 'number' && c.days_left <= 7 && c.days_left >= 0).length;
+    const autoPayClients = clientsData.filter(c => c.auto_pay === true || c.auto_pay === 'Active' || c.id % 2 === 0).length;
+    const totalBotsManaged = clientsData.reduce((acc, c) => acc + (c.bots_used || 1), 0);
+
+    const monthlyClients = clientsData.filter(c => (c.billing_cycle || '').toLowerCase() === 'monthly').length;
+    const yearlyClients = clientsData.filter(c => (c.billing_cycle || '').toLowerCase() === 'yearly').length;
+    const customDurationClients = Math.max(0, totalClients - monthlyClients - yearlyClients);
+
+    container.innerHTML = `
+      <div class="command-center-container">
+        <!-- 1. Header with Live Engine Badge -->
+        <div class="command-center-header">
+          <div>
+            <div class="cc-header-title">
+              <span>⚡ SmatBot Operations Command Center</span>
+              <span class="cc-live-pulse-badge"><span class="cc-pulse-dot"></span> LIVE OPERATIONS ENGINE</span>
+            </div>
+            <p style="font-size:0.85rem; color:#64748B; margin:4px 0 0 0;">
+              Unified SaaS Operations, Revenue Health, Multi-duration Subscriptions & Security Gateway.
+            </p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="launcher-btn primary" onclick="window.smatApp.openAddClientModal()">
+              ➕ Onboard Client & Assign Plan
+            </button>
+            <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('client-details')">
+              👥 Client Directory (${totalClients})
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Quick Action Launcher Bar -->
+        <div class="quick-action-launcher-bar">
+          <span style="font-size:0.8rem; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em;">QUICK ACTIONS:</span>
+          <button class="launcher-btn primary" onclick="window.smatApp.openAddClientModal()">
+            <span>➕</span> Add New Client Account
+          </button>
+          <button class="launcher-btn accent" onclick="window.smatApp.openPlanModal(null, 'Pro NY')">
+            <span>⚡</span> Assign / Upgrade Plan
+          </button>
+          <button class="launcher-btn purple" onclick="window.smatApp.navigateTo('impersonation')">
+            <span>🔐</span> 1-Click Client Portal Login
+          </button>
+          <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('renewals')">
+            <span>🔄</span> Renewal Tracking (14 Expiring)
+          </button>
+          <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('addons')">
+            <span>🧩</span> Manage Add-ons & Quotas
+          </button>
+        </div>
+
+        <!-- 3. Executive Metrics 6-Card Grid -->
+        <div class="metrics-hub-grid">
+          <!-- Metric 1: Total Accounts -->
+          <div class="hub-metric-card" onclick="window.smatApp.navigateTo('client-details')" style="cursor:pointer;" title="View all clients">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon blue">🏢</div>
+              <span class="hub-metric-badge blue">SaaS + On-Prem</span>
+            </div>
+            <div class="hub-metric-value">${totalClients}</div>
+            <div class="hub-metric-label">Total Accounts Managed</div>
+          </div>
+
+          <!-- Metric 2: Active Paid Subscriptions -->
+          <div class="hub-metric-card" style="border-left: 4px solid #16A34A; cursor:pointer;" onclick="window.smatApp.navigateTo('client-details'); window.smatApp.selectSegmentTab('active');" title="Click to view Active Paid list">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon green">🟢</div>
+              <span class="hub-metric-badge green">71.8% Retention</span>
+            </div>
+            <div class="hub-metric-value">${activeClients} <span style="font-size:0.9rem; color:#16A34A; font-weight:700;">Paid</span></div>
+            <div class="hub-metric-label">Active Paying Subscriptions (₹3.42L MRR)</div>
+          </div>
+
+          <!-- Metric 3: Trial Pipeline -->
+          <div class="hub-metric-card" style="border-left: 4px solid #F59E0B; cursor:pointer;" onclick="window.smatApp.navigateTo('client-details'); window.smatApp.selectSegmentTab('trial');" title="Click to view Trials">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon orange">⏳</div>
+              <span class="hub-metric-badge orange">Evaluation</span>
+            </div>
+            <div class="hub-metric-value">${trialClients}</div>
+            <div class="hub-metric-label">Trial Pipeline Accounts</div>
+          </div>
+
+          <!-- Metric 4: Impending Renewals -->
+          <div class="hub-metric-card" style="border-left: 4px solid #DC2626; cursor:pointer;" onclick="window.smatApp.navigateTo('client-details'); window.smatApp.selectSegmentTab('expiring');" title="Click to view Expiring accounts">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon red">⚠️</div>
+              <span class="hub-metric-badge red">Next 7 Days</span>
+            </div>
+            <div class="hub-metric-value" style="color:#DC2626;">${expiringClients}</div>
+            <div class="hub-metric-label">Renewals Requiring Attention</div>
+          </div>
+
+          <!-- Metric 5: Auto-Pay Status -->
+          <div class="hub-metric-card" onclick="window.smatApp.navigateTo('subscriptions')" style="cursor:pointer;" title="View subscriptions">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon teal">⚡</div>
+              <span class="hub-metric-badge green">Auto Recurring</span>
+            </div>
+            <div class="hub-metric-value">${autoPayClients}</div>
+            <div class="hub-metric-label">Auto-Pay Active Subscriptions</div>
+          </div>
+
+          <!-- Metric 6: Live Chatbots Managed -->
+          <div class="hub-metric-card" onclick="window.smatApp.navigateTo('chatbots')" style="cursor:pointer;" title="View bot engine">
+            <div class="hub-metric-top">
+              <div class="hub-metric-icon purple">🤖</div>
+              <span class="hub-metric-badge blue">WhatsApp + Web</span>
+            </div>
+            <div class="hub-metric-value">${totalBotsManaged}</div>
+            <div class="hub-metric-label">Live Active Bot Instances</div>
+          </div>
+        </div>
+
+        <!-- 4. Subscription Cycles & Duration Breakdown -->
+        <div class="cycles-section-container">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <div style="font-weight:800; font-size:1.1rem; color:#0F172A;">📊 Flexible Subscription Cycles & Durations</div>
+              <p style="font-size:0.8rem; color:#64748B; margin-top:2px; margin-bottom:0;">
+                Supporting Monthly, Yearly & Custom On-demand Durations (2, 4, 6, 9 Months) without requiring separate SKU plans.
+              </p>
+            </div>
+            <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('subscriptions')">
+              View All Subscriptions →
+            </button>
+          </div>
+
+          <div class="cycles-cards-grid">
+            <!-- Cycle 1: Monthly -->
+            <div class="cycle-stat-card">
+              <div class="cycle-stat-header">
+                <span class="cycle-stat-title">📅 Monthly Cycle (30 Days)</span>
+                <span class="hub-metric-badge blue">Standard</span>
+              </div>
+              <div class="cycle-stat-count">${monthlyClients} <span style="font-size:0.8rem; font-weight:600; color:#64748B;">Clients</span></div>
+              <p style="font-size:0.75rem; color:#64748B; margin-top:6px; margin-bottom:10px;">
+                Recurring every 30 days. High flexibility for SMBs with auto-pay support.
+              </p>
+              <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:#1877F2; height:100%; width:${Math.round((monthlyClients/totalClients)*100)}%;"></div>
+              </div>
+            </div>
+
+            <!-- Cycle 2: Yearly -->
+            <div class="cycle-stat-card featured">
+              <div class="cycle-stat-header">
+                <span class="cycle-stat-title">🌟 Yearly Cycle (365 Days)</span>
+                <span class="hub-metric-badge green">Annual ARR</span>
+              </div>
+              <div class="cycle-stat-count">${yearlyClients} <span style="font-size:0.8rem; font-weight:600; color:#64748B;">Clients</span></div>
+              <p style="font-size:0.75rem; color:#64748B; margin-top:6px; margin-bottom:10px;">
+                Annual upfront contract with monthly add-on capability (Add-ons co-expire with main contract).
+              </p>
+              <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:#16A34A; height:100%; width:${Math.round((yearlyClients/totalClients)*100)}%;"></div>
+              </div>
+            </div>
+
+            <!-- Cycle 3: Custom Durations -->
+            <div class="cycle-stat-card">
+              <div class="cycle-stat-header">
+                <span class="cycle-stat-title">⏱️ Custom Durations (2, 4, 6, 9 Mos)</span>
+                <span class="hub-metric-badge orange">Custom Term</span>
+              </div>
+              <div class="cycle-stat-count">${customDurationClients} <span style="font-size:0.8rem; font-weight:600; color:#64748B;">Clients</span></div>
+              <p style="font-size:0.75rem; color:#64748B; margin-top:6px; margin-bottom:10px;">
+                Calculated dynamically: <code style="background:#E2E8F0; padding:1px 4px; border-radius:4px;">Monthly Price × N Months</code>. Zero extra plan clutter.
+              </p>
+              <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:#F59E0B; height:100%; width:${Math.round((customDurationClients/totalClients)*100)}%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Plans Portfolio Matrix -->
+        <div class="plans-portfolio-container">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <div style="font-weight:800; font-size:1.1rem; color:#0F172A;">💎 Active Plans Portfolio & Entitlements</div>
+              <p style="font-size:0.8rem; color:#64748B; margin-top:2px; margin-bottom:0;">
+                All registered tier plans with live subscriber counts, quota caps, and prorated upgrade paths.
+              </p>
+            </div>
+            <button class="launcher-btn primary" onclick="window.smatApp.navigateTo('plans')">
+              Plan Matrix & Pricing Details →
+            </button>
+          </div>
+
+          <div class="portfolio-cards-grid">
+            <!-- Plan 1: Broadcast -->
+            <div class="plan-item-card">
+              <div>
+                <div class="plan-item-header">
+                  <span class="plan-item-name">Broadcast</span>
+                  <span class="hub-metric-badge blue">Tier 1 • Outreach</span>
+                </div>
+                <div class="plan-item-price">₹1,499 <span>/ mo • ₹14,500 / yr</span></div>
+                <div class="plan-item-subscribers">👥 28 Active Subscribers</div>
+                <div class="plan-item-meta">
+                  <span>🤖 <strong>2 Bots Included</strong></span>
+                  <span>💬 <strong>1K/mo (12K/yr Upfront)</strong> Service Chats</span>
+                  <span>📨 WA Template & Broadcast Messaging</span>
+                  <span>📊 Google Sheets Integration & Contacts</span>
+                </div>
+              </div>
+              <button class="launcher-btn secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Broadcast')">
+                Assign Broadcast
+              </button>
+            </div>
+
+            <!-- Plan 2: Standard -->
+            <div class="plan-item-card">
+              <div>
+                <div class="plan-item-header">
+                  <span class="plan-item-name">Standard</span>
+                  <span class="hub-metric-badge orange">Tier 2 • Flow Bot</span>
+                </div>
+                <div class="plan-item-price">₹3,500 <span>/ mo • ₹35,000 / yr</span></div>
+                <div class="plan-item-subscribers" style="background:#FEF3C7; color:#B45309;">👥 64 Active Subscribers</div>
+                <div class="plan-item-meta">
+                  <span>🤖 <strong>5 Bots Included</strong></span>
+                  <span>💬 <strong>30K/mo (360K/yr Upfront)</strong> Service Chats</span>
+                  <span>🌐 Unlimited Website & Instagram Messages</span>
+                  <span>📱 4 Platforms + Custom Sheets & Webhooks</span>
+                </div>
+              </div>
+              <button class="launcher-btn secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Standard')">
+                Assign Standard
+              </button>
+            </div>
+
+            <!-- Plan 3: Pro (Most Popular) -->
+            <div class="plan-item-card popular">
+              <div>
+                <div class="plan-item-header">
+                  <span class="plan-item-name" style="color:#1877F2;">Pro</span>
+                  <span class="hub-metric-badge green">★ Most Popular</span>
+                </div>
+                <div class="plan-item-price">₹6,500 <span>/ mo • ₹72,000 / yr</span></div>
+                <div class="plan-item-subscribers" style="background:#DCFCE7; color:#15803D;">👥 92 Active Subscribers</div>
+                <div class="plan-item-meta">
+                  <span>🤖 <strong>10 Bots Included + 3 Live Agents</strong></span>
+                  <span>💬 <strong>100K/mo (1.2M/yr Upfront)</strong> Service Chats</span>
+                  <span>📱 6 Omnichannel Platforms (WA, Web, FB, IG, Apps, Landing)</span>
+                  <span>🛒 WhatsApp Cart, Catalog & CRM Included</span>
+                </div>
+              </div>
+              <button class="launcher-btn primary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Pro')">
+                Assign / Upgrade Pro
+              </button>
+            </div>
+
+            <!-- Plan 4: AI -->
+            <div class="plan-item-card">
+              <div>
+                <div class="plan-item-header">
+                  <span class="plan-item-name" style="color:#7C3AED;">AI Integration</span>
+                  <span class="hub-metric-badge purple">Tier 4 • Autonomous</span>
+                </div>
+                <div class="plan-item-price">₹8,999 <span>/ mo • ₹96,000 / yr</span></div>
+                <div class="plan-item-subscribers" style="background:#F3E8FF; color:#7E22CE;">👥 34 Active Deployments</div>
+                <div class="plan-item-meta">
+                  <span>🤖 <strong>10 Bots Included + 3 Live Agents</strong></span>
+                  <span>💬 <strong>500K/mo (6M/yr Upfront)</strong> Service Chats</span>
+                  <span>🧠 Native AI Knowledge Base & LLM Integration</span>
+                  <span>⚡ 10K/mo (120K/yr Upfront) BI Messages</span>
+                </div>
+              </div>
+              <button class="launcher-btn secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'AI')">
+                Assign AI Tier
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Client Impersonation & Security Spotlight Card -->
+        <div style="background:#FFFFFF; border-radius:14px; border:1px solid #E2E8F0; padding:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <div style="width:50px; height:50px; border-radius:12px; background:#FAF5FF; color:#7E22CE; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+              🔐
+            </div>
+            <div>
+              <div style="font-weight:800; font-size:1.05rem; color:#0F172A;">Client Portal Impersonation Gateway</div>
+              <p style="font-size:0.8rem; color:#64748B; margin-top:2px; margin-bottom:0;">
+                Troubleshoot client chatbot issues in real time without asking for their passwords. Audit-logged & encrypted.
+              </p>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button class="launcher-btn purple" onclick="window.smatApp.navigateTo('impersonation')">
+              Launch Impersonation Console →
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderImpersonationView(container) {
+    container.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:1.5rem; padding-bottom:2rem;">
+        <div style="background:#FFFFFF; padding:1.5rem; border-radius:14px; border:1px solid #E2E8F0;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h2 class="section-page-title" style="margin:0; display:flex; align-items:center; gap:0.5rem;">
+                <span>🔐</span> Client Portal Impersonation Console
+              </h2>
+              <p style="font-size:0.85rem; color:#64748B; margin-top:4px; margin-bottom:0;">
+                Select any registered client account to securely launch into their live Chatbot Control Panel for instant debugging, flow verification, or configuration support.
+              </p>
+            </div>
+            <div class="cc-live-pulse-badge" style="background:#FAF5FF; color:#7E22CE; border-color:#E9D5FF;">
+              🛡️ AUDIT-LOGGED COMPLIANCE GATEWAY
+            </div>
+          </div>
+
+          <div style="margin-top:1.25rem;">
+            <input 
+              type="text" 
+              id="impersonate-search-box"
+              class="filter-search-box" 
+              placeholder="🔍 Search client by name, email, or Zoho ID to impersonate..." 
+              oninput="window.smatApp.filterImpersonationClients(this.value)"
+              style="max-width:550px;"
+            />
+          </div>
+        </div>
+
+        <div class="table-card-container">
+          <table class="client-data-table">
+            <thead>
+              <tr>
+                <th>Client Name</th>
+                <th>Email</th>
+                <th>Current Plan</th>
+                <th>Active Bots</th>
+                <th>Status</th>
+                <th style="text-align:right;">1-Click Impersonate Action</th>
+              </tr>
+            </thead>
+            <tbody id="impersonation-table-body">
+              ${clientsData.slice(0, 15).map(c => `
+                <tr>
+                  <td>
+                    <div class="client-name-cell">
+                      <div class="client-avatar-circle ${getAvatarColorClass(c.name)}">${getInitials(c.name)}</div>
+                      <div>
+                        <div class="client-primary-name">${escapeHtml(c.name)}</div>
+                        <div class="client-sub-domain">${escapeHtml(c.custom_domain || c.url || '')}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>${escapeHtml(c.email)}</td>
+                  <td><span style="font-weight:700; color:#1E293B;">${escapeHtml(c.plan_name || 'Pro Trial')}</span></td>
+                  <td>${c.bots_used || 0} / ${c.bots_limit || 10} Bots</td>
+                  <td>
+                    <span class="status-badge-compact ${c.subscription_status === 'Active' ? 'active' : (c.subscription_status === 'Trial' ? 'trial' : 'expired')}">
+                      ● ${escapeHtml(c.subscription_status || 'Trial')}
+                    </span>
+                  </td>
+                  <td style="text-align:right;">
+                    <button class="launcher-btn purple" style="padding:6px 14px; font-size:0.78rem;" onclick="window.smatApp.openLoginConfirmModal(${c.id})">
+                      🔐 Login as ${escapeHtml(c.name)}
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function filterImpersonationClients(q) {
+    const tbody = $('#impersonation-table-body');
+    if (!tbody) return;
+    const term = (q || '').trim().toLowerCase();
+    const list = clientsData.filter(c => 
+      (c.name && c.name.toLowerCase().includes(term)) ||
+      (c.email && c.email.toLowerCase().includes(term)) ||
+      (c.zoho_customer_id && c.zoho_customer_id.toLowerCase().includes(term))
+    ).slice(0, 15);
+
+    tbody.innerHTML = list.map(c => `
+      <tr>
+        <td>
+          <div class="client-name-cell">
+            <div class="client-avatar-circle ${getAvatarColorClass(c.name)}">${getInitials(c.name)}</div>
+            <div>
+              <div class="client-primary-name">${escapeHtml(c.name)}</div>
+              <div class="client-sub-domain">${escapeHtml(c.custom_domain || c.url || '')}</div>
+            </div>
+          </div>
+        </td>
+        <td>${escapeHtml(c.email)}</td>
+        <td><span style="font-weight:700; color:#1E293B;">${escapeHtml(c.plan_name || 'Pro Trial')}</span></td>
+        <td>${c.bots_used || 0} / ${c.bots_limit || 10} Bots</td>
+        <td>
+          <span class="status-badge-compact ${c.subscription_status === 'Active' ? 'active' : (c.subscription_status === 'Trial' ? 'trial' : 'expired')}">
+            ● ${escapeHtml(c.subscription_status || 'Trial')}
+          </span>
+        </td>
+        <td style="text-align:right;">
+          <button class="launcher-btn purple" style="padding:6px 14px; font-size:0.78rem;" onclick="window.smatApp.openLoginConfirmModal(${c.id})">
+            🔐 Login as ${escapeHtml(c.name)}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // =========================================================================
+  // 4. MODULE 1: CLIENT DETAILS TABLE & 15 FILTERS
   // =========================================================================
   function renderClientDetailsView(container) {
     const totalClients = clientsData.length;
     const activeClients = clientsData.filter(c => c.subscription_status === 'Active').length;
     const trialClients = clientsData.filter(c => c.subscription_status === 'Trial' || (!c.subscription_status && (c.plan_name || '').toLowerCase().includes('trial'))).length;
+    const expiringClients = clientsData.filter(c => typeof c.days_left === 'number' && c.days_left <= 7 && c.days_left >= 0).length;
+    const whitelabelClients = clientsData.filter(c => c.customer_type === 'White-Label' || c.deployment_type === 'White-Label').length;
     const activePercent = totalClients > 0 ? Math.round((activeClients / totalClients) * 100) : 0;
     const trialPercent = totalClients > 0 ? Math.round((trialClients / totalClients) * 100) : 0;
 
@@ -1028,7 +1455,7 @@
       <!-- Top 3 Metrics Overview Cards (Total Customers, Active Clients, Trial Pipeline) -->
       <div class="overview-metrics-grid">
         <!-- Card 1: TOTAL CUSTOMERS -->
-        <div class="metric-summary-card">
+        <div class="metric-summary-card clickable ${filterState.activeSegmentTab === 'all' ? 'active-filter' : ''}" onclick="window.smatApp.selectSegmentTab('all')">
           <div class="metric-card-top-row">
             <div class="metric-card-badge">
               <div class="metric-icon-circle purple">
@@ -1036,20 +1463,20 @@
               </div>
               <span class="metric-card-label">TOTAL CUSTOMERS</span>
             </div>
-            <button class="metric-btn-pill" onclick="window.smatApp.openAddClientModal()">+ Add Client</button>
+            <button class="metric-btn-pill" onclick="event.stopPropagation(); window.smatApp.openAddClientModal()">+ Add Client</button>
           </div>
           <div class="metric-card-big-value">
             ${totalClients} <span class="metric-sub-limit">Accounts</span>
-            <span class="metric-monthly-growth-pill clickable" onclick="window.smatApp.filterNewClientsThisMonth()" title="Click to filter 18 new clients">✨ +18 New</span>
+            <span class="metric-monthly-growth-pill clickable" onclick="event.stopPropagation(); window.smatApp.filterNewClientsThisMonth()" title="Click to filter 18 new clients">✨ +18 New</span>
           </div>
-          <div class="metric-card-subtext" onclick="window.smatApp.filterNewClientsThisMonth()" style="cursor:pointer;" title="Click to filter 18 new clients">
+          <div class="metric-card-subtext" onclick="event.stopPropagation(); window.smatApp.filterNewClientsThisMonth()" style="cursor:pointer;" title="Click to filter 18 new clients">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; color:#10B981;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
             <span><strong style="color:#059669;">+18 new accounts</strong> added this month</span>
           </div>
         </div>
 
         <!-- Card 2: ACTIVE CLIENTS -->
-        <div class="metric-summary-card">
+        <div class="metric-summary-card clickable ${filterState.activeSegmentTab === 'active' ? 'active-filter' : ''}" onclick="window.smatApp.selectSegmentTab('active')">
           <div class="metric-card-top-row">
             <div class="metric-card-badge">
               <div class="metric-icon-circle blue">
@@ -1069,7 +1496,7 @@
         </div>
 
         <!-- Card 3: TRIAL EVALUATION PIPELINE -->
-        <div class="metric-summary-card">
+        <div class="metric-summary-card clickable ${filterState.activeSegmentTab === 'trial' ? 'active-filter' : ''}" onclick="window.smatApp.selectSegmentTab('trial')">
           <div class="metric-card-top-row">
             <div class="metric-card-badge">
               <div class="metric-icon-circle orange">
@@ -1196,8 +1623,29 @@
         </div>
       </div>
 
-      <!-- Count Badge (Top-Left Badge matching screenshot 218) -->
-      <div class="client-count-blue-badge" id="client-count-badge">${totalItems}</div>
+      <!-- Smart Quick Segment Tabs Bar -->
+      <div class="quick-segment-tabs-container">
+        <div class="quick-segment-tabs-list">
+          <button class="segment-tab-pill ${filterState.activeSegmentTab === 'all' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('all')">
+            🌐 All Accounts <span class="segment-tab-counter">${totalClients}</span>
+          </button>
+          <button class="segment-tab-pill ${filterState.activeSegmentTab === 'active' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('active')">
+            🟢 Active Paid <span class="segment-tab-counter">${activeClients}</span>
+          </button>
+          <button class="segment-tab-pill ${filterState.activeSegmentTab === 'trial' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('trial')">
+            ⏳ Trial Accounts <span class="segment-tab-counter">${trialClients}</span>
+          </button>
+          <button class="segment-tab-pill ${filterState.activeSegmentTab === 'expiring' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('expiring')">
+            ⚠️ Expiring in 7 Days <span class="segment-tab-counter" style="background:${expiringClients>0?'#FEE2E2':'#E2E8F0'}; color:${expiringClients>0?'#DC2626':'#475569'};">${expiringClients}</span>
+          </button>
+          <button class="segment-tab-pill ${filterState.activeSegmentTab === 'whitelabel' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('whitelabel')">
+            🏷️ White-Label <span class="segment-tab-counter">${whitelabelClients}</span>
+          </button>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div class="client-count-blue-badge" id="client-count-badge">${totalItems} Results</div>
+        </div>
+      </div>
 
       <!-- Client Details Data Table -->
       <div class="table-card-container">
@@ -1237,45 +1685,57 @@
       <tr>
         <td style="font-weight: 600; color: #64748B;">${c.s_no}</td>
         <td>
-          <span style="font-weight: 700; color: #1E293B; cursor:pointer;" onclick="window.smatApp.openClientDetailsPage(${c.id})">${c.name}</span>
+          <div class="client-name-cell">
+            <div class="client-avatar-circle ${getAvatarColorClass(c.name)}">${getInitials(c.name)}</div>
+            <div class="client-name-meta">
+              <span class="client-primary-name" onclick="window.smatApp.openClientQuickDrawer(${c.id})" title="Click to view Quick Drawer">${escapeHtml(c.name)}</span>
+              <span class="client-sub-domain">${escapeHtml(c.custom_domain || c.url || c.email || '')}</span>
+            </div>
+          </div>
         </td>
         <td>
-          <span style="color: #334155;">${c.phone_number}</span>
+          <span style="color: #334155;">${escapeHtml(c.phone_number)}</span>
           <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${c.phone_number}', 'phone number')" title="Copy Phone">
             <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           </button>
         </td>
-        <td style="color: #64748B;">${c.alternate_phone || '-'}</td>
+        <td style="color: #64748B;">${escapeHtml(c.alternate_phone || '-')}</td>
         <td>
-          <span style="color: #334155;">${c.email}</span>
+          <span style="color: #334155;">${escapeHtml(c.email)}</span>
           <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${c.email}', 'email address')" title="Copy Email">
             <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           </button>
         </td>
         <td>
           ${c.customer_type === 'White-Label' || c.deployment_type === 'White-Label' 
-            ? `<span class="cust-type-pill whitelabel" title="Custom CNAME Domain: ${c.custom_domain || 'bot.' + c.url}">🏷️ White-Label</span>` 
+            ? `<span class="cust-type-pill whitelabel" title="Custom CNAME Domain: ${escapeHtml(c.custom_domain || 'bot.' + c.url)}">🏷️ White-Label</span>` 
             : (c.customer_type === 'On-Premise' || c.deployment_type === 'On-Premise' 
-              ? `<span class="cust-type-pill onpremise" title="Server: ${c.server_host || 'AWS Dedicated VPC'}">🛡️ On-Premise</span>` 
+              ? `<span class="cust-type-pill onpremise" title="Server: ${escapeHtml(c.server_host || 'AWS Dedicated VPC')}">🛡️ On-Premise</span>` 
               : (c.customer_type === 'Reseller' 
                 ? `<span class="cust-type-pill reseller">Reseller</span>` 
-                : `<span class="cust-type-pill direct">${c.customer_type || 'Direct'}</span>`))}
+                : `<span class="cust-type-pill direct">${escapeHtml(c.customer_type || 'Direct')}</span>`))}
         </td>
-        <td style="color: #334155; font-weight:600;">${c.plan_name || 'Pro Trial'}</td>
+        <td style="color: #334155; font-weight:600;">${escapeHtml(c.plan_name || 'Pro Trial')}</td>
 
-        <td style="color: #334155;">${c.plan_type || 'Trial_plan'}</td>
-        <td style="color: #1E293B; font-weight: 600;">${c.subscription_amount_display || '₹ 0.00'}</td>
-        <td style="color: #334155;">${c.end_date || '08-10-2026'}</td>
-        <td style="color: #334155;">${c.days_left !== undefined ? c.days_left : 13}</td>
-        <td style="color: #334155;">${c.test_account || 'No'}</td>
+        <td style="color: #334155;">${escapeHtml(c.plan_type || 'Trial_plan')}</td>
+        <td style="color: #1E293B; font-weight: 600;">${escapeHtml(c.subscription_amount_display || '₹ 0.00')}</td>
+        <td style="color: #334155;">${escapeHtml(c.end_date || '08-10-2026')}</td>
+        <td style="color: ${typeof c.days_left === 'number' && c.days_left <= 7 ? '#DC2626; font-weight:700;' : '#334155;'}">${c.days_left !== undefined ? c.days_left : 13}</td>
+        <td style="color: #334155;">${escapeHtml(c.test_account || 'No')}</td>
         <td style="text-align: center;">
-          <!-- Eye Action: Opens Deep-Dive Client Details Profile View -->
-          <button class="btn-eye-action" onclick="window.smatApp.openClientDetailsPage(${c.id})" title="Click to View Full Details">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+          <div class="client-action-row">
+            <button class="client-mini-action-btn" onclick="window.smatApp.openClientQuickDrawer(${c.id})" title="Quick Overview Drawer">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Quick
+            </button>
+            <button class="client-mini-action-btn login-btn" onclick="window.smatApp.openLoginConfirmModal(${c.id})" title="1-Click Client Portal Impersonation">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Login
+            </button>
+            <button class="client-mini-action-btn" onclick="window.smatApp.openClientDetailsPage(${c.id})" title="Full Profile">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -1544,27 +2004,126 @@
           </div>
         </div>
 
-        <!-- 3. Subscriptions Accordion -->
-        <div class="details-accordion-card" id="acc-subscriptions">
+        <!-- 3. Subscriptions Accordion (Points 1-8 Full Control Center) -->
+        <div class="details-accordion-card open" id="acc-subscriptions">
           <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-subscriptions')">
-            <span>Subscriptions & Invoices</span>
-            <span class="accordion-arrow-indicator">▼</span>
+            <span>Subscriptions & Invoices (Billing Control Center)</span>
+            <span class="accordion-arrow-indicator">▲</span>
           </div>
           <div class="details-accordion-body">
             <div class="details-subcard" style="padding:1.25rem;">
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; font-size:0.88rem; color:#334155;">
-                <div><strong>Subscription ID:</strong><br/><code>${client.subscription_id || 'SUB-PRO-2026'}</code></div>
-                <div><strong>Billing Cycle:</strong><br/>${client.billing_cycle || 'Monthly'}</div>
-                <div><strong>Subscription Amount:</strong><br/>${client.subscription_amount_display || '₹ 0.00'}</div>
-                <div><strong>Valid Till:</strong><br/>${client.end_date || '08-10-2026'}</div>
-                <div><strong>Status:</strong><br/><span class="status-pill ${client.subscription_status.toLowerCase()}">${client.subscription_status}</span></div>
+              <!-- Top Grid: Subscription Overview -->
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; font-size:0.88rem; color:#334155; padding-bottom:1rem; border-bottom:1px solid #E2E8F0;">
+                <div>
+                  <span style="font-size:0.75rem; color:#64748B;">Subscription ID:</span><br/>
+                  <code style="font-weight:700; color:#1877F2;">${client.subscription_id || 'SUB-PRO-2026'}</code>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; color:#64748B;">Billing Cycle:</span><br/>
+                  <strong>${client.billing_cycle || 'Monthly'}</strong>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; color:#64748B;">Subscription Amount:</span><br/>
+                  <strong style="color:#0F172A; font-size:1.05rem;">${client.subscription_amount_display || '₹ 0.00'}</strong>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; color:#64748B;">Valid Till / Expiry Date:</span><br/>
+                  <strong style="color:#2563EB;">${client.end_date || '08-10-2026'}</strong> (${client.days_left || 0} Days Left)
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; color:#64748B;">Status:</span><br/>
+                  <span class="status-pill ${client.subscription_status.toLowerCase()}">${client.subscription_status}</span>
+                  ${client.cancellation_status === 'pending_end_of_period' ? `<span style="font-size:0.75rem; color:#DC2626; font-weight:700; display:block; margin-top:3px;">⚠️ Scheduled to cancel on ${client.end_date}</span>` : ''}
+                </div>
               </div>
-              <div style="margin-top:1rem; display:flex; justify-content:flex-end;">
-                <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal(${client.id})">⚡ Upgrade / Renew Plan</button>
+
+              <!-- Mid Grid: Auto-Pay & Payment Method -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin:1.25rem 0; padding-bottom:1rem; border-bottom:1px solid #E2E8F0;">
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem 1rem;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                    <span style="font-size:0.82rem; font-weight:700; color:#1E293B;">💳 Auto-Pay Status</span>
+                    <span class="autopay-status-badge ${client.autopay_enabled !== false ? 'enabled' : 'disabled'}">
+                      ${client.autopay_enabled !== false ? '🟢 ON' : '⚪ OFF'}
+                    </span>
+                  </div>
+                  <div style="font-size:0.78rem; color:#64748B; margin-bottom:0.6rem;">
+                    ${client.autopay_enabled !== false ? 'Automatic renewal active on billing date.' : 'Auto-renew disabled. Plan remains fully active until expiry.'}
+                  </div>
+                  <button class="btn-table-action btn-action-secondary" style="font-size:0.78rem; padding:4px 10px;" onclick="window.smatApp.openAutoPayModal(${client.id})">
+                    ⚙️ Manage Auto-Pay
+                  </button>
+                </div>
+
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem 1rem;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                    <span style="font-size:0.82rem; font-weight:700; color:#1E293B;">🏦 Saved Payment Method</span>
+                    <span style="font-size:0.75rem; color:#15803D; font-weight:700;">DEFAULT</span>
+                  </div>
+                  <div style="font-size:0.82rem; color:#334155; margin-bottom:0.6rem;">
+                    <strong>${client.payment_method?.brand || 'Visa'}</strong> •••• ${client.payment_method?.last4 || '4242'} <span style="color:#64748B;">(Exp: ${client.payment_method?.expiry || '12/28'})</span>
+                  </div>
+                  <button class="btn-table-action btn-action-secondary" style="font-size:0.78rem; padding:4px 10px;" onclick="window.smatApp.openUpdatePaymentMethodModal(${client.id})">
+                    💳 Update Card
+                  </button>
+                </div>
+              </div>
+
+              <!-- Active Add-ons with Expiry Priority -->
+              <div style="margin-bottom:1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                  <span style="font-weight:700; font-size:0.86rem; color:#1E293B;">📦 Active Add-ons & Boosters</span>
+                  <span style="font-size:0.75rem; color:#64748B; font-weight:600;">Synchronized with active subscription expiry</span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                  ${(client.active_addons && client.active_addons.length > 0) ? client.active_addons.map(addon => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.85rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; font-size:0.82rem;">
+                      <div>
+                        <strong>${addon.name}</strong>
+                        <span style="font-size:0.75rem; color:#64748B; margin-left:6px;">(${addon.type || 'recurring'})</span>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <span class="addon-expiry-pill capped">
+                          Expires: ${addon.expiryDate || client.end_date} (Synced to Plan Expiry)
+                        </span>
+                        <span style="color:#10B981; font-weight:700;">🟢 Active</span>
+                      </div>
+                    </div>
+                  `).join('') : `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.85rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; font-size:0.82rem;">
+                      <div>
+                        <strong>+10,000 Additional Conversations Quota</strong>
+                        <span style="font-size:0.75rem; color:#64748B; margin-left:6px;">(Auto-pay Recurring)</span>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <span class="addon-expiry-pill capped">
+                          Expires: ${client.end_date} (Synced to Plan Expiry)
+                        </span>
+                        <span style="color:#10B981; font-weight:700;">🟢 Active</span>
+                      </div>
+                    </div>
+                  `}
+                </div>
+              </div>
+
+              <!-- Action Buttons Row -->
+              <div style="display:flex; justify-content:space-between; align-items:center; pt:0.5rem;">
+                <button class="btn-table-action btn-action-danger" style="background:#FFF1F2; border-color:#FECDD3; color:#E11D48;" onclick="window.smatApp.openCancelSubscriptionModal(${client.id})">
+                  🚫 Cancel Subscription
+                </button>
+                <div style="display:flex; gap:0.5rem;">
+                  <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openPlanModal(${client.id})">
+                    🔄 Change Plan / Duration
+                  </button>
+                  <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal(${client.id})">
+                    ⚡ Upgrade / Modify Plan
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
 
         <!-- 4. AI Details Accordion -->
         <div class="details-accordion-card" id="acc-ai">
@@ -2248,116 +2807,431 @@
   // 7. MODULE 4: PLAN ACTIVATION & BILLING TIERS
   // =========================================================================
   function renderPlansView(container) {
+    const isYearly = billingToggleYearly;
+
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
         <div>
-          <h2 class="section-page-title" style="margin:0;">Plan Activation & Subscriptions</h2>
-          <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">Manage SaaS subscription plans, quota tiers, and custom white-label licenses.</p>
+          <h2 class="section-page-title" style="margin:0;">SmatBot — Pricing & Plans (Official Structure)</h2>
+          <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">Broadcast · Standard · Pro · AI — Enterprise SaaS Tier Management & Feature Matrix</p>
         </div>
         <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal()" style="padding:0.6rem 1.25rem; font-size:0.88rem;">
           ⚡ Activate Client Plan
         </button>
       </div>
 
-      <!-- Billing Frequency Toggle Pill -->
-      <div class="billing-toggle-container">
-        <span style="font-weight:700; font-size:0.85rem; color:#1E293B;">Billing Frequency:</span>
-        <div class="billing-toggle-pill">
-          <button class="billing-toggle-btn ${!billingToggleYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(false)">Monthly</button>
-          <button class="billing-toggle-btn ${billingToggleYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(true)">Yearly (Save 20% 🎉)</button>
-        </div>
-      </div>
-
-      <!-- 4 Modern Pricing Tier Cards -->
-      <div class="pricing-plans-grid">
-        <!-- Tier 1: Starter -->
-        <div class="pricing-tier-card">
-          <div>
-            <div style="font-weight:800; font-size:1.15rem; color:#1E293B;">Starter Plan</div>
-            <div style="font-size:0.8rem; color:#64748B;">For small startups & local businesses</div>
-            <div class="tier-price-amount">
-              ${billingToggleYearly ? '$39' : '$49'}<span class="period"> / mo</span>
-            </div>
-            <ul class="pricing-features-list">
-              <li><span class="check-icon">✓</span> 5,000 Chats / month</li>
-              <li><span class="check-icon">✓</span> 3 Bot Instances</li>
-              <li><span class="check-icon">✓</span> Web Chat Widget</li>
-              <li><span class="check-icon">✓</span> Standard Lead Forms</li>
-              <li><span class="check-icon">✓</span> Email SLA Support</li>
-            </ul>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Starter')">
-            Select Starter
-          </button>
-        </div>
-
-        <!-- Tier 2: Professional -->
-        <div class="pricing-tier-card featured">
-          <div class="pricing-popular-badge">Most Popular</div>
-          <div>
-            <div style="font-weight:800; font-size:1.15rem; color:#1877F2;">Professional</div>
-            <div style="font-size:0.8rem; color:#64748B;">For scaling companies & e-commerce</div>
-            <div class="tier-price-amount">
-              ${billingToggleYearly ? '$119' : '$149'}<span class="period"> / mo</span>
-            </div>
-            <ul class="pricing-features-list">
-              <li><span class="check-icon">✓</span> <strong>25,000 Chats / month</strong></li>
-              <li><span class="check-icon">✓</span> <strong>10 Bot Instances</strong></li>
-              <li><span class="check-icon">✓</span> WhatsApp Business API (WABA)</li>
-              <li><span class="check-icon">✓</span> NLP AI Knowledge Base FAQs</li>
-              <li><span class="check-icon">✓</span> CRM Webhooks & Zapier</li>
-              <li><span class="check-icon">✓</span> Live Agent Chat Transfer</li>
-            </ul>
-          </div>
-          <button class="btn-table-action btn-action-primary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Pro NY')">
-            Activate Professional
-          </button>
-        </div>
-
-        <!-- Tier 3: Enterprise AI -->
-        <div class="pricing-tier-card">
-          <div>
-            <div style="font-weight:800; font-size:1.15rem; color:#7C3AED;">Enterprise AI</div>
-            <div style="font-size:0.8rem; color:#64748B;">High-volume AI automation & Voicebots</div>
-            <div class="tier-price-amount">
-              ${billingToggleYearly ? '$399' : '$499'}<span class="period"> / mo</span>
-            </div>
-            <ul class="pricing-features-list">
-              <li><span class="check-icon">✓</span> 150,000 Chats / month</li>
-              <li><span class="check-icon">✓</span> 50 Bot Instances</li>
-              <li><span class="check-icon">✓</span> GPT-4o & Claude BYOK Embeddings</li>
-              <li><span class="check-icon">✓</span> Voicebot & IVR Twilio Support</li>
-              <li><span class="check-icon">✓</span> Dedicated Account Manager</li>
-            </ul>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Enterprise AI')">
-            Select Enterprise
-          </button>
-        </div>
-
-        <!-- Tier 4: Custom White-Label -->
-        <div class="pricing-tier-card">
-          <div>
-            <div style="font-weight:800; font-size:1.15rem; color:#10B981;">Custom White-Label</div>
-            <div style="font-size:0.8rem; color:#64748B;">OEM agency & reseller platform</div>
-            <div class="tier-price-amount">
-              ${billingToggleYearly ? '$999' : '$1,200'}<span class="period"> / mo</span>
-            </div>
-            <ul class="pricing-features-list">
-              <li><span class="check-icon">✓</span> 1,000,000+ Chats Quota</li>
-              <li><span class="check-icon">✓</span> Custom Domain (bot.yourbrand.com)</li>
-              <li><span class="check-icon">✓</span> Multi-Tenant Client Manager</li>
-              <li><span class="check-icon">✓</span> Unlimited API Access</li>
-            </ul>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Custom White-Label')">
-            Select White-Label
+      <!-- Billing Period Switch -->
+      <div class="pricing-billing-switch-wrap">
+        <div class="pricing-billing-switch" role="group" aria-label="Billing period">
+          <button type="button" class="${!isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(false)">Monthly</button>
+          <button type="button" class="${isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(true)">
+            Yearly <span class="hint">Save up to 19% 🎉</span>
           </button>
         </div>
       </div>
 
-      <!-- Quick Navigation Callout to Dedicated Client Subscriptions -->
-      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #BBF7D0; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+      <!-- 4 Plan Summary Cards -->
+      <div class="official-plan-cards">
+
+        <!-- Broadcast -->
+        <div class="official-plan-card">
+          <div>
+            <div class="official-plan-name">Broadcast</div>
+            <div class="official-plan-price">
+              ${!isYearly 
+                ? '<sub>₹</sub>1,499 <span class="per">/ mo</span>' 
+                : '<sub>₹</sub>14,500 <span class="per">/ yr</span>'}
+            </div>
+            <div class="official-plan-sub">
+              ${!isYearly 
+                ? '₹17,988 over 12 months' 
+                : '≈ ₹1,208 / mo, billed yearly'}
+            </div>
+            <div class="official-plan-save">
+              ${!isYearly 
+                ? '<span class="nudge-text">Save 19% with yearly</span>' 
+                : '<span class="save-badge">Save ₹3,488 (19%)</span>'}
+            </div>
+            <div class="official-plan-gst">+ GST</div>
+            <div class="official-plan-desc">
+              WhatsApp template/broadcast messages with Google Sheets integration. No bot — replies are handled by an agent from the dashboard.
+            </div>
+          </div>
+          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Broadcast')">
+            Select Broadcast
+          </button>
+        </div>
+
+        <!-- Standard -->
+        <div class="official-plan-card">
+          <div>
+            <div class="official-plan-name">Standard</div>
+            <div class="official-plan-price">
+              ${!isYearly 
+                ? '<sub>₹</sub>3,500 <span class="per">/ mo</span>' 
+                : '<sub>₹</sub>35,000 <span class="per">/ yr</span>'}
+            </div>
+            <div class="official-plan-sub">
+              ${!isYearly 
+                ? '₹42,000 over 12 months' 
+                : '≈ ₹2,917 / mo, billed yearly'}
+            </div>
+            <div class="official-plan-save">
+              ${!isYearly 
+                ? '<span class="nudge-text">Save 17% with yearly</span>' 
+                : '<span class="save-badge">Save ₹7,000 (17%)</span>'}
+            </div>
+            <div class="official-plan-gst">+ GST</div>
+            <div class="official-plan-desc">
+              Flow/menu-driven chatbot with Google Sheets integration. Platforms: WhatsApp, Website, Instagram + Landing Page Chatbot. All add-ons available.
+            </div>
+          </div>
+          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Standard')">
+            Select Standard
+          </button>
+        </div>
+
+        <!-- Pro (Highlight / Most Popular) -->
+        <div class="official-plan-card highlight">
+          <span class="official-plan-badge-popular">Most Popular</span>
+          <div>
+            <div class="official-plan-name" style="color:#2563EB;">Pro</div>
+            <div class="official-plan-price">
+              ${!isYearly 
+                ? '<sub>₹</sub>6,500 <span class="per">/ mo</span>' 
+                : '<sub>₹</sub>72,000 <span class="per">/ yr</span>'}
+            </div>
+            <div class="official-plan-sub">
+              ${!isYearly 
+                ? '₹78,000 over 12 months' 
+                : '≈ ₹6,000 / mo, billed yearly'}
+            </div>
+            <div class="official-plan-save">
+              ${!isYearly 
+                ? '<span class="nudge-text">Save 8% with yearly</span>' 
+                : '<span class="save-badge">Save ₹6,000 (8%)</span>'}
+            </div>
+            <div class="official-plan-gst">+ GST</div>
+            <div class="official-plan-desc">
+              Flow-based bot with the full feature set. 6 platforms: WhatsApp, Website, Facebook Messenger, Instagram Messenger, Applications & Landing Page Chatbot. 3 Live Agents included.
+            </div>
+          </div>
+          <button class="btn-table-action btn-action-primary" style="width:100%; justify-content:center; background:#2563EB; border-color:#2563EB;" onclick="window.smatApp.openPlanModal(null, 'Pro')">
+            Activate Pro
+          </button>
+        </div>
+
+        <!-- AI -->
+        <div class="official-plan-card">
+          <div>
+            <div class="official-plan-name" style="color:#7C3AED;">AI</div>
+            <div class="official-plan-price">
+              ${!isYearly 
+                ? '<sub>₹</sub>8,999 <span class="per">/ mo</span>' 
+                : '<sub>₹</sub>96,000 <span class="per">/ yr</span>'}
+            </div>
+            <div class="official-plan-sub">
+              ${!isYearly 
+                ? '₹107,988 over 12 months' 
+                : '≈ ₹8,000 / mo, billed yearly'}
+            </div>
+            <div class="official-plan-save">
+              ${!isYearly 
+                ? '<span class="nudge-text">Save 11% with yearly</span>' 
+                : '<span class="save-badge">Save ₹11,988 (11%)</span>'}
+            </div>
+            <div class="official-plan-gst">+ GST</div>
+            <div class="official-plan-desc">
+              Everything in Pro, plus native AI integration suite. 500,000 Monthly Service Messages (6M Upfront on Yearly), 10,000 BI Messages (120K Upfront), 3 Live Agents.
+            </div>
+          </div>
+          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'AI')">
+            Select AI Tier
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Feature Comparison Table -->
+      <div class="pricing-section-header">
+        <h2>Feature Comparison</h2>
+        <div class="line"></div>
+      </div>
+
+      <div class="pricing-table-wrap">
+        <table class="pricing-matrix-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Broadcast</th>
+              <th>Standard</th>
+              <th>Pro</th>
+              <th>AI</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="group-row"><td colspan="5">Overview</td></tr>
+            <tr><td>Bot Type</td><td class="note-inline">Broadcast only (no bot)</td><td class="note-inline">Flow / menu-driven</td><td class="note-inline">Flow-based (full feature set)</td><td class="note-inline">Flow-based + AI integration</td></tr>
+            <tr><td>Chatbots Included</td><td class="val">2</td><td class="val">5</td><td class="val">10</td><td class="val">10</td></tr>
+            <tr><td>Price</td>
+              <td class="val">${!isYearly ? '₹1,499 / mo' : '₹14,500 / yr'}</td>
+              <td class="val">${!isYearly ? '₹3,500 / mo' : '₹35,000 / yr'}</td>
+              <td class="val">${!isYearly ? '₹6,500 / mo' : '₹72,000 / yr'}</td>
+              <td class="val">${!isYearly ? '₹8,999 / mo' : '₹96,000 / yr'}</td>
+            </tr>
+            <tr><td>Cost for 12 Months</td>
+              <td>${!isYearly ? '₹17,988' : '₹14,500'}</td>
+              <td>${!isYearly ? '₹42,000' : '₹35,000'}</td>
+              <td>${!isYearly ? '₹78,000' : '₹72,000'}</td>
+              <td>${!isYearly ? '₹107,988' : '₹96,000'}</td>
+            </tr>
+            <tr><td>Yearly Plan Saves</td>
+              <td><span class="save-badge">₹3,488 (19%)</span></td>
+              <td><span class="save-badge">₹7,000 (17%)</span></td>
+              <td><span class="save-badge">₹6,000 (8%)</span></td>
+              <td><span class="save-badge">₹11,988 (11%)</span></td>
+            </tr>
+
+            <tr class="group-row"><td colspan="5">Platforms</td></tr>
+            <tr><td>WhatsApp</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Website</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Facebook Messenger</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Instagram Messenger</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Applications (in-app)</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Landing Page Chatbot</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+
+            <tr class="group-row"><td colspan="5">Message &amp; Chat Limits</td></tr>
+            <tr><td>Website Messages</td><td><span class="cross">—</span></td><td class="val">Unlimited</td><td class="val">Unlimited</td><td class="val">Unlimited</td></tr>
+            <tr><td>Instagram Messages</td><td><span class="cross">—</span></td><td class="val">Unlimited</td><td class="val">Unlimited</td><td class="val">Unlimited</td></tr>
+            <tr><td>WhatsApp Service (UI) Messages<br><span class="note-inline">+ Meta charges applicable</span></td>
+              <td>${!isYearly ? '<span class="val">1,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">12,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">30,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">360,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">100,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">1,200,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">500,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">6,000,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+            </tr>
+            <tr><td>WhatsApp BI Messages<br><span class="note-inline">+ Meta charges applicable</span></td>
+              <td>${!isYearly ? '<span class="val">1,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">12,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">2,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">24,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">5,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">60,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+              <td>${!isYearly ? '<span class="val">10,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">120,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
+            </tr>
+
+            <tr class="group-row"><td colspan="5">WhatsApp Behaviour</td></tr>
+            <tr><td>Send Template / Broadcast Messages</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Two-Way Bot Conversation on WhatsApp</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Template Text Replies<br><span class="note-inline">Same add-on as Button Click Responses</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Template Button Click Responses<br><span class="note-inline">Same add-on as Template Text Replies</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>WhatsApp Cart &amp; Catalog</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+
+            <tr class="group-row"><td colspan="5">Bot &amp; Automation</td></tr>
+            <tr><td>Google Sheets Integration</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Custom Google Sheet</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Custom Webhook Integration</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Dynamic Responses</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Canned Responses</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Live Agents<br><span class="note-inline">3 included in Pro &amp; AI</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Media Upload</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Contacts</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>CRM</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>AI Agent (Dialogflow)</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>AI Integration</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Voice Enabled (Speech to Text)</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Multi-Lingual (up to 2 languages)</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Auto Email Follow-up</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>AdWords Tracking</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Facebook Pixel</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+
+            <tr class="group-row"><td colspan="5">Security &amp; Notifications</td></tr>
+            <tr><td>Lead Email Notifications</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Hot Lead Notifications</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Email OTP Validation</td><td><span class="cross">—</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td></tr>
+            <tr><td>Two-Factor Authentication (2FA)</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+
+            <tr class="group-row"><td colspan="5">Analytics &amp; Reports</td></tr>
+            <tr><td>Analytics</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+
+            <tr class="group-row"><td colspan="5">Add-ons &amp; Customization</td></tr>
+            <tr><td>Add-ons Available</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Custom Development / Customization</td><td colspan="4"><span class="pricing-badge-addon">Quoted &amp; charged separately — all plans</span></td></tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Notices -->
+      <div class="pricing-notice-box blue">
+        <span style="font-size:1.2rem;">ℹ️</span>
+        <div><b>How limits are credited:</b> monthly plans get the monthly allowance every month. Yearly plans get all 12 months' allowance credited once, <strong>upfront</strong> — e.g. Broadcast yearly gets 1,000 × 12 = 12,000 service messages and 1,000 × 12 = 12,000 BI messages. Standard gets 360,000 service chats upfront. Pro gets 1,200,000 service chats upfront. AI gets 6,000,000 service chats upfront.</div>
+      </div>
+
+      <div class="pricing-notice-box">
+        <span style="font-size:1.2rem;">ℹ️</span>
+        <div><b>Meta charges applicable on WhatsApp service (UI) and BI messages:</b> the customer must add a payment card in Meta Business Manager. Meta's per-message charges apply on top of the plan price.</div>
+      </div>
+
+      <div class="pricing-notice-box">
+        <span style="font-size:1.2rem;">ℹ️</span>
+        <div>All prices are <b>exclusive of GST (+18%)</b>, which is charged extra at checkout.</div>
+      </div>
+
+      <!-- Add-ons Section Header -->
+      <div class="pricing-section-header">
+        <h2>Official Add-ons Catalog (19 Available Modules)</h2>
+        <div class="line"></div>
+      </div>
+
+      <div class="pricing-table-wrap">
+        <table class="pricing-matrix-table">
+          <thead>
+            <tr>
+              <th>Add-on Name</th>
+              <th>Unit / Scope</th>
+              <th>Available on Plans</th>
+              <th>Price (₹)</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Template Text Replies + Button Clicks <span class="note-inline">(one add-on)</span></td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">Broadcast, Standard</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>CRM Integration</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">Broadcast, Standard</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>WhatsApp Cart &amp; Catalog</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">Broadcast, Standard</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Live Agent Seat</td>
+              <td class="note-inline">per agent<br>(Pro &amp; AI: beyond 3 included)</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>AI Agent (Dialogflow)</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">Broadcast, Standard</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Multi-Lingual / Extra Language</td>
+              <td class="note-inline">Broadcast &amp; Standard: up to 2 langs<br>Pro &amp; AI: per language beyond 2</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>AI Integration Suite</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">Broadcast, Standard, Pro</td>
+              <td class="val">${!isYearly ? '₹2,000 / mo' : '₹24,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Email OTP Validation</td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
+              <td class="note-inline">Standard, Pro, AI</td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Extra Chatbots</td>
+              <td class="note-inline">per 5 chatbots</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>WhatsApp BI Messages</td>
+              <td class="note-inline">${!isYearly ? '1,000 messages / mo' : '12,000 messages / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹200 / mo' : '₹2,400 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>UI / Website Chats</td>
+              <td class="note-inline">${!isYearly ? '1,000 chats / mo' : '12,000 chats / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹600 / mo' : '₹7,200 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>SMS OTPs</td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>WhatsApp OTPs</td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>SMS Notifications</td>
+              <td class="note-inline">${!isYearly ? '1,000 notifications / mo' : '12,000 notifications / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>WhatsApp Notifications</td>
+              <td class="note-inline">${!isYearly ? '1,000 notifications / mo' : '12,000 notifications / yr upfront'}</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Text to Speech</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹800 / mo' : '₹7,200 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Remove Branding</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹1,900 / mo' : '₹20,280 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Basic Support</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹6,999 / mo' : '₹71,988 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+            <tr>
+              <td>Premium Support</td>
+              <td class="note-inline">flat rate</td>
+              <td class="note-inline">All plans</td>
+              <td class="val">${!isYearly ? '₹14,999 / mo' : '₹143,988 / yr'}</td>
+              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Navigation Callout -->
+      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #BBF7D0; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap:wrap; gap:1rem;">
         <div>
           <div style="font-weight: 700; font-size: 0.95rem; color: #166534;">Manage Active Client Subscriptions</div>
           <div style="font-size: 0.82rem; color: #15803D; margin-top: 2px;">View all ${clientsData.length} client renewal dates, expiring days left, and license upgrades.</div>
@@ -2365,6 +3239,238 @@
         <button class="btn-table-action btn-action-primary" onclick="window.smatApp.navigateTo('subscriptions')" style="background-color: #16A34A; border:none;">
           Open Client Subscriptions →
         </button>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // DEDICATED ADDONS & INTEGRATIONS VIEW
+  // =========================================================================
+  function renderAddonsView(container) {
+    const isYearly = billingToggleYearly;
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 class="section-page-title" style="margin:0;">Platform Addons & Integrations Catalog</h2>
+          <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">19 Official SmatBot Add-ons with Upfront Yearly Quota Allocation & Plan Eligibility</p>
+        </div>
+        <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal()" style="padding:0.6rem 1.25rem; font-size:0.88rem;">
+          ⚡ Assign Add-on to Client
+        </button>
+      </div>
+
+      <!-- Billing Period Switch -->
+      <div class="pricing-billing-switch-wrap">
+        <div class="pricing-billing-switch" role="group" aria-label="Billing period">
+          <button type="button" class="${!isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(false)">Monthly</button>
+          <button type="button" class="${isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(true)">
+            Yearly <span class="hint">Upfront Quota Credited 🎉</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Operational Mandate Banner -->
+      <div class="pricing-notice-box blue" style="margin-bottom:1.5rem;">
+        <span style="font-size:1.3rem;">🚀</span>
+        <div>
+          <b>Yearly Add-on Quota Allocation Rule:</b>
+          If a client purchases an annual quota add-on (such as SMS Notifications, SMS OTP, WhatsApp BI Messages, or Email OTPs), the entire yearly allowance (e.g. <b>12,000 notifications upfront</b>) is credited immediately upon activation, instead of a monthly reset.
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Total Add-ons</div>
+          <div style="font-size:1.6rem; font-weight:800; color:#0F172A; margin:4px 0;">19 Modules</div>
+          <div style="font-size:0.78rem; color:#16A34A; font-weight:600;">Fully cataloged & priced</div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Quota-Based Modules</div>
+          <div style="font-size:1.6rem; font-weight:800; color:#2563EB; margin:4px 0;">7 Add-ons</div>
+          <div style="font-size:0.78rem; color:#64748B;">SMS, WA OTP, BI, Email OTP</div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Flat-Rate Feature Add-ons</div>
+          <div style="font-size:1.6rem; font-weight:800; color:#7C3AED; margin:4px 0;">10 Add-ons</div>
+          <div style="font-size:0.78rem; color:#64748B;">CRM, AI Suite, Cart, TTS</div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Support Tiers</div>
+          <div style="font-size:1.6rem; font-weight:800; color:#EA580C; margin:4px 0;">2 Tiers</div>
+          <div style="font-size:0.78rem; color:#64748B;">Basic & Premium SLA</div>
+        </div>
+      </div>
+
+      <!-- Add-ons Catalog Table -->
+      <div class="pricing-table-wrap">
+        <table class="pricing-matrix-table">
+          <thead>
+            <tr>
+              <th>Add-on</th>
+              <th>Unit / Allocation Rule</th>
+              <th>Available on Plans</th>
+              <th>Price (₹)</th>
+              <th>Billing Frequency</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Template Text Replies + Button Clicks</strong><div class="note-inline">Combined unified response module</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>CRM Integration</strong><div class="note-inline">Hubspot, Zoho, Salesforce sync</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>WhatsApp Cart &amp; Catalog</strong><div class="note-inline">E-commerce in-chat checkout</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Live Agent Seat</strong><div class="note-inline">Real-time human takeover</div></td>
+              <td class="note-inline">per agent (Pro &amp; AI: beyond 3 incl.)</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>AI Agent (Dialogflow)</strong><div class="note-inline">Google Dialogflow ES/CX agent</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Multi-Lingual / Extra Language</strong><div class="note-inline">Broad/Std: up to 2 langs • Pro/AI: per lang &gt; 2</div></td>
+              <td class="note-inline">per language</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>AI Integration Suite</strong><div class="note-inline">Full LLM vector training fallback</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span> <span class="badge-tag blue">Pro</span></td>
+              <td class="val">${!isYearly ? '₹2,000 / mo' : '₹24,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (Flat)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Email OTP Validation</strong><div class="note-inline">Two-factor email code verification</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
+              <td><span class="badge-tag blue">Standard</span> <span class="badge-tag blue">Pro</span> <span class="badge-tag blue">AI</span></td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Extra Chatbots</strong><div class="note-inline">Expand bot limit</div></td>
+              <td class="note-inline">per 5 chatbots</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>WhatsApp BI Messages</strong><div class="note-inline">Business-initiated message quota</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 messages / mo' : '<strong>12,000 messages / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹200 / mo' : '₹2,400 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>UI / Website Chats</strong><div class="note-inline">Extra web visitor conversation packs</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 chats / mo' : '<strong>12,000 chats / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹600 / mo' : '₹7,200 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>SMS OTPs</strong><div class="note-inline">High-delivery transactional OTP route</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>WhatsApp OTPs</strong><div class="note-inline">Authentication template authentication</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>SMS Notifications</strong><div class="note-inline">Order updates, reminders, transactional</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 notifs / mo' : '<strong>12,000 notifs / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>WhatsApp Notifications</strong><div class="note-inline">Utility &amp; service notification alerts</div></td>
+              <td class="note-inline">${!isYearly ? '1,000 notifs / mo' : '<strong>12,000 notifs / yr upfront</strong>'}</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Text to Speech</strong><div class="note-inline">Voice synthesis audio audio player</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹800 / mo' : '₹7,200 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (25% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Remove Branding</strong><div class="note-inline">White-label "Powered by SmatBot" removal</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹1,900 / mo' : '₹20,280 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly (11% Off)'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Basic Support</strong><div class="note-inline">8-hour business day email &amp; chat SLA</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹6,999 / mo' : '₹71,988 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly SLA'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+            <tr>
+              <td><strong>Premium Support</strong><div class="note-inline">24/7 dedicated engineer &amp; phone SLA</div></td>
+              <td class="note-inline">flat rate</td>
+              <td><span class="badge-tag green">All Plans</span></td>
+              <td class="val">${!isYearly ? '₹14,999 / mo' : '₹143,988 / yr'}</td>
+              <td>${!isYearly ? 'Monthly' : 'Yearly SLA'}</td>
+              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     `;
   }
@@ -2605,16 +3711,48 @@
     renderClientSubscriptionsView($('#route-viewport'));
   }
 
+  // =========================================================================
+  // 7. MODULE 4: SUBSCRIPTION & BILLING ENGINE (Points 1-9 Implementation)
+  // =========================================================================
+  const PLAN_TIER_META = {
+    'Broadcast': { rank: 1, monthlyINR: 1499, yearlyINR: 14500, yearlySavingsINR: 3488, yearlySavingsPercent: 19, bots: 2, chats: 1000, yearlyChatsUpfront: 12000, monthlyBiChats: 1000, yearlyBiChatsUpfront: 12000, monthlyUSD: 19, yearlyUSD: 180, hasWA: true, hasWL: false },
+    'Standard': { rank: 2, monthlyINR: 3500, yearlyINR: 35000, yearlySavingsINR: 7000, yearlySavingsPercent: 17, bots: 5, chats: 30000, yearlyChatsUpfront: 360000, monthlyBiChats: 2000, yearlyBiChatsUpfront: 24000, monthlyUSD: 45, yearlyUSD: 430, hasWA: true, hasWL: false },
+    'Pro': { rank: 3, isPopular: true, monthlyINR: 6500, yearlyINR: 72000, yearlySavingsINR: 6000, yearlySavingsPercent: 8, bots: 10, chats: 100000, yearlyChatsUpfront: 1200000, monthlyBiChats: 5000, yearlyBiChatsUpfront: 60000, liveAgents: 3, monthlyUSD: 85, yearlyUSD: 890, hasWA: true, hasWL: true },
+    'AI': { rank: 4, monthlyINR: 8999, yearlyINR: 96000, yearlySavingsINR: 11988, yearlySavingsPercent: 11, bots: 10, chats: 500000, yearlyChatsUpfront: 6000000, monthlyBiChats: 10000, yearlyBiChatsUpfront: 120000, liveAgents: 3, monthlyUSD: 115, yearlyUSD: 1190, hasWA: true, hasWL: true },
+    'Free Trial': { rank: 0, monthlyINR: 0, yearlyINR: 0, monthlyUSD: 0, yearlyUSD: 0, bots: 1, chats: 500, hasWA: false, hasWL: false },
+    'Pro Trial': { rank: 0, monthlyINR: 0, yearlyINR: 0, monthlyUSD: 0, yearlyUSD: 0, bots: 10, chats: 500, hasWA: true, hasWL: false },
+    'Pro NY': { rank: 3, monthlyINR: 6500, yearlyINR: 72000, bots: 10, chats: 100000, hasWA: true, hasWL: false },
+    'Starter NY': { rank: 2, monthlyINR: 3500, yearlyINR: 35000, bots: 5, chats: 30000, hasWA: false, hasWL: false },
+    'Starter NM': { rank: 2, monthlyINR: 3500, yearlyINR: 35000, bots: 5, chats: 30000, hasWA: false, hasWL: false },
+    'Enterprise AI': { rank: 4, monthlyINR: 8999, yearlyINR: 96000, bots: 10, chats: 500000, hasWA: true, hasWL: true },
+    'Custom White-Label': { rank: 4, monthlyINR: 8999, yearlyINR: 96000, bots: 10, chats: 500000, hasWA: true, hasWL: true }
+  };
+
+  function getPlanRank(planName) {
+    if (!planName) return 1;
+    const clean = planName.replace(' (WA)', '').trim();
+    return PLAN_TIER_META[clean]?.rank ?? (clean.includes('Enterprise') ? 3 : clean.includes('Pro') ? 2 : clean.includes('Custom') ? 4 : 1);
+  }
+
+  function getPlanMeta(planName) {
+    if (!planName) return PLAN_TIER_META['Pro NY'];
+    const clean = planName.replace(' (WA)', '').trim();
+    return PLAN_TIER_META[clean] || PLAN_TIER_META['Pro NY'];
+  }
+
   function openPlanModal(clientId, defaultPlan) {
     const client = clientsData.find(c => c.id === clientId) || clientsData[0];
-    const plan = defaultPlan || client.plan_name || 'Pro NY';
+    const initialPlan = defaultPlan || client.plan_name || 'Pro NY';
     const modal = $('#modal-container');
 
     modal.innerHTML = `
       <div class="modal-overlay open">
-        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:580px;">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:620px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-            <div style="font-size:1.15rem; font-weight:800; color:#1E293B;">⚡ Plan Activation & Upgrade Wizard</div>
+            <div>
+              <div style="font-size:1.18rem; font-weight:800; color:#1E293B;">⚡ Plan Activation & Subscription Wizard</div>
+              <div style="font-size:0.8rem; color:#64748B;">Manage flexible durations, add-on expiry sync, and plan tier transitions</div>
+            </div>
             <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
           </div>
 
@@ -2626,40 +3764,91 @@
               </select>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1rem; margin-bottom:1rem;">
               <div>
                 <label class="filter-item-label">Select Plan Tier</label>
                 <select id="plan-tier-select" class="custom-dropdown-trigger" style="width:100%;">
-                  <option value="Pro NY" ${plan.includes('Pro')?'selected':''}>Professional ($149 / ₹12,500)</option>
-                  <option value="Starter NY" ${plan.includes('Starter')?'selected':''}>Starter ($49 / ₹4,100)</option>
-                  <option value="Enterprise AI" ${plan.includes('Enterprise')?'selected':''}>Enterprise AI ($499 / ₹41,900)</option>
-                  <option value="Custom White-Label" ${plan.includes('Custom')?'selected':''}>Custom White-Label ($1200 / ₹99,900)</option>
+                  <option value="Pro" ${initialPlan === 'Pro' || initialPlan.includes('Pro NY') ? 'selected' : ''}>Pro (₹6,500/mo | ₹72,000/yr)</option>
+                  <option value="Broadcast" ${initialPlan === 'Broadcast' ? 'selected' : ''}>Broadcast (₹1,499/mo | ₹14,500/yr)</option>
+                  <option value="Standard" ${initialPlan === 'Standard' || initialPlan.includes('Starter') ? 'selected' : ''}>Standard (₹3,500/mo | ₹35,000/yr)</option>
+                  <option value="AI" ${initialPlan === 'AI' || initialPlan.includes('Enterprise') ? 'selected' : ''}>AI (₹8,999/mo | ₹96,000/yr)</option>
+                  <option value="Pro Trial" ${initialPlan.includes('Trial') || initialPlan.includes('Free') ? 'selected' : ''}>Pro Trial (₹0)</option>
                 </select>
               </div>
               <div>
-                <label class="filter-item-label">Billing Cycle</label>
-                <select id="plan-billing-cycle" class="custom-dropdown-trigger" style="width:100%;">
-                  <option value="Yearly" selected>Yearly (Save 20%)</option>
-                  <option value="Monthly">Monthly</option>
+                <!-- Point 2: Flexible Subscription Durations -->
+                <label class="filter-item-label">Subscription Duration</label>
+                <select id="plan-duration-select" class="custom-dropdown-trigger" style="width:100%;">
+                  <option value="1">1 Month (Monthly)</option>
+                  <option value="2">Custom 2 Months</option>
+                  <option value="4">Custom 4 Months</option>
+                  <option value="6">Custom 6 Months</option>
+                  <option value="9">Custom 9 Months</option>
+                  <option value="12" selected>Yearly (12 Mos - Save 20%)</option>
                 </select>
               </div>
             </div>
 
-            <!-- Optional Add-ons -->
-            <label class="filter-item-label" style="margin-bottom:0.5rem;">Select Add-on Boosters</label>
-            <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem; font-size:0.85rem; color:#334155;">
-              <label style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
-                <span>+10,000 Additional Conversations Quota</span>
-                <input type="checkbox" id="addon-chats" checked />
-              </label>
-              <label style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
-                <span>+1 Dedicated WhatsApp WABA Number Connection</span>
-                <input type="checkbox" id="addon-waba" checked />
-              </label>
+            <!-- Dynamic Calculation Display -->
+            <div id="plan-price-calc-box" style="background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#1E40AF;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span><strong>Flexible Pricing Calculation:</strong></span>
+                <span id="calc-formula-display" style="font-weight:700;">₹ 11,999 × 10 = ₹ 1,19,990.00 (Yearly)</span>
+              </div>
+              <div style="font-size:0.75rem; color:#3B82F6; margin-top:3px;">
+                💡 Custom durations (2, 4, 6, 9 months) are calculated dynamically from base monthly rate.
+              </div>
+            </div>
+
+            <!-- Add-on Purchases & Expiry Synchronization -->
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="filter-item-label" style="margin:0;">Add-on Boosters</label>
+                <span style="font-size:0.75rem; color:#64748B; font-weight:600;">Auto-Synchronized Expiry</span>
+              </div>
+              
+              <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.84rem; color:#334155;">
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                  <div>
+                    <span style="font-weight:600;">+10,000 Conversations Quota</span>
+                    <div style="font-size:0.75rem; color:#64748B;">₹1,500 / month • Auto-pay Recurring</div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span class="addon-expiry-pill capped" id="addon-preview-expiry">Expires with Plan</span>
+                    <input type="checkbox" id="addon-chats" checked />
+                  </div>
+                </label>
+
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                  <div>
+                    <span style="font-weight:600;">+1 Dedicated WhatsApp WABA Number</span>
+                    <div style="font-size:0.75rem; color:#64748B;">₹2,500 / month • Auto-pay Recurring</div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span class="addon-expiry-pill capped">Expires with Plan</span>
+                    <input type="checkbox" id="addon-waba" checked />
+                  </div>
+                </label>
+
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                  <div>
+                    <span style="font-weight:600;">+1 Additional Live Agent Seat</span>
+                    <div style="font-size:0.75rem; color:#64748B;">₹800 • One-Time Booster</div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span class="addon-expiry-pill capped">Expires with Plan</span>
+                    <input type="checkbox" id="addon-agent" />
+                  </div>
+                </label>
+              </div>
+
+              <div style="font-size:0.75rem; color:#64748B; margin-top:4px; line-height:1.4;">
+                🛡️ <strong>Add-on Validity:</strong> Add-ons last up to 30 days, but are automatically synchronized with the main subscription renewal date.
+              </div>
             </div>
 
             <!-- Coupon Code -->
-            <div style="margin-bottom:1.5rem;">
+            <div style="margin-bottom:1.25rem;">
               <label class="filter-item-label">Voucher / Coupon Code</label>
               <div style="display:flex; gap:0.5rem;">
                 <input type="text" id="voucher-code-input" class="filter-search-box" placeholder="e.g. SMAT50 or WELCOME2026" value="SMAT50" />
@@ -2667,39 +3856,540 @@
               </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.75rem; border-top:1px solid #E2E8F0;">
               <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
-              <button type="submit" class="btn-table-action btn-action-primary">⚡ Confirm & Activate Plan</button>
+              <button type="submit" id="plan-submit-btn" class="btn-table-action btn-action-primary">
+                ⚡ Confirm & Activate Plan
+              </button>
             </div>
           </form>
         </div>
       </div>
     `;
 
+    // Dynamic price calculation updater
+    function updateCalcDisplay() {
+      const targetId = parseInt($('#plan-target-client')?.value || client.id);
+      const targetC = clientsData.find(c => c.id === targetId) || client;
+      const selectedPlan = $('#plan-tier-select')?.value || 'Pro NY';
+      const durationMonths = parseInt($('#plan-duration-select')?.value || '12', 10);
+      const meta = getPlanMeta(selectedPlan);
+
+      const baseMonthly = targetC.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
+      const currencySymbol = targetC.currency_type === 'USD' ? '$ ' : '₹ ';
+
+      let total = 0;
+      let formulaText = '';
+      if (durationMonths === 12) {
+        total = meta.yearlyINR ? (targetC.currency_type === 'USD' ? meta.yearlyUSD : meta.yearlyINR) : baseMonthly * 10;
+        formulaText = `${currencySymbol}${total.toLocaleString()} billed yearly (Save ${meta.yearlySavingsPercent || 15}%) • Quotas credited UPFRONT`;
+      } else {
+        total = baseMonthly * durationMonths;
+        formulaText = `${currencySymbol}${baseMonthly.toLocaleString()} × ${durationMonths} Months = ${currencySymbol}${total.toLocaleString()}`;
+      }
+
+      const calcEl = $('#calc-formula-display');
+      if (calcEl) calcEl.innerText = formulaText;
+
+      // Downgrade detection
+      const currentRank = getPlanRank(targetC.plan_name);
+      const targetRank = meta.rank;
+      const submitBtn = $('#plan-submit-btn');
+
+      if (submitBtn) {
+        if (targetRank < currentRank) {
+          submitBtn.className = 'btn-table-action btn-action-warning';
+          submitBtn.style.background = '#EA580C';
+          submitBtn.style.borderColor = '#EA580C';
+          submitBtn.style.color = '#FFFFFF';
+          submitBtn.innerHTML = '⚠️ Assess Downgrade Impact & Proceed';
+        } else {
+          submitBtn.className = 'btn-table-action btn-action-primary';
+          submitBtn.style.background = '#1877F2';
+          submitBtn.style.borderColor = '#1877F2';
+          submitBtn.style.color = '#FFFFFF';
+          submitBtn.innerHTML = '⚡ Confirm & Activate Plan';
+        }
+      }
+    }
+
+    $('#plan-tier-select')?.addEventListener('change', updateCalcDisplay);
+    $('#plan-duration-select')?.addEventListener('change', updateCalcDisplay);
+    $('#plan-target-client')?.addEventListener('change', updateCalcDisplay);
+    updateCalcDisplay();
+
+    // Form submit
     $('#plan-activation-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const targetId = parseInt($('#plan-target-client').value);
       const selectedPlan = $('#plan-tier-select').value;
-      const cycle = $('#plan-billing-cycle').value;
-      const targetClient = clientsData.find(c => c.id === targetId);
+      const durationMonths = parseInt($('#plan-duration-select').value, 10);
+      const targetClient = clientsData.find(c => c.id === targetId) || client;
 
-      if (targetClient) {
-        targetClient.plan_name = selectedPlan;
-        targetClient.plan_type = 'Paid_plan';
-        targetClient.billing_cycle = cycle;
-        targetClient.subscription_status = 'Active';
-        targetClient.days_left = cycle === 'Yearly' ? 365 : 30;
-        targetClient.end_date = cycle === 'Yearly' ? '30-09-2027' : '30-10-2026';
-        targetClient.subscription_amount_display = cycle === 'Yearly' ? '₹ 47,999.00' : '₹ 4,999.00';
+      const currentRank = getPlanRank(targetClient.plan_name);
+      const targetRank = getPlanMeta(selectedPlan).rank;
+
+      const selectedAddons = [];
+      if ($('#addon-chats')?.checked) selectedAddons.push({ name: '+10,000 Conversations Quota', priceINR: 1500, type: 'recurring' });
+      if ($('#addon-waba')?.checked) selectedAddons.push({ name: '+1 Dedicated WhatsApp WABA Number', priceINR: 2500, type: 'recurring' });
+      if ($('#addon-agent')?.checked) selectedAddons.push({ name: '+1 Additional Live Agent Seat', priceINR: 800, type: 'one_time' });
+
+      // Point 8: If Downgrade, trigger Admin Downgrade Impact Assessment modal!
+      if (targetRank < currentRank) {
+        closeModal();
+        openDowngradeImpactModal(targetId, selectedPlan, durationMonths, selectedAddons);
+        return;
       }
 
-      showToast(`Plan successfully activated for ${targetClient?.name || 'Client'}!`);
-      closeModal();
-      if (currentRoute === 'plans') renderPlansView($('#route-viewport'));
-      else if (currentRoute === 'client-details') renderClientDetailsView($('#route-viewport'));
-      else if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+      // Upgrade / Renewal direct activation
+      applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons);
     });
   }
+
+  // Helper: Apply Plan Activation
+  function applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons) {
+    const meta = getPlanMeta(selectedPlan);
+    const isYearly = durationMonths === 12;
+    const baseMonthly = targetClient.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
+    const totalAmount = isYearly ? baseMonthly * 10 : baseMonthly * durationMonths;
+
+    targetClient.plan_name = selectedPlan;
+    targetClient.plan_type = meta.monthlyINR > 0 ? 'Paid_plan' : 'Trial_plan';
+    targetClient.billing_cycle = isYearly ? 'Yearly' : (durationMonths > 1 ? `Custom (${durationMonths} Mos)` : 'Monthly');
+    targetClient.subscription_status = 'Active';
+    targetClient.days_left = durationMonths * 30;
+    targetClient.bots_limit = meta.bots;
+    targetClient.chats_limit = meta.chats;
+
+    // Calculate effective end date
+    const now = new Date();
+    const endDate = new Date(now.getTime() + durationMonths * 30 * 24 * 60 * 60 * 1000);
+    targetClient.end_date = `${String(endDate.getDate()).padStart(2, '0')}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${endDate.getFullYear()}`;
+    targetClient.subscription_amount_display = targetClient.currency_type === 'USD' ? `$ ${totalAmount.toFixed(2)}` : `₹ ${totalAmount.toLocaleString('en-IN')}.00`;
+
+    // Process add-ons with Point 3 Expiry Priority
+    targetClient.active_addons = selectedAddons.map(addon => {
+      const std30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const effectiveExpiry = endDate < std30 ? endDate : std30;
+      return {
+        id: `addon_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        name: addon.name,
+        type: addon.type,
+        expiryDate: `${String(effectiveExpiry.getDate()).padStart(2, '0')}-${String(effectiveExpiry.getMonth() + 1).padStart(2, '0')}-${effectiveExpiry.getFullYear()}`,
+        cappedBySubscription: endDate < std30
+      };
+    });
+
+    showToast(`Plan successfully activated for ${targetClient.name} (${durationMonths} Mos)!`);
+    closeModal();
+    if (currentRoute === 'plans') renderPlansView($('#route-viewport'));
+    else if (currentRoute === 'client-details') renderClientDetailsView($('#route-viewport'));
+    else if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+  }
+
+  // =========================================================================
+  // POINT 8: ADMIN PANEL – DOWNGRADE IMPACT ASSESSMENT MODAL
+  // =========================================================================
+  function openDowngradeImpactModal(clientId, targetPlanName, durationMonths, selectedAddons) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const currentMeta = getPlanMeta(client.plan_name);
+    const targetMeta = getPlanMeta(targetPlanName);
+    const modal = $('#modal-container');
+
+    // Real client usage calculation
+    const botsUsed = client.bots_used || 0;
+    const chatsUsed = client.chats_used || 0;
+    const botsExceeded = Math.max(0, botsUsed - targetMeta.bots);
+    const chatsExceeded = Math.max(0, chatsUsed - targetMeta.chats);
+    const hasWA = client.plan_name?.includes('WA') || client.plan_name?.includes('Pro');
+    const waBlocked = hasWA && !targetMeta.hasWA;
+    const isWL = client.deployment_type === 'White-Label';
+    const wlBlocked = isWL && !targetMeta.hasWL;
+
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="impact-modal-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <div style="font-size:1.15rem; font-weight:800; color:#9A3412; display:flex; align-items:center; gap:0.5rem;">
+                <span>⚠️ Admin Downgrade Impact Assessment</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748B;">Account: <strong>${client.name}</strong> (${client.email})</div>
+            </div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+
+          <!-- Alert Banner -->
+          <div class="impact-alert-banner">
+            <span style="font-size:1.3rem;">🚨</span>
+            <div>
+              <strong>Action Required:</strong> You are downgrading this account from a higher tier. SmatBot has evaluated the account's live usage and identified configurations that will be disrupted.
+            </div>
+          </div>
+
+          <!-- Plan Comparison Header -->
+          <div class="impact-comparison-header">
+            <div>
+              <div style="font-size:0.75rem; color:#64748B; margin-bottom:2px;">Current Active Plan</div>
+              <span class="impact-plan-pill current">${client.plan_name}</span>
+            </div>
+            <div style="font-size:1.2rem; color:#94A3B8; font-weight:700;">➔</div>
+            <div>
+              <div style="font-size:0.75rem; color:#64748B; margin-bottom:2px;">Target Downgraded Plan</div>
+              <span class="impact-plan-pill target">${targetPlanName}</span>
+            </div>
+          </div>
+
+          <!-- Section 1: Usage Limits Exceeded -->
+          <div class="impact-section-title">
+            <span>📊 Usage Limits Impact</span>
+          </div>
+
+          ${botsExceeded > 0 ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>Active Chatbots Exceeded (${botsUsed} / ${targetMeta.bots} allowed)</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Client currently has ${botsUsed} live bots. The new plan only permits ${targetMeta.bots} bots.</div>
+              </div>
+              <span class="impact-badge-tag exceeded">-${botsExceeded} Bots To Pause</span>
+            </div>
+          ` : `
+            <div class="impact-item-box safe">
+              <div><strong>Chatbot Allocation:</strong> ${botsUsed} of ${targetMeta.bots} bots used</div>
+              <span class="impact-badge-tag safe">Within Limit</span>
+            </div>
+          `}
+
+          ${chatsExceeded > 0 ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>Conversations Quota (${chatsUsed.toLocaleString()} / ${targetMeta.chats.toLocaleString()})</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Current month chats exceed new plan capacity. Live chats will pause unless quota add-on is purchased.</div>
+              </div>
+              <span class="impact-badge-tag exceeded">Exceeded by ${chatsExceeded.toLocaleString()}</span>
+            </div>
+          ` : `
+            <div class="impact-item-box safe">
+              <div><strong>Conversations Quota:</strong> ${chatsUsed.toLocaleString()} of ${targetMeta.chats.toLocaleString()} chats</div>
+              <span class="impact-badge-tag safe">Within Limit</span>
+            </div>
+          `}
+
+          <!-- Section 2: Features Becoming Unavailable -->
+          <div class="impact-section-title">
+            <span>🚫 Features Becoming Unavailable</span>
+          </div>
+
+          ${waBlocked ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>WhatsApp WABA Business Cloud API</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Meta webhook and WhatsApp bot message automation will be disconnected immediately.</div>
+              </div>
+              <span class="impact-badge-tag blocked">Disconnected</span>
+            </div>
+          ` : ''}
+
+          ${wlBlocked ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>White-Label Domain & Reseller Hub (${client.custom_domain || 'Custom Domain'})</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Custom domain will revert to default smatbot.com subdomain. Reseller sub-clients will be locked out.</div>
+              </div>
+              <span class="impact-badge-tag blocked">Reverted</span>
+            </div>
+          ` : ''}
+
+          <div class="impact-item-box warning">
+            <div>
+              <strong>AI Vector Embeddings & Custom LLM Fallback</strong>
+              <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Document training switched to read-only rule matching. Token consumption halted.</div>
+            </div>
+            <span class="impact-badge-tag exceeded">Restricted</span>
+          </div>
+
+          <!-- Section 3: Safe Features Continuing to Work -->
+          <div class="impact-section-title">
+            <span>✅ Features That Will Continue to Work</span>
+          </div>
+          <div class="impact-item-box safe">
+            <div>
+              <strong>Core Chatbot Automation & Web Widget</strong>
+              <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Web live chat widget, lead capture forms, and basic email notifications remain fully operational.</div>
+            </div>
+            <span class="impact-badge-tag safe">Active</span>
+          </div>
+
+          <!-- Section 4: Required Admin Actions -->
+          <div class="impact-section-title">
+            <span>📋 Required Pre-Downgrade Actions</span>
+          </div>
+          <ul class="impact-action-list">
+            ${botsExceeded > 0 ? `<li>⚠️ <strong>Archive ${botsExceeded} Bot(s):</strong> Confirm which bots to deactivate before final execution.</li>` : ''}
+            ${waBlocked ? `<li>⚠️ <strong>Export WhatsApp Data:</strong> Notify client to back up customer transcripts.</li>` : ''}
+            <li>⚠️ <strong>Audit Add-on Renewals:</strong> Confirm with client that recurring add-ons will align with the new plan tier.</li>
+          </ul>
+
+          <!-- Checkbox Confirmation -->
+          <label class="impact-ack-checkbox">
+            <input type="checkbox" id="impact-ack-check" onchange="document.getElementById('confirm-downgrade-btn').disabled = !this.checked;" />
+            <span>I have reviewed this Downgrade Impact Assessment with the client and verify that the required feature deactivations are accepted.</span>
+          </label>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
+            <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.openPlanModal(${client.id}, '${targetPlanName}')">
+              ← Back to Plan Selector
+            </button>
+            <button type="button" id="confirm-downgrade-btn" class="btn-table-action btn-action-warning" style="background:#EA580C; border-color:#EA580C; color:#FFFFFF;" disabled onclick="window.smatApp.executeDowngrade(${client.id}, '${targetPlanName}', ${durationMonths})">
+              🛡️ Confirm & Execute Downgrade
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function executeDowngrade(clientId, targetPlanName, durationMonths) {
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+
+    applyPlanActivation(client, targetPlanName, durationMonths, []);
+    showToast(`Downgrade applied to ${client.name} (${targetPlanName}). Impact logged in audit trail.`);
+  }
+
+  // =========================================================================
+  // POINT 5: AUTO-PAY MANAGEMENT MODAL
+  // =========================================================================
+  function openAutoPayModal(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const isEnabled = client.autopay_enabled !== false;
+    const modal = $('#modal-container');
+
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="max-width:520px; border-top:4px solid #1877F2;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem;">
+            <div style="font-size:1.15rem; font-weight:800; color:#1E293B;">💳 Auto-Pay Renewal Settings</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:1rem; margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700; color:#1E293B;">Auto-Pay Recurring Debits</div>
+                <div style="font-size:0.8rem; color:#64748B;">For Plan renewals & recurring add-ons</div>
+              </div>
+              <span class="autopay-status-badge ${isEnabled ? 'enabled' : 'disabled'}">
+                ${isEnabled ? '🟢 ACTIVE' : '⚪ DISABLED'}
+              </span>
+            </div>
+          </div>
+
+          <!-- Clear Communication Banner -->
+          <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-left:4px solid #1877F2; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1.25rem; font-size:0.84rem; color:#1E40AF; line-height:1.5;">
+            <strong>🛡️ Important Information:</strong><br/>
+            Disabling auto-pay will <strong>NOT cancel your active subscription</strong> or remove access to paid features. Your current plan (${client.plan_name}) remains 100% active until <strong>${client.end_date || 'expiry date'}</strong>. Only automated future card charges will be turned off.
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Close</button>
+            <button type="button" class="btn-table-action ${isEnabled ? 'btn-action-warning' : 'btn-action-primary'}" onclick="window.smatApp.toggleAutoPay(${client.id}, ${!isEnabled})">
+              ${isEnabled ? 'Turn OFF Auto-Pay' : 'Turn ON Auto-Pay'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleAutoPay(clientId, newStatus) {
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+    client.autopay_enabled = newStatus;
+    showToast(newStatus ? 'Auto-Pay enabled for future renewals.' : 'Auto-Pay disabled. Plan remains active till expiry.');
+    closeModal();
+    if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+  }
+
+  // =========================================================================
+  // POINT 6: SUBSCRIPTION CANCELLATION MODAL (2 CHOICES)
+  // =========================================================================
+  function openCancelSubscriptionModal(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const modal = $('#modal-container');
+
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="max-width:560px; border-top:4px solid #EF4444;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div style="font-size:1.15rem; font-weight:800; color:#991B1B;">🚫 Cancel Subscription</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+
+          <div style="font-size:0.85rem; color:#475569; margin-bottom:1rem;">
+            Account: <strong>${client.name}</strong> • Current Plan: <strong>${client.plan_name}</strong>
+          </div>
+
+          <!-- Point 6 Choice 1: Cancel at End of Billing Period -->
+          <div class="billing-choice-card selected" id="cancel-card-end" onclick="window.smatApp.selectCancelOption('end')">
+            <input type="radio" name="cancel-type" id="cancel-opt-end" class="billing-choice-radio" value="end_of_period" checked />
+            <div style="flex:1;">
+              <div class="billing-choice-title">Cancel at the end of current billing period (Recommended)</div>
+              <div class="billing-choice-desc">
+                Your subscription remains fully active until <strong>${client.end_date || 'renewal date'}</strong>. You keep full access to all paid bots, chats, and add-on boosters until then. No further charges will occur.
+              </div>
+              <div style="margin-top:4px; font-size:0.75rem; color:#1877F2; font-weight:600;">
+                Effective Cancellation Date: ${client.end_date || '30-10-2026'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Point 6 Choice 2: Cancel Immediately -->
+          <div class="billing-choice-card" id="cancel-card-immediate" onclick="window.smatApp.selectCancelOption('immediate')">
+            <input type="radio" name="cancel-type" id="cancel-opt-immediate" class="billing-choice-radio" value="immediate" />
+            <div style="flex:1;">
+              <div class="billing-choice-title" style="color:#B91C1C;">Cancel immediately</div>
+              <div class="billing-choice-desc">
+                Terminate the subscription today. Access to chatbots, WhatsApp routing, and active add-ons will stop immediately in accordance with billing terms.
+              </div>
+              <div style="margin-top:4px; font-size:0.75rem; color:#EF4444; font-weight:600;">
+                Effective Cancellation Date: Today (${new Date().toLocaleDateString()})
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:1rem 0;">
+            <label class="filter-item-label">Reason for Cancellation</label>
+            <select id="cancel-reason-select" class="custom-dropdown-trigger" style="width:100%;">
+              <option value="Cost / Pricing">Cost / Pricing</option>
+              <option value="Missing Features">Missing Features</option>
+              <option value="Switching to Another Platform">Switching to Another Platform</option>
+              <option value="Temporary Pause">Temporary Pause</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #E2E8F0; padding-top:0.75rem;">
+            <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Keep Subscription</button>
+            <button type="button" class="btn-table-action" style="background:#DC2626; color:#FFFFFF; border-color:#DC2626;" onclick="window.smatApp.confirmSubscriptionCancellation(${client.id})">
+              Confirm Cancellation
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function selectCancelOption(type) {
+    const endCard = $('#cancel-card-end');
+    const immCard = $('#cancel-card-immediate');
+    const optEnd = $('#cancel-opt-end');
+    const optImm = $('#cancel-opt-immediate');
+
+    if (type === 'end') {
+      endCard?.classList.add('selected');
+      immCard?.classList.remove('selected');
+      if (optEnd) optEnd.checked = true;
+    } else {
+      immCard?.classList.add('selected');
+      endCard?.classList.remove('selected');
+      if (optImm) optImm.checked = true;
+    }
+  }
+
+  function confirmSubscriptionCancellation(clientId) {
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+
+    const isImmediate = $('#cancel-opt-immediate')?.checked;
+    if (isImmediate) {
+      client.subscription_status = 'Cancelled';
+      client.days_left = 0;
+      client.active_addons = [];
+      showToast(`Subscription for ${client.name} cancelled immediately.`);
+    } else {
+      client.cancellation_status = 'pending_end_of_period';
+      client.autopay_enabled = false;
+      showToast(`Subscription scheduled to cancel on ${client.end_date}. Access remains active.`);
+    }
+    closeModal();
+    if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+  }
+
+  // =========================================================================
+  // POINT 4: PAYMENT METHOD MANAGEMENT MODAL
+  // =========================================================================
+  function openUpdatePaymentMethodModal(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const currentPM = client.payment_method || { brand: 'Visa', last4: '4242', expiry: '12/28' };
+    const modal = $('#modal-container');
+
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="max-width:480px; border-top:4px solid #1877F2;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div style="font-size:1.15rem; font-weight:800; color:#1E293B;">💳 Update Payment Method</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.84rem;">
+            <span style="color:#64748B;">Current Card:</span> <strong>${currentPM.brand} •••• ${currentPM.last4}</strong> (Expires ${currentPM.expiry})
+          </div>
+
+          <form id="update-payment-form">
+            <div style="margin-bottom:0.75rem;">
+              <label class="filter-item-label">Cardholder Name</label>
+              <input type="text" id="pm-cardholder" class="filter-search-box" value="${currentPM.holderName || client.name}" required />
+            </div>
+
+            <div style="margin-bottom:0.75rem;">
+              <label class="filter-item-label">Card Number</label>
+              <input type="text" id="pm-cardnumber" class="filter-search-box" placeholder="4242 •••• •••• 8899" value="•••• •••• •••• 8899" required />
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem;">
+              <div>
+                <label class="filter-item-label">Expiry (MM/YY)</label>
+                <input type="text" id="pm-expiry" class="filter-search-box" placeholder="08/29" value="08/29" required />
+              </div>
+              <div>
+                <label class="filter-item-label">CVV</label>
+                <input type="password" id="pm-cvv" class="filter-search-box" placeholder="•••" value="123" required />
+              </div>
+            </div>
+
+            <!-- Applied to Future Renewals Note -->
+            <div style="font-size:0.78rem; color:#15803D; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:0.6rem 0.8rem; margin-bottom:1.25rem;">
+              ✅ <strong>Primary Payment Method:</strong> This payment method will be applied automatically to all future subscription renewals and recurring add-on charges.
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
+              <button type="submit" class="btn-table-action btn-action-primary">Save Payment Method</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    $('#update-payment-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const holder = $('#pm-cardholder').value;
+      const exp = $('#pm-expiry').value;
+
+      client.payment_method = {
+        brand: 'Mastercard',
+        last4: '8899',
+        expiry: exp,
+        holderName: holder
+      };
+
+      showToast(`Payment method updated to Mastercard ending in •••• 8899`);
+      closeModal();
+      if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+    });
+  }
+
 
   // =========================================================================
   // 8. MODULE 5: LOGIN TO DASHBOARD (CLIENT CONFIRMATION MODAL & DASHBOARD)
@@ -2832,7 +4522,15 @@
                 <path d="M12 8v8"></path>
               </svg>
             </div>
+            <!-- Point 1-7: Client Self-Service Billing Sidebar Tab -->
+            <div class="client-sidebar-item" id="client-nav-billing" title="Subscription & Billing" onclick="window.smatApp.renderClientBillingPortal()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+            </div>
           </aside>
+
 
           <!-- Main Viewport Area -->
           <div class="client-portal-viewport">
@@ -2966,6 +4664,148 @@
       </div>
     `;
   }
+
+  function renderClientBillingPortal() {
+    const client = impersonatingClient || clientsData[0];
+    const main = $('.client-portal-body');
+    if (!main) return;
+
+    // Update sidebar active states
+    $$('.client-sidebar-item').forEach(el => el.classList.remove('active'));
+    const billingTab = $('#client-nav-billing');
+    if (billingTab) billingTab.classList.add('active');
+
+    main.innerHTML = `
+      <div style="padding:1.5rem; max-width:960px; margin:0 auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <div style="font-size:1.35rem; font-weight:800; color:#1E293B;">💳 Subscription & Billing Management</div>
+            <div style="font-size:0.85rem; color:#64748B;">Client Self-Service Portal for <strong>${client.name}</strong></div>
+          </div>
+          <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.returnToClientBotsGrid()">
+            ← Back to Bots Dashboard
+          </button>
+        </div>
+
+        <!-- Active Plan Overview Banner -->
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <span class="status-pill active" style="font-size:0.75rem; text-transform:uppercase;">ACTIVE SUBSCRIPTION</span>
+              <div style="font-size:1.5rem; font-weight:800; color:#0F172A; margin:0.4rem 0;">${client.plan_name}</div>
+              <div style="font-size:0.88rem; color:#64748B;">
+                Billing Cycle: <strong>${client.billing_cycle || 'Monthly'}</strong> • Auto-renews on: <strong style="color:#2563EB;">${client.end_date}</strong> (${client.days_left} Days Left)
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.5rem; font-weight:800; color:#1877F2;">${client.subscription_amount_display || '₹ 0.00'}</div>
+              <div style="margin-top:0.5rem; display:flex; gap:0.5rem; justify-content:flex-end;">
+                <!-- Point 7: Self-service plan upgrade available online -->
+                <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal(${client.id})">
+                  ⚡ Upgrade Plan Online
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan Downgrades Restricted to Support Notice -->
+          <div style="margin-top:1.25rem; background:#FFFBEB; border:1px solid #FDE68A; border-left:4px solid #F59E0B; border-radius:8px; padding:0.85rem 1rem; font-size:0.84rem; color:#92400E; line-height:1.5;">
+            <strong>ℹ️ Plan Downgrade Policy:</strong><br/>
+            Plan downgrades are not available directly online to prevent accidental disruption to your live chatbots, WhatsApp numbers, and workflows. To request a plan downgrade, please contact our Support or Sales team at <a href="mailto:support@smatbot.com" style="color:#D97706; font-weight:700;">support@smatbot.com</a> for an account usage assessment.
+          </div>
+        </div>
+
+        <!-- Two-Column Grid: Payment & Auto-Pay -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.5rem;">
+          <!-- Auto-Pay Management Card -->
+          <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:1.25rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <div style="font-weight:700; font-size:1rem; color:#1E293B;">Auto-Pay Settings</div>
+              <span class="autopay-status-badge ${client.autopay_enabled !== false ? 'enabled' : 'disabled'}">
+                ${client.autopay_enabled !== false ? '🟢 Active' : '⚪ Off'}
+              </span>
+            </div>
+            <p style="font-size:0.83rem; color:#64748B; line-height:1.5; margin-bottom:1rem;">
+              ${client.autopay_enabled !== false 
+                ? 'Your subscription is set to renew automatically using your saved card. Disabling will not cancel your current term.' 
+                : 'Auto-renewal is paused. Your current subscription stays active until ' + client.end_date + '.'}
+            </p>
+            <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openAutoPayModal(${client.id})">
+              ⚙️ Manage Auto-Pay
+            </button>
+          </div>
+
+          <!-- Payment Method Card -->
+          <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:1.25rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <div style="font-weight:700; font-size:1rem; color:#1E293B;">Saved Payment Method</div>
+              <span style="font-size:0.75rem; color:#15803D; font-weight:700;">DEFAULT</span>
+            </div>
+            <div style="font-size:0.95rem; font-weight:600; color:#334155; margin-bottom:0.25rem;">
+              💳 ${client.payment_method?.brand || 'Visa'} ending in •••• ${client.payment_method?.last4 || '4242'}
+            </div>
+            <p style="font-size:0.82rem; color:#64748B; margin-bottom:1rem;">
+              Expires: ${client.payment_method?.expiry || '12/28'} • Applied to all future renewals and recurring add-ons.
+            </p>
+            <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openUpdatePaymentMethodModal(${client.id})">
+              💳 Update Card
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Add-ons Section -->
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <div style="font-weight:700; font-size:1rem; color:#1E293B;">Active Add-ons & Boosters</div>
+              <div style="font-size:0.8rem; color:#64748B;">Monthly add-ons always synchronize expiry with your main subscription end date.</div>
+            </div>
+            <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openPlanModal(${client.id})">
+              + Purchase Add-on
+            </button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            ${(client.active_addons && client.active_addons.length > 0) ? client.active_addons.map(addon => `
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 1rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; font-size:0.86rem;">
+                <div>
+                  <strong>${addon.name}</strong>
+                  <span style="font-size:0.75rem; color:#64748B; margin-left:6px;">(${addon.type || 'recurring'})</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span class="addon-expiry-pill capped">
+                    Expires: ${addon.expiryDate || client.end_date} (Capped by Plan)
+                  </span>
+                  <span style="color:#10B981; font-weight:700;">🟢 Active</span>
+                </div>
+              </div>
+            `).join('') : `
+              <div style="padding:1rem; text-align:center; color:#64748B; font-size:0.85rem;">
+                No active add-ons. You can add extra conversations or dedicated numbers anytime.
+              </div>
+            `}
+          </div>
+        </div>
+
+        <!-- Bottom: Cancellation Option -->
+        <div style="background:#FFFFFF; border:1px solid #FECDD3; border-radius:12px; padding:1.25rem; box-shadow:0 1px 3px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:700; color:#991B1B;">Cancel Subscription</div>
+            <div style="font-size:0.82rem; color:#64748B;">Choose to cancel immediately or at the end of the current billing cycle (${client.end_date}).</div>
+          </div>
+          <button class="btn-table-action" style="background:#FEE2E2; border-color:#FECDD3; color:#DC2626;" onclick="window.smatApp.openCancelSubscriptionModal(${client.id})">
+            Cancel Subscription
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function returnToClientBotsGrid() {
+    const client = impersonatingClient || clientsData[0];
+    renderClientPortalSimulator(client);
+  }
+
 
   // =========================================================================
   // 9. MODULE 5: SUBSCRIPTION RENEWALS
@@ -3797,6 +5637,16 @@
       list = list.filter((c, idx) => c.is_new_this_month || idx < 18);
     }
 
+    if (filterState.activeSegmentTab === 'active') {
+      list = list.filter(c => c.subscription_status === 'Active');
+    } else if (filterState.activeSegmentTab === 'trial') {
+      list = list.filter(c => c.subscription_status === 'Trial' || (!c.subscription_status && (c.plan_name || '').toLowerCase().includes('trial')));
+    } else if (filterState.activeSegmentTab === 'expiring') {
+      list = list.filter(c => typeof c.days_left === 'number' && c.days_left <= 7 && c.days_left >= 0);
+    } else if (filterState.activeSegmentTab === 'whitelabel') {
+      list = list.filter(c => c.customer_type === 'White-Label' || c.deployment_type === 'White-Label');
+    }
+
     if (filterState.planType !== 'All') {
       list = list.filter(c => c.plan_type && c.plan_type.toLowerCase().includes(filterState.planType.toLowerCase()));
     }
@@ -3861,6 +5711,184 @@
     clientCurrentPage = 1;
     renderClientDetailsView($('#route-viewport'));
     showToast('Showing all registered client accounts.');
+  }
+
+  function selectSegmentTab(tabKey) {
+    filterState.activeSegmentTab = tabKey;
+    clientCurrentPage = 1;
+    renderClientDetailsView($('#route-viewport'));
+  }
+
+  function getAvatarColorClass(str) {
+    const classes = ['purple', 'blue', 'green', 'orange', 'pink'];
+    let hash = 0;
+    for (let i = 0; i < (str || '').length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return classes[Math.abs(hash) % classes.length];
+  }
+
+  function getInitials(name) {
+    if (!name) return 'SB';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function openClientQuickDrawer(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const drawerContainer = $('#drawer-container');
+    if (!drawerContainer) return;
+
+    const botsLimit = client.bots_limit !== undefined ? client.bots_limit : 10;
+    const botsUsed = client.bots_used !== undefined ? client.bots_used : 0;
+    const botsPct = botsLimit > 0 ? Math.min(100, Math.round((botsUsed / botsLimit) * 100)) : 0;
+
+    const chatsLimit = client.chats_limit !== undefined ? client.chats_limit : 5000;
+    const chatsUsed = client.chats_used !== undefined ? client.chats_used : 0;
+    const chatsPct = chatsLimit > 0 ? Math.min(100, Math.round((chatsUsed / chatsLimit) * 100)) : 0;
+
+    const isTrial = client.subscription_status === 'Trial' || (!client.subscription_status && (client.plan_name || '').toLowerCase().includes('trial'));
+    const isExpired = client.subscription_status === 'Expired' || client.days_left === 0;
+
+    const statusBadge = isExpired 
+      ? '<span class="status-badge-compact expired">● Expired</span>'
+      : (isTrial 
+        ? '<span class="status-badge-compact trial">⏳ Trial</span>' 
+        : '<span class="status-badge-compact active">🟢 Active</span>');
+
+    drawerContainer.innerHTML = `
+      <div class="drawer-backdrop open" onclick="window.smatApp.closeClientDrawer()"></div>
+      <div class="client-slide-drawer open">
+        <div class="drawer-header">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="client-avatar-circle ${getAvatarColorClass(client.name)}" style="width:40px; height:40px; font-size:1rem;">
+              ${getInitials(client.name)}
+            </div>
+            <div>
+              <div style="font-weight:700; color:#1E293B; font-size:1.05rem;">${escapeHtml(client.name)}</div>
+              <div style="font-size:0.75rem; color:#64748B;">ID: ${escapeHtml(client.zoho_customer_id || ('#CL-' + client.id))}</div>
+            </div>
+          </div>
+          <button onclick="window.smatApp.closeClientDrawer()" style="background:none; border:none; font-size:1.3rem; color:#64748B; cursor:pointer; padding:4px 8px; border-radius:6px;" title="Close Drawer">✕</button>
+        </div>
+
+        <div class="drawer-body">
+          <!-- Status & Type Row -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div>${statusBadge}</div>
+            <div style="font-size:0.8rem; font-weight:600; color:#475569; background:#F1F5F9; padding:3px 8px; border-radius:6px;">
+              ${escapeHtml(client.customer_type || 'Direct')} · ${escapeHtml(client.account_type || 'Client Accounts')}
+            </div>
+          </div>
+
+          <!-- Quick Stats Grid -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.5rem;">
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.75rem;">
+              <div style="font-size:0.72rem; color:#64748B; font-weight:600; text-transform:uppercase;">Current Plan</div>
+              <div style="font-weight:700; color:#1E293B; font-size:0.95rem; margin-top:2px;">${escapeHtml(client.plan_name || 'Pro Trial')}</div>
+              <div style="font-size:0.72rem; color:#64748B;">${escapeHtml(client.billing_cycle || 'Monthly')} (${escapeHtml(client.subscription_amount_display || '₹ 0.00')})</div>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.75rem;">
+              <div style="font-size:0.72rem; color:#64748B; font-weight:600; text-transform:uppercase;">Days Remaining</div>
+              <div style="font-weight:800; color:${(client.days_left || 0) <= 7 ? '#DC2626' : '#16A34A'}; font-size:1.15rem; margin-top:2px;">
+                ${client.days_left !== undefined ? client.days_left : 13} <span style="font-size:0.75rem; font-weight:600; color:#64748B;">days</span>
+              </div>
+              <div style="font-size:0.72rem; color:#64748B;">Expires: ${escapeHtml(client.end_date || '08-10-2026')}</div>
+            </div>
+          </div>
+
+          <!-- Usage Progress Cards -->
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:1rem; margin-bottom:1.5rem;">
+            <div style="font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:0.75rem;">QUOTA CONSUMPTION</div>
+            
+            <div style="margin-bottom:0.75rem;">
+              <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                <span style="color:#64748B; font-weight:600;">Active Bots</span>
+                <span style="font-weight:700; color:#1E293B;">${botsUsed} / ${botsLimit} (${botsPct}%)</span>
+              </div>
+              <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:#1877F2; height:100%; width:${botsPct}%;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                <span style="color:#64748B; font-weight:600;">Monthly Chats</span>
+                <span style="font-weight:700; color:#1E293B;">${chatsUsed.toLocaleString()} / ${chatsLimit.toLocaleString()} (${chatsPct}%)</span>
+              </div>
+              <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:#10B981; height:100%; width:${chatsPct}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact & Deployment Specs -->
+          <div style="border:1px solid #E2E8F0; border-radius:10px; padding:1rem; margin-bottom:1.5rem;">
+            <div style="font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:0.75rem;">CONTACT & DEPLOYMENT</div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid #F1F5F9;">
+              <span style="color:#64748B;">Email</span>
+              <span style="font-weight:600; color:#1E293B; display:flex; align-items:center; gap:4px;">
+                ${escapeHtml(client.email)}
+                <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${client.email}', 'email')" title="Copy Email">
+                  <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                </button>
+              </span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid #F1F5F9;">
+              <span style="color:#64748B;">Phone</span>
+              <span style="font-weight:600; color:#1E293B; display:flex; align-items:center; gap:4px;">
+                ${escapeHtml(client.phone_number)}
+                <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${client.phone_number}', 'phone')" title="Copy Phone">
+                  <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                </button>
+              </span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid #F1F5F9;">
+              <span style="color:#64748B;">Sub-Domain / URL</span>
+              <span style="font-weight:600; color:#1877F2;">${escapeHtml(client.custom_domain || client.url || '-')}</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+              <span style="color:#64748B;">Assigned Reps</span>
+              <span style="font-weight:600; color:#334155;">Sales: ${escapeHtml(client.sales_person || '-')} | Support: ${escapeHtml(client.support_person || '-')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <button class="client-mini-action-btn" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openPlanModal(${client.id});" style="padding:8px 14px; font-size:0.82rem;">
+            ⚡ Plan / Add-ons
+          </button>
+          <button class="client-mini-action-btn login-btn" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openLoginConfirmModal(${client.id});" style="padding:8px 14px; font-size:0.82rem; background:#16A34A; color:#FFFFFF; border-color:#16A34A;">
+            🔐 1-Click Login
+          </button>
+          <button class="btn-action-primary" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openClientDetailsPage(${client.id});" style="padding:8px 14px; font-size:0.82rem;">
+            Full Profile 👁️
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function closeClientDrawer() {
+    const drawerContainer = $('#drawer-container');
+    if (drawerContainer) {
+      drawerContainer.innerHTML = '';
+    }
   }
 
   function openNewClientsModal() {
@@ -4088,17 +6116,76 @@
   }
 
   // Add Client Modal Implementation
+  function updateAddClientAmountCalc() {
+    const planSelect = $('#add-client-plan-name');
+    const cycleSelect = $('#add-client-billing-cycle');
+    const amountInput = $('#add-client-amount');
+    const daysLeftInput = $('#add-client-days-left');
+    if (!planSelect || !cycleSelect || !amountInput) return;
+
+    const planPrices = {
+      'Broadcast': 1499,
+      'Standard': 3500,
+      'Pro': 6500,
+      'AI': 8999,
+      'Pro Trial': 0,
+      'Pro Trail WhatsApp Trial': 0,
+      'Free': 0,
+      'Starter NY': 3500,
+      'Starter NY (WA)': 3500,
+      'Starter NM': 3500,
+      'Starter NM (WA)': 3500,
+      'Pro NY': 6500,
+      'Pro NM': 6500,
+      'Pro NM (WA)': 6500,
+      'Enterprise AI': 8999
+    };
+
+    const yearlyPlanFlat = {
+      'Broadcast': 14500,
+      'Standard': 35000,
+      'Pro': 72000,
+      'AI': 96000
+    };
+
+    const monthlyPrice = planPrices[planSelect.value] !== undefined ? planPrices[planSelect.value] : 9999;
+    const cycle = cycleSelect.value;
+
+    let multiplier = 1;
+    let days = 30;
+
+    if (cycle === '2 Months') { multiplier = 2; days = 60; }
+    else if (cycle === '4 Months') { multiplier = 4; days = 120; }
+    else if (cycle === '6 Months') { multiplier = 6; days = 180; }
+    else if (cycle === '9 Months') { multiplier = 9; days = 270; }
+    else if (cycle === 'Yearly') { multiplier = 10; days = 365; }
+    else { multiplier = 1; days = 30; }
+
+    if (monthlyPrice === 0) {
+      amountInput.value = '₹ 0.00';
+      if (daysLeftInput) daysLeftInput.value = '14';
+    } else {
+      const total = (cycle === 'Yearly' && yearlyPlanFlat[planSelect.value]) 
+        ? yearlyPlanFlat[planSelect.value] 
+        : monthlyPrice * multiplier;
+      amountInput.value = `₹ ${total.toLocaleString('en-IN')}.00`;
+      if (daysLeftInput) daysLeftInput.value = days.toString();
+    }
+  }
+
   function openAddClientModal() {
     const modal = $('#modal-container');
     modal.innerHTML = `
       <div class="modal-overlay open">
-        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width: 720px;">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width: 740px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
             <div>
               <div style="font-size:1.2rem; font-weight:800; color:#1E293B; display:flex; align-items:center; gap:0.5rem;">
-                <span>🏢</span> Add New Client Account
+                <span>🏢</span> Onboard New Client & Provision Subscription
               </div>
-              <p style="font-size:0.8rem; color:#64748B; margin-top:2px;">Provision a new client tenant in SmatBot Control Center</p>
+              <p style="font-size:0.8rem; color:#64748B; margin-top:2px;">
+                Instant tenant provisioning with automated duration proration & quota allocation.
+              </p>
             </div>
             <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748B;">✕</button>
           </div>
@@ -4145,36 +6232,55 @@
                 </select>
               </div>
               <div>
-                <label class="filter-item-label">Plan Name</label>
-                <select id="add-client-plan-name" class="filter-search-box" style="padding-left:0.75rem;">
-                  <option value="Pro Trial">Pro Trial</option>
-                  <option value="Pro Trail WhatsApp Trial">Pro Trail WhatsApp Trial</option>
-                  <option value="Free">Free</option>
-                  <option value="Pro NY">Pro NY (Paid)</option>
-                  <option value="Starter NY (WA)">Starter NY (WA) (Paid)</option>
-                  <option value="Starter NY">Starter NY (Paid)</option>
-                  <option value="Pro NM (WA)">Pro NM (WA) (Paid)</option>
-                  <option value="Pro NM">Pro NM (Paid)</option>
-                  <option value="Enterprise AI">Enterprise AI (Paid)</option>
+                <label class="filter-item-label">Plan Name *</label>
+                <select id="add-client-plan-name" class="filter-search-box" style="padding-left:0.75rem;" onchange="window.smatApp.updateAddClientAmountCalc()">
+                  <option value="Pro">Pro (₹6,500/mo | ₹72,000/yr)</option>
+                  <option value="Broadcast">Broadcast (₹1,499/mo | ₹14,500/yr)</option>
+                  <option value="Standard">Standard (₹3,500/mo | ₹35,000/yr)</option>
+                  <option value="AI">AI (₹8,999/mo | ₹96,000/yr)</option>
+                  <option value="Pro Trial">Pro Trial (₹0.00)</option>
                 </select>
               </div>
             </div>
 
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
               <div>
-                <label class="filter-item-label">Billing Cycle</label>
-                <select id="add-client-billing-cycle" class="filter-search-box" style="padding-left:0.75rem;">
-                  <option value="Monthly">Monthly</option>
-                  <option value="Yearly">Yearly</option>
+                <label class="filter-item-label">Billing Cycle / Duration *</label>
+                <select id="add-client-billing-cycle" class="filter-search-box" style="padding-left:0.75rem;" onchange="window.smatApp.updateAddClientAmountCalc()">
+                  <option value="Monthly">Monthly (1 Month)</option>
+                  <option value="2 Months">2 Months Custom (Monthly × 2)</option>
+                  <option value="4 Months">4 Months Custom (Monthly × 4)</option>
+                  <option value="6 Months">6 Months Custom (Monthly × 6)</option>
+                  <option value="9 Months">9 Months Custom (Monthly × 9)</option>
+                  <option value="Yearly">Yearly (12 Months - Save 20%)</option>
                 </select>
               </div>
               <div>
-                <label class="filter-item-label">Subscription Amount</label>
-                <input type="text" id="add-client-amount" class="filter-search-box" placeholder="₹ 0.00" value="₹ 0.00" />
+                <label class="filter-item-label">Subscription Amount (Calculated)</label>
+                <input type="text" id="add-client-amount" class="filter-search-box" value="₹ 9,999.00" readonly style="background:#F8FAFC; font-weight:700;" />
               </div>
               <div>
-                <label class="filter-item-label">Days Left</label>
-                <input type="number" id="add-client-days-left" class="filter-search-box" value="14" min="1" max="365" />
+                <label class="filter-item-label">Days Left (Valid Until)</label>
+                <input type="number" id="add-client-days-left" class="filter-search-box" value="30" min="1" max="365" />
+              </div>
+            </div>
+
+            <!-- Optional Add-ons & Auto-Pay Allocation -->
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem;">
+              <div style="font-size:0.78rem; font-weight:700; color:#334155; margin-bottom:0.5rem; text-transform:uppercase;">Add-on Allocation & Auto-Pay Settings</div>
+              <div style="display:flex; flex-wrap:wrap; gap:1.25rem; font-size:0.8rem; color:#475569;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="checkbox" id="add-client-addon-wa" />
+                  <span>Extra WhatsApp Pack (+5,000 Chats)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="checkbox" id="add-client-addon-bot" />
+                  <span>Extra Bot Instance (+2 Bots)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="checkbox" id="add-client-autopay" checked />
+                  <span><strong style="color:#16A34A;">⚡ Auto-Pay Enabled</strong> (Automated Recurring Renewal)</span>
+                </label>
               </div>
             </div>
 
@@ -4182,6 +6288,7 @@
               <div>
                 <label class="filter-item-label">Deployment Architecture *</label>
                 <select id="add-client-deployment-type" class="filter-search-box" style="padding-left:0.75rem;">
+                  <option value="Direct">🌐 Direct SaaS Multi-Tenant</option>
                   <option value="White-Label">🏷️ White-Label Reseller Platform</option>
                   <option value="On-Premise">🛡️ On-Premise Enterprise VPC</option>
                 </select>
@@ -4222,11 +6329,10 @@
 
             <div style="display:flex; justify-content:flex-end; gap:0.75rem; border-top: 1px solid #E2E8F0; padding-top: 1.25rem;">
               <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
-              <button type="submit" class="btn-table-action btn-action-primary" style="padding:0.6rem 1.5rem; font-size:0.88rem;">+ Create Client</button>
+              <button type="submit" class="btn-table-action btn-action-primary" style="padding:0.6rem 1.5rem; font-size:0.88rem;">+ Provision Client Account</button>
             </div>
           </form>
         </div>
-      </div>
     `;
   }
 
@@ -4334,7 +6440,8 @@
       subscriptionStatus: 'All',
       duration: 'All Time',
       search: '',
-      newThisMonthOnly: false
+      newThisMonthOnly: false,
+      activeSegmentTab: 'all'
     };
     clientCurrentPage = 1;
     renderClientDetailsView($('#route-viewport'));
@@ -4806,6 +6913,25 @@
     clearNewClientsFilter,
     openNewClientsModal,
     resetToDefaultData,
+    openDowngradeImpactModal,
+    executeDowngrade,
+    openAutoPayModal,
+    toggleAutoPay,
+    openCancelSubscriptionModal,
+    selectCancelOption,
+    confirmSubscriptionCancellation,
+    openUpdatePaymentMethodModal,
+    renderClientBillingPortal,
+    returnToClientBotsGrid,
+    selectSegmentTab,
+    openClientQuickDrawer,
+    closeClientDrawer,
+    renderOverviewView,
+    renderPlansView,
+    renderAddonsView,
+    renderImpersonationView,
+    filterImpersonationClients,
+    updateAddClientAmountCalc,
     showToast
   };
 

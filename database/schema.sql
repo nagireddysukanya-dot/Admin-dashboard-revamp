@@ -179,3 +179,69 @@ INSERT INTO `clients` (
 (9, 'cli-shrishti-009', 'Shrishti Jajodia', '+91-7289970856', '', 'customercare@alignbooks.com', 'Direct', 'Client Accounts', 'Pro NY (WA)', 'Paid_plan', 'Yearly', '₹ 47,999.00', 47999.00, 600.00, '08-06-2027', 252, 10, 1, 5000, 0, 1000, 0, 0, 0, '-', 'alignbooks.com', 'No', 'Active', 'Rahul Sharma', 'Kiran Kumar', 'INR', '3141005000009490054', 'SUB-SHRISHTI-2026'),
 (10, 'cli-solaris-010', 'Solaris Green Energy #2', '+91-9800009460', '+91-9100006220', 'client20@solarisgre.com', 'Direct', 'Client Accounts', 'Pro NM', 'Paid_plan', 'Monthly', '₹ 4,999.00', 4999.00, 65.00, '15-02-2027', 141, 25, 0, 50000, 2400, 1000, 0, 5000, 0, '36AAACH7020R1ZZ', 'solarisgre.com', 'No', 'Active', 'Rahul Sharma', 'Kiran Kumar', 'INR', '3141005000009490020', 'SUB-SOLARIS-2026')
 ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
+
+-- ============================================================================
+-- 5. Subscriptions, Add-ons & Billing Management Relational Tables
+-- ============================================================================
+
+-- Table: Client Add-ons (Points 1 & 3: Add-on Purchases & Expiry Priority)
+CREATE TABLE IF NOT EXISTS `client_addons` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `client_id` INT NOT NULL,
+  `addon_name` VARCHAR(120) NOT NULL,
+  `addon_type` ENUM('one_time', 'recurring') DEFAULT 'recurring',
+  `price` DECIMAL(10,2) NOT NULL,
+  `currency` ENUM('INR', 'USD') DEFAULT 'INR',
+  `purchase_date` DATE NOT NULL,
+  `standard_expiry_date` DATE NOT NULL,
+  `effective_expiry_date` DATE NOT NULL,
+  `is_capped_by_subscription` TINYINT(1) DEFAULT 1,
+  `status` ENUM('Active', 'Expired', 'Cancelled') DEFAULT 'Active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table: Payment Methods & Auto-Pay (Points 4 & 5: Payment Method & Auto-Pay Management)
+CREATE TABLE IF NOT EXISTS `payment_methods` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `client_id` INT NOT NULL,
+  `card_brand` VARCHAR(50) DEFAULT 'Visa',
+  `last4` VARCHAR(4) NOT NULL,
+  `exp_month` VARCHAR(2) NOT NULL,
+  `exp_year` VARCHAR(4) NOT NULL,
+  `cardholder_name` VARCHAR(150),
+  `is_autopay_enabled` TINYINT(1) DEFAULT 1,
+  `is_default` TINYINT(1) DEFAULT 1,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table: Plan Changes & Downgrade Impact Audit (Points 7 & 8: Downgrade Impact Assessment)
+CREATE TABLE IF NOT EXISTS `subscription_audit_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `client_id` INT NOT NULL,
+  `action_type` ENUM('upgrade', 'downgrade', 'autopay_toggle', 'cancellation', 'duration_change') NOT NULL,
+  `previous_plan` VARCHAR(80),
+  `new_plan` VARCHAR(80),
+  `duration_months` INT DEFAULT 1,
+  `admin_user` VARCHAR(100) DEFAULT 'Sukanya Nagireddy',
+  `impact_summary` TEXT,
+  `limits_exceeded` JSON,
+  `blocked_features` JSON,
+  `reason` VARCHAR(255),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table: Subscription Cancellations (Point 6: Immediate vs End-of-Billing-Cycle)
+CREATE TABLE IF NOT EXISTS `subscription_cancellations` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `client_id` INT NOT NULL,
+  `cancellation_type` ENUM('immediate', 'end_of_period') NOT NULL,
+  `requested_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `effective_date` DATE NOT NULL,
+  `reason` VARCHAR(255),
+  `admin_or_client` VARCHAR(100) DEFAULT 'Admin',
+  FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

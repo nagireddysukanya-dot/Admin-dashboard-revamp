@@ -496,6 +496,32 @@ async function initDb() {
 
 initDb();
 
+// Initialize default billing and subscription properties for all seed clients
+inMemoryClients.forEach(c => {
+  if (c.autopay_enabled === undefined) c.autopay_enabled = true;
+  if (!c.payment_method) {
+    c.payment_method = {
+      brand: 'Visa',
+      last4: '4242',
+      expiry: '12/28',
+      holderName: c.name
+    };
+  }
+  if (!c.active_addons) {
+    c.active_addons = [
+      {
+        id: `addon_quota_${c.id}`,
+        name: '+10,000 Conversations Booster',
+        type: 'recurring',
+        purchaseDate: '01-10-2026',
+        expiryDate: c.end_date || '30-10-2026',
+        cappedBySubscription: true
+      }
+    ];
+  }
+  if (c.cancellation_status === undefined) c.cancellation_status = null;
+});
+
 module.exports = {
   getPool: () => pool,
   isMysqlConnected: () => isMysqlConnected,
@@ -503,3 +529,4 @@ module.exports = {
   inMemoryMigrations,
   inMemoryUsers
 };
+
