@@ -200,4 +200,55 @@ router.delete('/:id', (req, res) => {
   res.json({ success: true, message: `Client ${deleted[0].name} removed` });
 });
 
+// GET /api/clients/gstin/:gstin - Live Government GST Taxpayer verification API
+router.get('/gstin/:gstin', async (req, res) => {
+  const { gstin } = req.params;
+  const cleanGstin = (gstin || '').trim().toUpperCase();
+  if (!cleanGstin || cleanGstin.length < 10) {
+    return res.status(400).json({ success: false, message: 'Please provide a valid 15-character GSTIN' });
+  }
+
+  // Built-in fallback for internal SmatBot demo GSTIN
+  if (cleanGstin === '36AAACS1429B1Z8') {
+    return res.json({
+      success: true,
+      gstin: '36AAACS1429B1Z8',
+      profile: {
+        legal_name: 'SMATBOT TECHNOLOGIES PRIVATE LIMITED',
+        trade_name: 'SMATBOT AI',
+        registration_date: '2020-01-07',
+        business_constitution: 'Private Limited Company',
+        status: 'Active',
+        taxpayer_type: 'Regular',
+        address: '2nd Floor, Ashoka HiTech Chambers, Road No. 2, opp. KBR Park, Banjara Hills',
+        city: 'HYDERABAD',
+        state_code: '36',
+        state: 'Telangana',
+        pincode: '500034'
+      }
+    });
+  }
+
+  const apiKey = process.env.GSTIN_API_KEY || 'gak_ac7762b5e29244c3b8af6a4c5e7ca594';
+
+  try {
+    const apiResponse = await fetch(`https://www.gstinapi.in/v1/gstin/${encodeURIComponent(cleanGstin)}/complete`, {
+      method: 'GET',
+      headers: {
+        'x-api-key': apiKey
+      }
+    });
+
+    const data = await apiResponse.json();
+    return res.json(data);
+  } catch (error) {
+    console.error('Error fetching GSTIN data:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to communicate with GST Verification API',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

@@ -3,7 +3,7 @@
 // 1. Clients (15 Filters, Directory, Deep-Dive Profile 👁)
 // 2. Migrate Bot (4-Step Wizard, Pre-Flight Check, Live Terminal, Rollback)
 // 3. Add Users (Team Management, Role-Based Access, Granular Permissions Matrix)
-// 4. Plan Activation (Tier Cards, Add-ons, Voucher Discounts, Instant Activation)
+// 4. Subscriptions & Renewals Management
 // 5. Login to Dashboard (Client Portal Impersonation Simulator & Interactive Bot Console)
 
 (function () {
@@ -11,9 +11,9 @@
 
   // State
   let currentRoute = 'client-details';
-  let currentUser = { 
-    name: 'Sukanya Nagireddy', 
-    email: 'sukanya@smatbot.com', 
+  let currentUser = {
+    name: 'Sukanya Nagireddy',
+    email: 'sukanya@smatbot.com',
     role: 'Super Admin',
     avatar: 'SN',
     department: 'Executive Operations'
@@ -28,6 +28,7 @@
   let clientPageSize = 10;
   let clientCurrentPage = 1;
   let partnersTab = 'All';
+  let clientDetailsFiltersExpanded = true;
 
   // 15 Filter Dropdown State
   let filterState = {
@@ -36,7 +37,7 @@
     billingCycle: 'All',
     customerTypes: ['Direct', 'Reseller', 'White-Label', 'On-Premise', 'Reseller Client', 'Channel Partners', 'Referral'],
     planNames: [
-      'Pro NY', 'Starter NY (WA)', 'Starter NY', 'Pro NM (WA)', 'Pro NM', 
+      'Pro NY', 'Starter NY (WA)', 'Starter NY', 'Pro NM (WA)', 'Pro NM',
       'Starter NM (WA)', 'Starter NM', 'test plan', 'TESTAPICHANGE', 'Pro Trail WhatsApp', 'Pro Trial', 'Pro Trail WhatsApp Trial'
     ],
     supportPlan: 'All',
@@ -63,6 +64,24 @@
   // 218 Initial Seed Clients Data (Matching User Screenshots & Production Specs)
   function generateInitialSeedClients() {
     const baseClients = [
+      {
+        id: 0, s_no: 0, name: 'abhianv', phone_number: '+91-9123456789', alternate_phone: '',
+        email: 'abhinav.smatbot@gmail.com', customer_type: 'Direct', account_type: 'Client Accounts',
+        plan_name: 'Pro', plan_type: 'Paid_plan', billing_cycle: 'Monthly',
+        subscription_amount_display: '₹ 6,500.00', inr_amount: 6500, usd_amount: 80, end_date: '30-11-2026',
+        days_left: 42, bots_limit: 10, bots_used: 4, chats_limit: 100000, chats_used: 12500,
+        service_chats_limit: 100000, service_chats_used: 12500, bi_chats_limit: 5000, bi_chats_used: 400,
+        gst_number: '36AAACS1429B1Z8', url: 'smatbot.com',
+        test_account: 'No', subscription_status: 'Active', sales_person: 'Rahul Sharma',
+        support_person: 'Sukanya Nagireddy', currency_type: 'INR', zoho_customer_id: '3594', subscription_id: 'SUB-SMAT-3594',
+        unpaid_invoices: 2,
+        billing_address: {
+          company: 'smatbot',
+          line1: '2nd Floor, Ashoka HiTech Chambers, Road No. 2, opp. KBR Park,',
+          line2: 'Park View Enclave, hyderabad 500034',
+          country: 'India'
+        }
+      },
       {
         id: 1, s_no: 1, name: 'Arpit Padhy', phone_number: '+91-8591876630', alternate_phone: '',
         email: 'arpitpadhy19@gmail.com', customer_type: 'Direct', account_type: 'Client Accounts',
@@ -199,7 +218,7 @@
 
     const allClients = [...baseClients];
     for (let i = 11; i <= 218; i++) {
-      const name = `${clientNames[(i - 10) % clientNames.length]} ${Math.floor(i / 20) > 0 ? '#' + (Math.floor(i/20)+1) : ''}`.trim();
+      const name = `${clientNames[(i - 10) % clientNames.length]} ${Math.floor(i / 20) > 0 ? '#' + (Math.floor(i / 20) + 1) : ''}`.trim();
       const plan = planNames[i % planNames.length];
       const isPaid = plan.includes('NY') || plan.includes('NM') || plan.includes('Enterprise');
       const cycle = i % 3 === 0 ? 'Yearly' : 'Monthly';
@@ -257,6 +276,11 @@
         license_key: !isWhiteLabel ? `LIC-ONPREM-2026-X${String(i).padStart(3, '0')}` : null
       });
     }
+
+    allClients.forEach((c, idx) => {
+      c.s_no = idx + 1;
+    });
+
     return allClients;
   }
 
@@ -409,7 +433,7 @@
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) return parsed;
       }
-    } catch (e) {}
+    } catch (e) { }
     // Default to the active admin user if previously recorded, else empty
     const savedUser = localStorage.getItem('smatbot_admin_user');
     if (savedUser) {
@@ -418,7 +442,7 @@
         if (u && u.email) {
           return [{ email: u.email, domain: '', password: '••••••••', realPass: 'admin123' }];
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     return [
       { email: 'sukanya@smatbot.com', domain: '', password: '••••••••', realPass: 'admin123' }
@@ -473,6 +497,9 @@
         const parsed = JSON.parse(savedClients);
         if (Array.isArray(parsed) && parsed.length > 0) {
           clientsData = parsed;
+          clientsData.forEach((c, idx) => {
+            c.s_no = idx + 1;
+          });
         } else {
           clientsData = generateInitialSeedClients();
           localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
@@ -507,6 +534,15 @@
       }
     });
 
+        // Global Browser Back / Forward and Hash Navigation Listener
+    window.addEventListener('hashchange', () => {
+      if (!isAuthenticated) return;
+      const targetRoute = resolveInitialRoute();
+      if (targetRoute !== currentRoute || targetRoute === 'client-details-profile') {
+        navigateTo(targetRoute, false);
+      }
+    });
+
     // Check saved session
     const savedLogin = localStorage.getItem('smatbot_admin_logged_in');
     const savedUser = localStorage.getItem('smatbot_admin_user');
@@ -521,142 +557,240 @@
     }
   }
 
-  // =========================================================================
-  // 0. ADMIN LOGIN PAGE (admin.smatbot.com - Dynamic Previous Logins)
+    // =========================================================================
+  // 0. ADMIN LOGIN PAGE (Split Layout with Centered SmatBot Logo & Clean Form)
   // =========================================================================
   function renderLoginPage() {
     const app = $('#app-mount');
     const savedLogins = getPreviousLoginsHistory();
     const hasPreviousLogins = savedLogins && savedLogins.length > 0;
-    const defaultEmail = hasPreviousLogins ? savedLogins[0].email : '';
-    const defaultPass = hasPreviousLogins ? savedLogins[0].realPass : '';
+    const defaultEmail = hasPreviousLogins ? savedLogins[0].email : 'sukanya@smatbot.com';
+    const defaultPass = hasPreviousLogins ? savedLogins[0].realPass : 'admin123';
 
     app.innerHTML = `
-      <div class="smatbot-login-page-container">
-        <!-- Top Navigation Header with Purple SmatBot Robot Logo -->
-        <header class="login-top-header">
-          <div class="smatbot-brand-logo-full">
-            <div class="smatbot-logo-icon-purple">
-              <svg viewBox="0 0 36 32" width="28" height="25" fill="none">
-                <rect width="36" height="26" y="3" rx="7" fill="#635BFF" />
-                <circle cx="12" cy="14" r="2.8" fill="#FFFFFF" />
-                <circle cx="24" cy="14" r="2.8" fill="#FFFFFF" />
-                <path d="M13 21 Q18 25 23 21" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" fill="none" />
-                <circle cx="18" cy="2" r="1.5" fill="#635BFF" />
-                <line x1="18" y1="3.5" x2="18" y2="4.5" stroke="#635BFF" stroke-width="1.5" stroke-linecap="round" />
+      <div class="smatbot-split-login-wrapper">
+        <div class="smat-split-login-card">
+          <!-- LEFT: Dark Midnight Indigo Section with SmatBot Branding & Features -->
+          <div class="smat-split-dark-col">
+            <!-- Ambient Top-Left Purple Glow -->
+            <div class="smat-dark-ambient-glow"></div>
+
+            <!-- Content Area -->
+            <div class="smat-dark-content-box">
+              <!-- SmatBot Logo -->
+              <div class="smat-dark-center-branding">
+                <div class="smatbot-purple-robot-badge-large">
+                  <svg width="44" height="34" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="34" height="26" rx="6.5" fill="#4C2277"/>
+                    <polygon points="10,8.5 12.5,11 10,13.5 7.5,11" fill="#FFFFFF"/>
+                    <polygon points="24,8.5 26.5,11 24,13.5 21.5,11" fill="#FFFFFF"/>
+                    <path d="M11 15.5 C13.5 19.5 20.5 19.5 23 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  </svg>
+                </div>
+                <span class="smat-dark-logo-title-large">
+                  <span class="brand-smat">Smat</span><span class="brand-bot">Bot</span>
+                </span>
+              </div>
+
+              <!-- Tagline -->
+              <div class="smat-dark-tagline">
+                Smarter Conversations.<br />Better Business.
+              </div>
+
+              <!-- 3 Feature Highlights matching Screenshot -->
+              <div class="smat-dark-features-list">
+                <!-- Feature 1: Automate Support -->
+                <div class="smat-split-feature-item">
+                  <div class="smat-feature-icon-bubble">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      <circle cx="8" cy="10" r="1" fill="#93C5FD"></circle>
+                      <circle cx="12" cy="10" r="1" fill="#93C5FD"></circle>
+                      <circle cx="16" cy="10" r="1" fill="#93C5FD"></circle>
+                    </svg>
+                  </div>
+                  <div class="smat-feature-info">
+                    <div class="smat-feature-heading">Automate Support</div>
+                    <div class="smat-feature-subheading">Engage your customers 24/7</div>
+                  </div>
+                </div>
+
+                <!-- Feature 2: Track Performance -->
+                <div class="smat-split-feature-item">
+                  <div class="smat-feature-icon-bubble">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                  </div>
+                  <div class="smat-feature-info">
+                    <div class="smat-feature-heading">Track Performance</div>
+                    <div class="smat-feature-subheading">Get real-time insights</div>
+                  </div>
+                </div>
+
+                <!-- Feature 3: Secure & Reliable -->
+                <div class="smat-split-feature-item">
+                  <div class="smat-feature-icon-bubble">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                  </div>
+                  <div class="smat-feature-info">
+                    <div class="smat-feature-heading">Secure &amp; Reliable</div>
+                    <div class="smat-feature-subheading">Your data, our priority</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flowing Gradient Waves at Bottom -->
+            <div class="smat-dark-waves-container">
+              <svg class="smat-dark-wave-svg" viewBox="0 0 420 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="waveGlow1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.38"/>
+                    <stop offset="100%" stop-color="#0F172A" stop-opacity="0.05"/>
+                  </linearGradient>
+                  <linearGradient id="waveGlow2" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#2563EB" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.22"/>
+                  </linearGradient>
+                </defs>
+                <path d="M-10,110 C90,165 190,65 310,115 C370,140 405,105 430,90 L430,190 L-10,190 Z" fill="url(#waveGlow1)" />
+                <path d="M-10,145 C110,120 200,175 330,105 C380,80 410,95 430,110 L430,190 L-10,190 Z" fill="url(#waveGlow2)" />
+                <path d="M-20,110 C80,165 185,65 305,115 C365,140 405,105 435,90" stroke="rgba(147, 197, 253, 0.22)" stroke-width="1.5" fill="none" />
+                <path d="M-10,145 C110,120 200,175 330,105 C380,80 410,95 430,110" stroke="rgba(167, 139, 250, 0.25)" stroke-width="1.5" fill="none" />
               </svg>
             </div>
-            <span class="smatbot-brand-name-text">SmatBot</span>
           </div>
-        </header>
 
-        <!-- Centered Login Box -->
-        <main class="login-center-viewport">
-          <div class="smatbot-login-box">
-            <h1 class="smatbot-login-title">Login</h1>
+          <!-- RIGHT: Clean Modern Login Form matching Screenshot -->
+          <div class="smat-split-white-col">
+            <!-- Form Container -->
+            <div class="smat-split-form-wrapper">
+              <h1 class="smat-split-login-heading">Login</h1>
+              <p class="smat-split-login-subheading">Please enter your credentials to continue.</p>
 
-            <form id="admin-login-form" onsubmit="window.smatApp.handleLoginSubmit(event)">
-              <div class="smat-form-group relative-anchor" id="email-group-anchor">
-                <label class="smat-form-label" for="login-email-input">Email Address</label>
-                <input 
-                  type="email" 
-                  id="login-email-input" 
-                  class="smat-form-input" 
-                  value="${defaultEmail}" 
-                  placeholder="Enter your email"
-                  required 
-                  autocomplete="off"
-                  onfocus="${hasPreviousLogins ? "window.smatApp.showSavedLoginsPopup('email')" : ''}"
-                  onclick="${hasPreviousLogins ? "window.smatApp.showSavedLoginsPopup('email')" : ''}"
-                />
-
-                ${hasPreviousLogins ? `
-                  <!-- Dark Autofill Saved Logins Dropdown Popup (Shown only if previous logins exist) -->
-                  <div class="saved-logins-dark-popup pos-email" id="saved-logins-popup">
-                    <div class="saved-logins-list-container">
-                      ${savedLogins.map((acc, idx) => `
-                        <div class="saved-login-item-row" onclick="window.smatApp.selectSavedLogin(${idx})">
-                          <div class="saved-login-icon-box">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                            </svg>
-                          </div>
-                          <div class="saved-login-text-info">
-                            <div class="saved-login-email-line">
-                              <span class="saved-login-email-txt">${acc.email}</span>
-                              ${acc.domain ? `<span class="saved-login-domain-txt">${acc.domain}</span>` : ''}
-                            </div>
-                            <span class="saved-login-pass-bullets">${acc.password || '••••••••'}</span>
-                          </div>
-                          <button type="button" class="btn-remove-saved-login" title="Remove from history" onclick="window.smatApp.removeLoginFromHistory('${acc.email}', event)">
-                            ✕
-                          </button>
-                        </div>
-                      `).join('')}
-                    </div>
-                    <div class="saved-logins-footer-bar" onclick="window.smatApp.showToast('Opening Saved Password Vault...')">
-                      <div class="saved-logins-footer-left">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <circle cx="12" cy="12" r="4"></circle>
-                        </svg>
-                        <span>Manage passwords...</span>
-                      </div>
-                      <span class="saved-logins-footer-key-icon">🔑</span>
-                    </div>
+              <!-- Form Inputs -->
+              <form id="admin-login-form" onsubmit="window.smatApp.handleLoginSubmit(event)">
+                <!-- Email Address Input -->
+                <div class="smat-clean-form-group">
+                  <label class="smat-clean-label" for="login-email-input">Email Address</label>
+                  <div class="smat-clean-input-box">
+                    <span class="smat-input-prefix-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                      </svg>
+                    </span>
+                    <input 
+                      type="email" 
+                      id="login-email-input" 
+                      class="smat-clean-input" 
+                      value="${defaultEmail}" 
+                      placeholder="sukanya@smatbot.com" 
+                      required 
+                      autocomplete="username" 
+                    />
                   </div>
-                ` : ''}
-              </div>
+                </div>
 
-              <div class="smat-form-group relative-anchor" id="password-group-anchor">
-                <label class="smat-form-label" for="login-password-input">Password</label>
-                <input 
-                  type="password" 
-                  id="login-password-input" 
-                  class="smat-form-input" 
-                  value="${defaultPass}" 
-                  placeholder="Enter your password"
-                  required 
-                  autocomplete="off"
-                  onfocus="${hasPreviousLogins ? "window.smatApp.showSavedLoginsPopup('password')" : ''}"
-                  onclick="${hasPreviousLogins ? "window.smatApp.showSavedLoginsPopup('password')" : ''}"
-                />
-              </div>
+                <!-- Password Input -->
+                <div class="smat-clean-form-group">
+                  <label class="smat-clean-label" for="login-password-input">Password</label>
+                  <div class="smat-clean-input-box">
+                    <span class="smat-input-prefix-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <input 
+                      type="password" 
+                      id="login-password-input" 
+                      class="smat-clean-input smat-input-with-toggle" 
+                      value="${defaultPass}" 
+                      placeholder="••••••••" 
+                      required 
+                      autocomplete="current-password" 
+                    />
+                    <button type="button" class="smat-clean-eye-btn" onclick="window.smatApp.togglePasswordVisibility()" title="Show/Hide Password">
+                      <svg id="password-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
 
-              <button type="submit" class="btn-smatbot-primary-login" id="btn-login-action">
-                Login
-              </button>
-            </form>
+                <!-- Remember me + Forgot Password row -->
+                <div class="smat-login-options-row">
+                  <label class="smat-remember-me-toggle">
+                    <input type="checkbox" id="login-remember-me" checked />
+                    <span>Remember me</span>
+                  </label>
+                  <a href="javascript:void(0)" onclick="window.smatApp.showToast('Password reset link sent to registered admin mail.')" class="smat-forgot-pass-anchor">Forgot Password?</a>
+                </div>
 
-            <!-- Quick Demo Credentials for Fast Switching -->
-            <div class="demo-login-shortcuts-section">
-              <div class="demo-shortcuts-divider"><span>Demo Roles</span></div>
-              <div class="demo-shortcuts-grid">
-                <button type="button" class="btn-demo-shortcut" onclick="window.smatApp.quickDemoLogin('Sukanya Nagireddy', 'sukanya@smatbot.com', 'Super Admin')">
-                  <span class="demo-role-icon">👑</span>
-                  <span>Super Admin</span>
+                <!-- Blue Login button with Arrow -->
+                <button type="submit" class="btn-smat-clean-login smat-primary-login-btn">
+                  <span>Login</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
                 </button>
-                <button type="button" class="btn-demo-shortcut" onclick="window.smatApp.quickDemoLogin('Arjun Mehta', 'arjun@smatbot.com', 'Bot Engineer')">
-                  <span class="demo-role-icon">🤖</span>
-                  <span>Bot Engineer</span>
-                </button>
-                <button type="button" class="btn-demo-shortcut" onclick="window.smatApp.quickDemoLogin('Elena Rostova', 'elena@smatbot.com', 'Billing Manager')">
-                  <span class="demo-role-icon">💳</span>
-                  <span>Billing Lead</span>
-                </button>
+              </form>
+
+              <!-- Bottom Secure Login Divider -->
+              <div class="smat-secure-badge-footer">
+                <span class="smat-secure-line"></span>
+                <span class="smat-secure-badge-text">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  <span>Secure Login</span>
+                </span>
+                <span class="smat-secure-line"></span>
               </div>
             </div>
           </div>
-        </main>
+        </div>
+
         <div id="toast-container"></div>
       </div>
     `;
   }
 
+  function togglePasswordVisibility() {
+    const input = $('#login-password-input');
+    const icon = $('#password-toggle-icon');
+    if (!input) return;
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) {
+        icon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      }
+    } else {
+      input.type = 'password';
+      if (icon) {
+        icon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+  }
+
   function showSavedLoginsPopup(targetField) {
     const popup = $('#saved-logins-popup');
     if (!popup) return;
-    
+
     popup.classList.remove('pos-email', 'pos-password');
     if (targetField === 'email') {
       popup.classList.add('pos-email');
@@ -705,36 +839,78 @@
       name: email.split('@')[0],
       email: email,
       role: 'Super Admin',
-      avatar: email.substring(0,2).toUpperCase()
+      avatar: email.substring(0, 2).toUpperCase()
     };
-    
+
     currentUser = { ...user };
     isAuthenticated = true;
     localStorage.setItem('smatbot_admin_logged_in', 'true');
     localStorage.setItem('smatbot_admin_user', JSON.stringify(currentUser));
-    
+
     showToast(`Welcome back, ${currentUser.name}!`);
     loadAppShell();
   }
 
   function quickDemoLogin(name, email, role) {
     recordLoginHistory(email, 'admin123');
-    currentUser = { name, email, role, avatar: name.split(' ').map(n=>n[0]).join('').substring(0,2) };
+    currentUser = { name, email, role, avatar: name.split(' ').map(n => n[0]).join('').substring(0, 2) };
     isAuthenticated = true;
     localStorage.setItem('smatbot_admin_logged_in', 'true');
     localStorage.setItem('smatbot_admin_user', JSON.stringify(currentUser));
-    
+
     showToast(`Welcome back, ${currentUser.name}!`);
     loadAppShell();
   }
 
-  function logout() {
+    function logout() {
     localStorage.removeItem('smatbot_admin_logged_in');
     localStorage.removeItem('smatbot_admin_user');
+    localStorage.removeItem('smatbot_active_route');
+    localStorage.removeItem('smatbot_selected_client_id');
+    window.location.hash = '';
     isAuthenticated = false;
     impersonatingClient = null;
     showToast('Logged out successfully.');
     renderLoginPage();
+  }
+
+    // =========================================================================
+  // ROUTE & CLIENT PERSISTENCE ENGINE (Preserves Page on F5 / Reload)
+  // =========================================================================
+  function resolveInitialRoute() {
+    // 1. Try URL Hash (e.g. #client-details-profile?id=0 or #overview or #users)
+    const rawHash = (window.location.hash || '').replace(/^#/, '').trim();
+    if (rawHash) {
+      if (rawHash.startsWith('client-details-profile')) {
+        const idMatch = rawHash.match(/id=([^&]+)/);
+        if (idMatch && idMatch[1] !== undefined) {
+          const rawId = idMatch[1];
+          selectedClientId = isNaN(rawId) ? rawId : Number(rawId);
+          try {
+            localStorage.setItem('smatbot_selected_client_id', String(selectedClientId));
+          } catch (e) {}
+        }
+        return 'client-details-profile';
+      }
+      const cleanRoute = rawHash.split('?')[0];
+      if (cleanRoute) {
+        return cleanRoute;
+      }
+    }
+
+    // 2. Try localStorage if no hash in URL
+    try {
+      const savedRoute = localStorage.getItem('smatbot_active_route');
+      const savedClientId = localStorage.getItem('smatbot_selected_client_id');
+      if (savedClientId !== null && savedClientId !== undefined) {
+        selectedClientId = isNaN(savedClientId) ? savedClientId : Number(savedClientId);
+      }
+      if (savedRoute) {
+        return savedRoute;
+      }
+    } catch (e) {}
+
+    return 'subscription';
   }
 
   // =========================================================================
@@ -746,16 +922,20 @@
       return;
     }
 
+    const isSidebarCollapsed = localStorage.getItem('smatbot_sidebar_collapsed') === 'true';
     const app = $('#app-mount');
     app.innerHTML = `
-      <div class="app-layout-wrapper sidebar-collapsed" id="admin-app-root">
+      <div class="app-layout-wrapper ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}" id="admin-app-root">
         <!-- Modern SmatBot Left Navigation Sidebar -->
         <aside class="main-sidebar" id="app-sidebar">
           <div class="sidebar-brand-box">
             <div class="sidebar-brand-logo">
-              <div class="brand-icon-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              <div class="brand-icon-box brand-icon-mascot" title="SmatBot">
+                <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="34" height="26" rx="6.5" fill="#4C2277"/>
+                  <polygon points="10,8.5 12.5,11 10,13.5 7.5,11" fill="#FFFFFF"/>
+                  <polygon points="24,8.5 26.5,11 24,13.5 21.5,11" fill="#FFFFFF"/>
+                  <path d="M11 15.5 C13.5 19.5 20.5 19.5 23 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none"/>
                 </svg>
               </div>
               <div class="brand-title-group">
@@ -774,7 +954,7 @@
           <div class="sidebar-profile-card">
             <div class="profile-card-left">
               <div class="profile-avatar-circle">
-                ${currentUser.name.split(' ').map(n=>n[0]).join('').substring(0, 2)}
+                ${currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
                 <span class="status-badge-dot"></span>
               </div>
               <div class="profile-card-text">
@@ -804,17 +984,17 @@
               <span>Chatbots</span>
             </a>
 
-            <div class="sidebar-section-title" style="margin-top:0.85rem;">BILLING & PLANS</div>
-
-            <!-- 3. Plan Activation & Matrix -->
-            <a class="nav-link-item ${currentRoute === 'plans' ? 'active' : ''}" onclick="window.smatApp.navigateTo('plans')">
+            <div class="sidebar-section-title" style="margin-top:0.85rem;">BILLING & SUBSCRIPTIONS</div>
+            <!-- Subscriptions (Zoho Billing Portal) -->
+            <a class="nav-link-item ${currentRoute === 'subscription' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscription')">
               <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
               </span>
-              <span>Plan Activation & Pricing</span>
+              <span>Subscriptions</span>
             </a>
 
-            <!-- 4. Client Subscriptions -->
+
+            <!-- 3. Client Subscriptions -->
             <a class="nav-link-item ${currentRoute === 'subscriptions' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscriptions')">
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
@@ -828,14 +1008,6 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
               </span>
               <span>Renewals</span>
-            </a>
-
-            <!-- 6. Platform Addons -->
-            <a class="nav-link-item ${currentRoute === 'addons' ? 'active' : ''}" onclick="window.smatApp.navigateTo('addons')">
-              <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              </span>
-              <span>Platform Addons</span>
             </a>
 
             <!-- 7. Coupons -->
@@ -893,7 +1065,7 @@
               <!-- Profile Pill Dropdown Trigger -->
               <div class="user-profile-header" onclick="window.smatApp.toggleUserMenu()">
                 <div class="user-avatar-circle">
-                  ${currentUser.name.split(' ').map(n=>n[0]).join('').substring(0, 2)}
+                  ${currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
                 </div>
                 <span class="user-header-name">
                   ${currentUser.name}
@@ -933,13 +1105,44 @@
       <div id="toast-container"></div>
     `;
 
-    navigateTo(currentRoute);
+    const initialRoute = resolveInitialRoute();
+    navigateTo(initialRoute, true);
   }
 
   // =========================================================================
   // 2. ROUTING CONTROLLER
   // =========================================================================
-  function navigateTo(route) {
+  function navigateTo(route, updateHash = true) {
+    if (route === 'plans' || route === 'addons') {
+      route = 'client-details';
+    }
+    currentRoute = route;
+
+    // Persist current route & selected client to stay on exact page on F5 / Reload
+    try {
+      localStorage.setItem('smatbot_active_route', route);
+      if (route === 'client-details-profile') {
+        localStorage.setItem('smatbot_selected_client_id', String(selectedClientId));
+      }
+    } catch (e) {}
+
+    // Synchronize URL Hash without page reset
+    if (updateHash) {
+      if (route === 'client-details-profile') {
+        const targetHash = '#client-details-profile?id=' + selectedClientId;
+        if (window.location.hash !== targetHash) {
+          window.location.hash = targetHash;
+        }
+      } else {
+        const targetHash = '#' + route;
+        if (window.location.hash !== targetHash) {
+          window.location.hash = targetHash;
+        }
+      }
+    }
+    if (route === 'plans' || route === 'addons') {
+      route = 'client-details';
+    }
     currentRoute = route;
     $$('.nav-link-item').forEach(el => {
       if (el.getAttribute('onclick')?.includes(`'${route}'`) || (route === 'client-details-profile' && el.getAttribute('onclick')?.includes('client-details'))) {
@@ -951,12 +1154,8 @@
 
     const headerActions = $('#header-details-actions');
     if (headerActions) {
-      if (route === 'client-details-profile') {
-        headerActions.style.display = 'flex';
-      } else {
-        headerActions.style.display = 'none';
+      headerActions.style.display = 'none';
         headerActions.innerHTML = '';
-      }
     }
 
     const titleEl = $('#header-page-title');
@@ -967,14 +1166,29 @@
       'impersonation': 'Client Portal Impersonation Console',
       'chatbots': 'Bot Migration Engine & Workflows',
       'users': 'Team & Role-Based Access Control',
-      'plans': 'Plan Activation & Pricing Subscriptions',
+      'subscription': 'Edit Customer',
+      'edit-customer': 'Edit Customer',
+      'edit-customer': 'Edit Customer — Zoho Billing Portal',
       'subscriptions': 'Active Client Subscriptions',
       'renewals': 'Subscription Renewals & Expiries',
-      'addons': 'Platform Addons & Integrations',
       'partners': 'Agency & Channel Partners Directory',
       'coupons': 'Discount Coupons & Vouchers'
     };
-    if (titleEl) titleEl.innerText = titles[route] || 'SmatBot Admin Control Center';
+    if (titleEl) {
+      if (route === 'client-details') {
+        titleEl.innerHTML = `
+          <div style="display:inline-flex; align-items:center; gap:0.6rem;">
+            <span>Client Details</span>
+            <button id="btn-toggle-client-filters" class="header-toggle-filters-btn" onclick="window.smatApp.toggleClientDetailsFilters()" title="Click to show/hide Metrics & Filters">
+              <span id="client-filters-arrow-icon">${clientDetailsFiltersExpanded ? '▲' : '▼'}</span>
+              <span id="client-filters-arrow-label">${clientDetailsFiltersExpanded ? 'Hide Filters & Metrics' : 'Show Filters & Metrics'}</span>
+            </button>
+          </div>
+        `;
+      } else {
+        titleEl.innerText = titles[route] || 'SmatBot Admin Control Center';
+      }
+    }
 
     const viewport = $('#route-viewport');
     if (!viewport) return;
@@ -991,10 +1205,8 @@
       renderChatbotsView(viewport);
     } else if (route === 'users') {
       renderUsersView(viewport);
-    } else if (route === 'plans') {
-      renderPlansView(viewport);
-    } else if (route === 'addons') {
-      renderAddonsView(viewport);
+    } else if (route === 'subscription' || route === 'edit-customer') {
+      renderZohoEditCustomerView(viewport);
     } else if (route === 'subscriptions') {
       renderClientSubscriptionsView(viewport);
     } else if (route === 'renewals') {
@@ -1037,9 +1249,6 @@
             </p>
           </div>
           <div style="display:flex; gap:0.5rem; align-items:center;">
-            <button class="launcher-btn primary" onclick="window.smatApp.openAddClientModal()">
-              ➕ Onboard Client & Assign Plan
-            </button>
             <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('client-details')">
               👥 Client Directory (${totalClients})
             </button>
@@ -1049,9 +1258,6 @@
         <!-- 2. Quick Action Launcher Bar -->
         <div class="quick-action-launcher-bar">
           <span style="font-size:0.8rem; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em;">QUICK ACTIONS:</span>
-          <button class="launcher-btn primary" onclick="window.smatApp.openAddClientModal()">
-            <span>➕</span> Add New Client Account
-          </button>
           <button class="launcher-btn accent" onclick="window.smatApp.openPlanModal(null, 'Pro NY')">
             <span>⚡</span> Assign / Upgrade Plan
           </button>
@@ -1061,8 +1267,8 @@
           <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('renewals')">
             <span>🔄</span> Renewal Tracking (14 Expiring)
           </button>
-          <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('addons')">
-            <span>🧩</span> Manage Add-ons & Quotas
+          <button class="launcher-btn secondary" onclick="window.smatApp.navigateTo('subscriptions')">
+            <span>💳</span> Active Client Subscriptions
           </button>
         </div>
 
@@ -1155,7 +1361,7 @@
                 Recurring every 30 days. High flexibility for SMBs with auto-pay support.
               </p>
               <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
-                <div style="background:#1877F2; height:100%; width:${Math.round((monthlyClients/totalClients)*100)}%;"></div>
+                <div style="background:#1877F2; height:100%; width:${Math.round((monthlyClients / totalClients) * 100)}%;"></div>
               </div>
             </div>
 
@@ -1170,7 +1376,7 @@
                 Annual upfront contract with monthly add-on capability (Add-ons co-expire with main contract).
               </p>
               <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
-                <div style="background:#16A34A; height:100%; width:${Math.round((yearlyClients/totalClients)*100)}%;"></div>
+                <div style="background:#16A34A; height:100%; width:${Math.round((yearlyClients / totalClients) * 100)}%;"></div>
               </div>
             </div>
 
@@ -1185,7 +1391,7 @@
                 Calculated dynamically: <code style="background:#E2E8F0; padding:1px 4px; border-radius:4px;">Monthly Price × N Months</code>. Zero extra plan clutter.
               </p>
               <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden;">
-                <div style="background:#F59E0B; height:100%; width:${Math.round((customDurationClients/totalClients)*100)}%;"></div>
+                <div style="background:#F59E0B; height:100%; width:${Math.round((customDurationClients / totalClients) * 100)}%;"></div>
               </div>
             </div>
           </div>
@@ -1395,7 +1601,7 @@
     const tbody = $('#impersonation-table-body');
     if (!tbody) return;
     const term = (q || '').trim().toLowerCase();
-    const list = clientsData.filter(c => 
+    const list = clientsData.filter(c =>
       (c.name && c.name.toLowerCase().includes(term)) ||
       (c.email && c.email.toLowerCase().includes(term)) ||
       (c.zoho_customer_id && c.zoho_customer_id.toLowerCase().includes(term))
@@ -1432,6 +1638,24 @@
   // =========================================================================
   // 4. MODULE 1: CLIENT DETAILS TABLE & 15 FILTERS
   // =========================================================================
+  
+  function toggleClientDetailsFilters() {
+    clientDetailsFiltersExpanded = !clientDetailsFiltersExpanded;
+    if (currentRoute === 'client-details') {
+      renderClientDetailsView($('#route-viewport'));
+      const titleEl = $('#header-page-title');
+      if (titleEl) {
+        titleEl.innerHTML = `
+          <span>Client Details</span>
+          <button id="btn-toggle-client-filters" class="header-toggle-filters-btn" onclick="window.smatApp.toggleClientDetailsFilters()" title="Click to show/hide Metrics & Filters">
+            <span id="client-filters-arrow-icon">${clientDetailsFiltersExpanded ? '▲' : '▼'}</span>
+            <span id="client-filters-arrow-label">${clientDetailsFiltersExpanded ? 'Hide Filters & Metrics' : 'Show Filters & Metrics'}</span>
+          </button>
+        `;
+      }
+    }
+  }
+
   function renderClientDetailsView(container) {
     const totalClients = clientsData.length;
     const activeClients = clientsData.filter(c => c.subscription_status === 'Active').length;
@@ -1452,7 +1676,9 @@
     const paginatedList = filteredList.slice(startIdx, endIdx);
 
     container.innerHTML = `
-      <!-- Top 3 Metrics Overview Cards (Total Customers, Active Clients, Trial Pipeline) -->
+      <!-- Collapsible Top Metrics & Filter Block (Hidden by default after login so clean table is directly visible) -->
+      <div id="client-details-collapsible-panel" class="client-details-collapsible-panel ${clientDetailsFiltersExpanded ? 'expanded' : 'collapsed'}" style="display: ${clientDetailsFiltersExpanded ? 'block' : 'none'};">
+        <!-- Top 3 Metrics Overview Cards (Total Customers, Active Clients, Trial Pipeline) -->
       <div class="overview-metrics-grid">
         <!-- Card 1: TOTAL CUSTOMERS -->
         <div class="metric-summary-card clickable ${filterState.activeSegmentTab === 'all' ? 'active-filter' : ''}" onclick="window.smatApp.selectSegmentTab('all')">
@@ -1463,7 +1689,6 @@
               </div>
               <span class="metric-card-label">TOTAL CUSTOMERS</span>
             </div>
-            <button class="metric-btn-pill" onclick="event.stopPropagation(); window.smatApp.openAddClientModal()">+ Add Client</button>
           </div>
           <div class="metric-card-big-value">
             ${totalClients} <span class="metric-sub-limit">Accounts</span>
@@ -1636,7 +1861,7 @@
             ⏳ Trial Accounts <span class="segment-tab-counter">${trialClients}</span>
           </button>
           <button class="segment-tab-pill ${filterState.activeSegmentTab === 'expiring' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('expiring')">
-            ⚠️ Expiring in 7 Days <span class="segment-tab-counter" style="background:${expiringClients>0?'#FEE2E2':'#E2E8F0'}; color:${expiringClients>0?'#DC2626':'#475569'};">${expiringClients}</span>
+            ⚠️ Expiring in 7 Days <span class="segment-tab-counter" style="background:${expiringClients > 0 ? '#FEE2E2' : '#E2E8F0'}; color:${expiringClients > 0 ? '#DC2626' : '#475569'};">${expiringClients}</span>
           </button>
           <button class="segment-tab-pill ${filterState.activeSegmentTab === 'whitelabel' ? 'active' : ''}" onclick="window.smatApp.selectSegmentTab('whitelabel')">
             🏷️ White-Label <span class="segment-tab-counter">${whitelabelClients}</span>
@@ -1647,49 +1872,88 @@
         </div>
       </div>
 
+      </div>
+
+      <!-- Compact Action Bar (Visible when top filters are collapsed, matching user screenshot) -->
+      ${!clientDetailsFiltersExpanded ? `
+        <div class="table-compact-header-bar">
+          <div style="display:flex; align-items:center; gap:0.75rem; flex:1; max-width:540px;">
+            <div class="table-compact-search-box">
+              <span style="font-size:0.85rem;">🔍</span>
+              <input 
+                type="text" 
+                id="search-input-compact" 
+                placeholder="Search by name, email, phone, Zoho ID..." 
+                value="${filterState.search}"
+                oninput="window.smatApp.updateSearch(this.value)"
+                onkeydown="if(event.key==='Enter') window.smatApp.applyFilters()"
+              />
+            </div>
+            <div class="client-count-blue-badge">${totalItems} Clients</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button class="header-toggle-filters-btn" onclick="window.smatApp.toggleClientDetailsFilters()" title="Expand full filters and metric cards">
+              <span>▼</span>
+              <span>Filters &amp; Metrics</span>
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
       <!-- Client Details Data Table -->
-      <div class="table-card-container">
-        <table class="client-data-table">
-          <thead>
-            <tr>
-              <th style="width: 50px;">S.no</th>
-              <th>Name</th>
-              <th>Phone number</th>
-              <th>Alternate Phone</th>
-              <th>Email</th>
-              <th>Customer type</th>
-              <th>Plan name</th>
-              <th>Plan Type</th>
-              <th>Subscription Amount</th>
-              <th>End date</th>
-              <th>Days Left</th>
-              <th>Test account</th>
-              <th style="text-align: center;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="clients-table-body">
-            ${renderClientTableRows(paginatedList)}
-          </tbody>
-        </table>
-        ${renderPaginationControls(totalPages, clientCurrentPage, clientPageSize)}
+      <div class="table-card-container table-card-with-top-scroll">
+        <!-- TOP HORIZONTAL SCROLLBAR (Quickly scroll wide columns from the top) -->
+        <div class="table-top-scrollbar-wrapper" id="table-top-scrollbar" onscroll="window.smatApp.syncTableScroll('top')" title="Scroll columns horizontally">
+          <div class="table-top-scrollbar-track" id="table-top-scrollbar-track"></div>
+        </div>
+
+        <!-- Table Responsive Scroll Container -->
+        <div class="table-scroll-container" id="table-scroll-container" onscroll="window.smatApp.syncTableScroll('table')">
+          <table class="client-data-table" id="clients-main-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">S.no</th>
+                <th>Name</th>
+                <th>Phone number</th>
+                <th>Alternate Phone</th>
+                <th>Email</th>
+                <th>Customer type</th>
+                <th>Plan name</th>
+                <th>Plan Type</th>
+                <th>Subscription Amount</th>
+                <th>End date</th>
+                <th>Days Left</th>
+                <th>Test account</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="clients-table-body">
+              ${renderClientTableRows(paginatedList, startIdx)}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Fixed Bottom Pagination Footer (Outside horizontal scrolling, with middle entry counter) -->
+        ${renderPaginationControls(totalPages, clientCurrentPage, clientPageSize, totalItems, startIdx)}
       </div>
     `;
+
+    initTableScrollbarSync();
   }
 
-  function renderClientTableRows(list) {
+  function renderClientTableRows(list, startIdx = 0) {
     if (list.length === 0) {
       return `<tr><td colspan="13" style="text-align:center; padding: 2.5rem; color: #94A3B8;">No client records match your filter criteria. <button onclick="window.smatApp.resetFilters()" style="color:#1877F2; background:none; border:none; cursor:pointer; font-weight:700;">Reset Filters</button></td></tr>`;
     }
 
-    return list.map(c => `
+    return list.map((c, idx) => `
       <tr>
-        <td style="font-weight: 600; color: #64748B;">${c.s_no}</td>
+        <td style="font-weight: 600; color: #64748B;">${startIdx + idx + 1}</td>
         <td>
           <div class="client-name-cell">
             <div class="client-avatar-circle ${getAvatarColorClass(c.name)}">${getInitials(c.name)}</div>
             <div class="client-name-meta">
               <span class="client-primary-name" onclick="window.smatApp.openClientQuickDrawer(${c.id})" title="Click to view Quick Drawer">${escapeHtml(c.name)}</span>
-              <span class="client-sub-domain">${escapeHtml(c.custom_domain || c.url || c.email || '')}</span>
             </div>
           </div>
         </td>
@@ -1707,13 +1971,13 @@
           </button>
         </td>
         <td>
-          ${c.customer_type === 'White-Label' || c.deployment_type === 'White-Label' 
-            ? `<span class="cust-type-pill whitelabel" title="Custom CNAME Domain: ${escapeHtml(c.custom_domain || 'bot.' + c.url)}">🏷️ White-Label</span>` 
-            : (c.customer_type === 'On-Premise' || c.deployment_type === 'On-Premise' 
-              ? `<span class="cust-type-pill onpremise" title="Server: ${escapeHtml(c.server_host || 'AWS Dedicated VPC')}">🛡️ On-Premise</span>` 
-              : (c.customer_type === 'Reseller' 
-                ? `<span class="cust-type-pill reseller">Reseller</span>` 
-                : `<span class="cust-type-pill direct">${escapeHtml(c.customer_type || 'Direct')}</span>`))}
+          ${c.customer_type === 'White-Label' || c.deployment_type === 'White-Label'
+        ? `<span class="cust-type-pill whitelabel" title="Custom CNAME Domain: ${escapeHtml(c.custom_domain || 'bot.' + c.url)}">🏷️ White-Label</span>`
+        : (c.customer_type === 'On-Premise' || c.deployment_type === 'On-Premise'
+          ? `<span class="cust-type-pill onpremise" title="Server: ${escapeHtml(c.server_host || 'AWS Dedicated VPC')}">🛡️ On-Premise</span>`
+          : (c.customer_type === 'Reseller'
+            ? `<span class="cust-type-pill reseller">Reseller</span>`
+            : `<span class="cust-type-pill direct">${escapeHtml(c.customer_type || 'Direct')}</span>`))}
         </td>
         <td style="color: #334155; font-weight:600;">${escapeHtml(c.plan_name || 'Pro Trial')}</td>
 
@@ -1746,453 +2010,885 @@
   // =========================================================================
   function openClientDetailsPage(clientId) {
     selectedClientId = clientId;
-    navigateTo('client-details-profile');
+    try {
+      localStorage.setItem('smatbot_selected_client_id', String(clientId));
+    } catch (e) {}
+    navigateTo('client-details-profile', true);
   }
 
+  function getClientBots(client) {
+    if (!client.bots || !Array.isArray(client.bots)) {
+      const botsCount = client.bots_used !== undefined ? client.bots_used : 2;
+      const count = Math.max(1, botsCount);
+      const domain = client.url || (client.email && client.email.includes('@') ? client.email.split('@')[1] : 'alignbooks.com');
+      const baseName = (client.name || 'Client').trim().split(' ')[0];
+      const defaultBots = [
+        {
+          id: 'BOT-' + client.id + '01',
+          name: baseName + ' Website Assistant',
+          channel: 'Website Widget',
+          channelIcon: '🌐',
+          triggerUrl: 'https://' + domain + '/*',
+          createdDate: '15-09-2026',
+          chatsCount: 342,
+          isActive: true
+        }
+      ];
+      if (count >= 2) {
+        defaultBots.push({
+          id: 'BOT-' + client.id + '02',
+          name: baseName + ' WhatsApp Lead Bot',
+          channel: 'WhatsApp (Meta WABA)',
+          channelIcon: '📱',
+          triggerUrl: client.phone_number || '+91-8099791498',
+          createdDate: '22-09-2026',
+          chatsCount: 189,
+          isActive: true
+        });
+      }
+      if (count >= 3) {
+        defaultBots.push({
+          id: 'BOT-' + client.id + '03',
+          name: baseName + ' FAQ & Support Flow',
+          channel: 'Website Widget',
+          channelIcon: '🌐',
+          triggerUrl: 'https://' + domain + '/support/*',
+          createdDate: '28-09-2026',
+          chatsCount: 76,
+          isActive: false
+        });
+      }
+      client.bots = defaultBots;
+    }
+    return client.bots;
+  }
+
+  function getClientPlanHistory(client) {
+    if (!client.plan_history || !Array.isArray(client.plan_history)) {
+      client.plan_history = [
+        {
+          id: 'SUB-HIST-' + client.id + '-01',
+          plan_name: client.plan_name || 'Pro NY (WA)',
+          billing_cycle: client.billing_cycle || 'Monthly',
+          amount: client.subscription_amount_display || '₹ 0.00',
+          start_date: '15-09-2026',
+          end_date: client.end_date || '15-10-2026',
+          status: client.subscription_status || 'Trial',
+          is_current: true,
+          invoice_id: 'INV-2026-X' + String(client.id).padStart(3, '0') + '-01'
+        },
+        {
+          id: 'SUB-HIST-' + client.id + '-02',
+          plan_name: 'Starter Evaluation Trial',
+          billing_cycle: 'Monthly',
+          amount: '₹ 0.00',
+          start_date: '15-08-2026',
+          end_date: '14-09-2026',
+          status: 'Expired',
+          is_current: false,
+          invoice_id: 'INV-2026-X' + String(client.id).padStart(3, '0') + '-02'
+        },
+        {
+          id: 'SUB-HIST-' + client.id + '-03',
+          plan_name: 'Free Trial Onboarding',
+          billing_cycle: '14 Days Trial',
+          amount: '₹ 0.00',
+          start_date: '01-08-2026',
+          end_date: '14-08-2026',
+          status: 'Expired',
+          is_current: false,
+          invoice_id: 'INV-2026-X' + String(client.id).padStart(3, '0') + '-03'
+        }
+      ];
+    }
+    return client.plan_history;
+  }
+
+  function toggleClientBotActive(clientId, botId) {
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+    const bots = getClientBots(client);
+    const bot = bots.find(b => b.id === botId);
+    if (bot) {
+      bot.isActive = !bot.isActive;
+      showToast('Bot "' + bot.name + '" is now ' + (bot.isActive ? 'Active (Live)' : 'Paused (Offline)'));
+      renderClientDetailsProfileView($('#route-viewport'));
+    }
+  }
+
+  function openCreateBotForClient(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const modal = $('#modal-container');
+    const domain = client.url || 'alignbooks.com';
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width: 480px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div style="font-size:1.15rem; font-weight:800; color:#1E293B;">🤖 Create Bot for ${escapeHtml(client.name)}</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+          <form onsubmit="window.smatApp.handleCreateBotSubmit(event, ${client.id})">
+            <div class="smat-form-group">
+              <label class="smat-form-label">Bot Name</label>
+              <input type="text" id="new-bot-name" class="smat-form-input" value="${escapeHtml(client.name)} AI Assistant" required />
+            </div>
+            <div class="smat-form-group">
+              <label class="smat-form-label">Channel Platform</label>
+              <select id="new-bot-channel" class="smat-form-input">
+                <option value="Website Widget">🌐 Website Widget</option>
+                <option value="WhatsApp (Meta WABA)">📱 WhatsApp (Meta Cloud API)</option>
+                <option value="Instagram Direct">📸 Instagram Direct</option>
+              </select>
+            </div>
+            <div class="smat-form-group">
+              <label class="smat-form-label">Binding URL / Path</label>
+              <input type="text" id="new-bot-trigger" class="smat-form-input" value="https://${escapeHtml(domain)}/*" required />
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.25rem;">
+              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
+              <button type="submit" class="btn-table-action btn-action-primary">🚀 Deploy Bot</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
+  function handleCreateBotSubmit(e, clientId) {
+    e.preventDefault();
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+    const name = $('#new-bot-name').value.trim();
+    const channel = $('#new-bot-channel').value;
+    const trigger = $('#new-bot-trigger').value.trim();
+    const bots = getClientBots(client);
+    const newId = 'BOT-' + client.id + '0' + (bots.length + 1);
+    bots.push({
+      id: newId,
+      name: name,
+      channel: channel,
+      channelIcon: channel.includes('WhatsApp') ? '📱' : '🌐',
+      triggerUrl: trigger,
+      createdDate: new Date().toLocaleDateString('en-GB').replace(/\//g, '-'),
+      chatsCount: 0,
+      isActive: true
+    });
+    client.bots_used = (client.bots_used || 0) + 1;
+    closeModal();
+    showToast('Successfully deployed bot "' + name + '" for ' + client.name + '!');
+    renderClientDetailsProfileView($('#route-viewport'));
+  }
+
+  function toggleModularCard(cardId, e) {
+    if (e) {
+      if (
+        e.target.closest('button:not(.btn-collapse-card)') ||
+        e.target.closest('a') ||
+        e.target.closest('input') ||
+        e.target.closest('select') ||
+        e.target.closest('.smat-switch-label') ||
+        e.target.closest('.btn-hero-primary') ||
+        e.target.closest('.btn-hero-secondary') ||
+        e.target.closest('.btn-hero-outline') ||
+        e.target.closest('.btn-hero-danger') ||
+        e.target.closest('.btn-card-action-icon') ||
+        e.target.closest('.btn-quota-pencil') ||
+        e.target.closest('.btn-cancel-sub') ||
+        e.target.closest('.btn-footer-secondary') ||
+        e.target.closest('.btn-footer-primary') ||
+        e.target.closest('.btn-tile-copy') ||
+        e.target.closest('.invoice-link-pill') ||
+        e.target.closest('.btn-bot-action-secondary') ||
+        e.target.closest('.btn-bot-action-outline')
+      ) {
+        return;
+      }
+      e.stopPropagation();
+    }
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    card.classList.toggle('collapsed');
+  }
+  window.toggleModularCard = toggleModularCard;
+
   function renderClientDetailsProfileView(container) {
-    const client = clientsData.find(c => c.id === selectedClientId) || clientsData[0];
-    
-    // Top Header Action Buttons (Expire, Login Into Client, Comments, Documents)
+    const client = clientsData.find(c => c.id === selectedClientId || String(c.id) === String(selectedClientId)) || clientsData[0];
+
+    // Top Header Action Buttons removed (maintained in profile card below)
     const headerActions = $('#header-details-actions');
     if (headerActions) {
-      headerActions.innerHTML = `
-        <button class="btn-header-action" onclick="window.smatApp.openExpireModal(${client.id})">Expire</button>
-        <button class="btn-header-action" onclick="window.smatApp.openLoginConfirmModal(${client.id})" style="background:#1877F2; color:#FFFFFF; border-color:#1877F2;">
-          🔐 Login Into Client
-        </button>
-        <button class="btn-header-action" onclick="window.smatApp.openCommentsModal(${client.id})">Comments</button>
-        <button class="btn-header-action" onclick="window.smatApp.openDocumentsModal(${client.id})">Documents</button>
-      `;
+      headerActions.style.display = 'none';
+      headerActions.innerHTML = '';
     }
 
+    const clientBots = getClientBots(client);
+    const planHistory = getClientPlanHistory(client);
+
     const botsLimit = client.bots_limit !== undefined ? client.bots_limit : 10;
-    const botsUsed = client.bots_used !== undefined ? client.bots_used : 0;
+    const botsUsed = clientBots.length;
     const botsLeft = Math.max(0, botsLimit - botsUsed);
-    const botsPct = botsLimit > 0 ? ((botsUsed / botsLimit) * 100).toFixed(2) : '0.00';
+    const botsPct = botsLimit > 0 ? Math.min(100, (botsUsed / botsLimit) * 100).toFixed(1) : '0.0';
 
     const chatsLimit = client.chats_limit !== undefined ? client.chats_limit : 5000;
     const chatsUsed = client.chats_used !== undefined ? client.chats_used : 0;
     const chatsLeft = Math.max(0, chatsLimit - chatsUsed);
-    const chatsPct = chatsLimit > 0 ? ((chatsUsed / chatsLimit) * 100).toFixed(2) : '0.00';
+    const chatsPct = chatsLimit > 0 ? Math.min(100, (chatsUsed / chatsLimit) * 100).toFixed(1) : '0.0';
 
     const serviceLimit = client.service_chats_limit !== undefined ? client.service_chats_limit : 1000;
     const serviceUsed = client.service_chats_used !== undefined ? client.service_chats_used : 0;
     const serviceLeft = Math.max(0, serviceLimit - serviceUsed);
-    const servicePct = serviceLimit > 0 ? ((serviceUsed / serviceLimit) * 100).toFixed(2) : '0.00';
+    const servicePct = serviceLimit > 0 ? Math.min(100, (serviceUsed / serviceLimit) * 100).toFixed(1) : '0.0';
 
     const biLimit = client.bi_chats_limit !== undefined ? client.bi_chats_limit : 0;
     const biUsed = client.bi_chats_used !== undefined ? client.bi_chats_used : 0;
     const biLeft = Math.max(0, biLimit - biUsed);
-    const biPct = biLimit > 0 ? ((biUsed / biLimit) * 100).toFixed(2) : '0.00';
+    const biPct = biLimit > 0 ? Math.min(100, (biUsed / biLimit) * 100).toFixed(1) : '0.0';
 
-    const clientUrl = client.url || client.company_url || (client.email.includes('@') && !client.email.endsWith('gmail.com') ? client.email.split('@')[1] : 'alignbooks.com');
+    const clientUrl = client.url || client.company_url || (client.email && client.email.includes('@') && !client.email.endsWith('gmail.com') ? client.email.split('@')[1] : 'alignbooks.com');
+    const avatarInitials = (client.name || 'C').trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'CL';
 
     container.innerHTML = `
       <div class="details-view-container">
-        <!-- Back Navigation & Title -->
-        <div class="details-back-header">
-          <button class="btn-back-arrow" onclick="window.smatApp.navigateTo('client-details')" title="Back to Client Details">
-            ←
-          </button>
-          <h2 class="details-page-heading">Details: ${client.name}</h2>
+        <!-- 1. Sleek Profile Hero Header -->
+        <div class="profile-hero-card">
+          <div class="profile-hero-left">
+            <button class="btn-back-circle" onclick="window.smatApp.navigateTo('client-details')" title="Back to Client List">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="profile-avatar-badge">${avatarInitials}</div>
+            <div class="profile-title-col">
+              <div class="profile-name-row">
+                <h1 class="profile-client-name">${escapeHtml(client.name)}</h1>
+                <span class="profile-status-chip ${(client.subscription_status || 'Trial').toLowerCase()}">
+                  <span class="status-pulse-dot"></span>
+                  ${client.subscription_status || 'Trial'}
+                </span>
+                <span class="profile-type-chip">${escapeHtml(client.customer_type || 'Direct')}</span>
+              </div>
+              <div class="profile-meta-row">
+                <span class="profile-meta-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  Zoho ID: <strong>${escapeHtml(client.zoho_customer_id || 'ZC-566987')}</strong>
+                </span>
+                <span class="profile-meta-sep">•</span>
+                <span class="profile-meta-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  <a href="${clientUrl.startsWith('http') ? clientUrl : 'https://' + clientUrl}" target="_blank" class="profile-domain-link">${escapeHtml(clientUrl)} ↗</a>
+                </span>
+                <span class="profile-meta-sep">•</span>
+                <span class="profile-meta-item">
+                  <span class="text-muted">Active Plan:</span>
+                  <strong style="color:#1877F2;">${escapeHtml(client.plan_name || 'Pro NY (WA)')}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-hero-actions">
+            <button class="btn-hero-primary" onclick="window.smatApp.openLoginConfirmModal(${client.id})" title="Access Client Portal">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Login Into Client
+            </button>
+            <button class="btn-hero-secondary" onclick="window.smatApp.openPlanModal(${client.id})" title="Manage Plan & Quotas">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              Upgrade / Modify Plan
+            </button>
+            <button class="btn-hero-outline" onclick="window.smatApp.openCommentsModal(${client.id})" title="View Internal Notes">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Comments
+            </button>
+            <button class="btn-hero-outline" onclick="window.smatApp.openDocumentsModal(${client.id})" title="View Client Files">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Documents
+            </button>
+            <button class="btn-hero-danger" onclick="window.smatApp.openExpireModal(${client.id})" title="Expire Account">
+              Expire
+            </button>
+          </div>
         </div>
 
-        <!-- 1. Profile Accordion (Open by Default) -->
-        <div class="details-accordion-card open" id="acc-profile">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-profile')">
-            <span>Profile</span>
-            <span class="accordion-arrow-indicator">▲</span>
-          </div>
-          <div class="details-accordion-body">
-            <div class="details-subcard-grid">
-              <!-- Subcard 1: Profile Details (All 9 Options) -->
-              <div class="details-subcard">
-                <button class="btn-edit-pencil" onclick="window.smatApp.openEditProfileModal(${client.id})" title="Edit Profile Details">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        <!-- 2. Top Overview: Client Profile (Left) & Active Plan Quotas (Right) -->
+        <div class="client-modular-grid">
+          <!-- Card 1: Client Account Profile -->
+          <div class="modular-card collapsed" id="card-client-profile">
+            <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('card-client-profile', event)">
+              <div class="modular-title-group">
+                <div class="modular-card-icon-wrap icon-blue">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="modular-card-title">Client Profile</h3>
+                  <p class="modular-card-subtitle">Master customer account & contact attributes</p>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.45rem;">
+                <button class="btn-card-action-icon" onclick="window.smatApp.openEditProfileModal(${client.id})" title="Edit Profile Details">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                  <span>Edit Profile</span>
                 </button>
-                <div class="details-subcard-title">Profile Details</div>
-                <div class="details-kv-list">
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Name :</span>
-                    <span class="details-kv-value">${client.name}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Email :</span>
-                    <span class="details-kv-value">${client.email}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Mobile :</span>
-                    <span class="details-kv-value">${client.phone_number}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Alternate Mobile :</span>
-                    <span class="details-kv-value">${client.alternate_phone || '-'}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">GST Number :</span>
-                    <span class="details-kv-value">${client.gst_number || '-'}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Customer type :</span>
-                    <span class="details-kv-value">${client.customer_type || 'Direct'}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Zoho Customer Id :</span>
-                    <span class="details-kv-value">${client.zoho_customer_id || '3141005000009490054'}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">url :</span>
-                    <span class="details-kv-value">
-                      <a href="${clientUrl.startsWith('http') ? clientUrl : 'https://' + clientUrl}" target="_blank" style="color:#1877F2; text-decoration:none; font-weight:500;">${clientUrl}</a>
-                    </span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Test account :</span>
-                    <span class="details-kv-value" style="display:flex; align-items:center; gap:0.4rem;">
-                      <span>${client.test_account || 'No'}</span>
-                      <button class="btn-inline-pencil" onclick="window.smatApp.toggleClientTestAccount(${client.id})" title="Toggle Test Account">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                      </button>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Subcard 2: Active plan details (All 6 Options with Edit Controls) -->
-              <div class="details-subcard">
-                <div class="details-subcard-title">Active plan details</div>
-                <div class="details-kv-list">
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Plan Name :</span>
-                    <span class="details-kv-value" style="font-weight:700; color:#1877F2;">${client.plan_name || 'Pro NY (WA)'}</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Number of bots :</span>
-                    <span class="details-kv-value">${botsLimit} - ( ${botsLeft} Left ) - ${botsPct}% Used</span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Number of chats :</span>
-                    <span class="details-kv-value" style="display:flex; align-items:center; gap:0.4rem;">
-                      <span>${chatsLimit} - (${chatsLeft} Left ) - ${chatsPct}% Used</span>
-                      <button class="btn-inline-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'chats')" title="Edit Chat Limit">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                      </button>
-                    </span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Number of Service Chats<br/>(User Initiated) :</span>
-                    <span class="details-kv-value" style="display:flex; align-items:center; gap:0.4rem;">
-                      <span>${serviceLimit} - ( ${serviceLeft} Left ) - ${servicePct}% Used</span>
-                      <button class="btn-inline-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'service')" title="Edit Service Chats Limit">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                      </button>
-                    </span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Number of BI Chats :</span>
-                    <span class="details-kv-value" style="display:flex; align-items:center; gap:0.4rem;">
-                      <span>${biLimit} - ( ${biLeft} Left ) - ${biPct}% Used</span>
-                      <button class="btn-inline-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'bi')" title="Edit BI Chats Limit">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                      </button>
-                    </span>
-                  </div>
-                  <div class="details-kv-row">
-                    <span class="details-kv-label">Days Left :</span>
-                    <span class="details-kv-value">${client.days_left !== undefined ? client.days_left : 252}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Subcard 3: Deployment & Infrastructure Architecture -->
-              <div class="details-subcard details-deployment-card ${client.deployment_type === 'White-Label' ? 'whitelabel' : 'onpremise'}" style="grid-column: 1 / -1;">
-                <div class="details-subcard-title" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-                  <span>Deployment & Infrastructure Architecture</span>
-                  ${client.deployment_type === 'White-Label' 
-                    ? `<span class="badge-whitelabel" style="font-size:0.8rem; padding:4px 10px;">🏷️ White-Label Reseller Platform</span>` 
-                    : `<span class="badge-onpremise" style="font-size:0.8rem; padding:4px 10px;">🛡️ On-Premise Enterprise VPC</span>`}
-                </div>
-                <div class="details-kv-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem 2rem;">
-                  <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                    <span class="details-kv-label">Deployment Model :</span>
-                    <span class="details-kv-value" style="font-weight:700; color:#1E293B;">
-                      ${client.deployment_type === 'White-Label' ? '🏷️ Multi-Tenant White-Label Hub' : '🛡️ Single-Tenant Isolated On-Premise Node'}
-                    </span>
-                  </div>
-                  ${client.deployment_type === 'White-Label' ? `
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Custom CNAME Domain :</span>
-                      <span class="details-kv-value">
-                        <a href="https://${client.custom_domain || 'bot.' + clientUrl}" target="_blank" style="color:#7C3AED; font-weight:700; text-decoration:none;">
-                          https://${client.custom_domain || 'bot.' + clientUrl} ↗
-                        </a>
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">White-Label Brand :</span>
-                      <span class="details-kv-value" style="font-weight:600; color:#1E293B;">${client.white_label_brand || client.name + ' AI Portal'}</span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Managed Sub-Clients :</span>
-                      <span class="details-kv-value" style="font-weight:700; color:#1877F2;">
-                        ${client.sub_clients_count || 12} Active Reseller Accounts
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">SSL & Security :</span>
-                      <span class="details-kv-value" style="color:#059669; font-weight:600;">
-                        ${client.ssl_status || 'Active (TLS 1.3 / Auto-Renew 🔒)'}
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Custom SMTP & DNS :</span>
-                      <span class="details-kv-value" style="color:#059669; font-weight:600;">
-                        Verified & Routed (DKIM / SPF OK)
-                      </span>
-                    </div>
-                  ` : `
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Private VPC Host :</span>
-                      <span class="details-kv-value" style="font-family:monospace; color:#1E293B; font-weight:600;">
-                        ${client.server_host || 'AWS Dedicated VPC (Mumbai DC) - Node 01'}
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Cluster Heartbeat :</span>
-                      <span class="details-kv-value">
-                        <span class="badge-cluster-live">${client.cluster_health || '🟢 100% Operational'}</span>
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Engine Version :</span>
-                      <span class="details-kv-value" style="font-weight:600;">${client.engine_version || 'v4.2.0 Enterprise Node'}</span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">Dedicated License :</span>
-                      <span class="details-kv-value" style="font-family:monospace; color:#1D4ED8; font-weight:700;">
-                        <code>${client.license_key || 'LIC-ONPREM-2026-X' + String(client.id).padStart(3, '0')}</code>
-                      </span>
-                    </div>
-                    <div class="details-kv-row" style="grid-template-columns: 180px 1fr;">
-                      <span class="details-kv-label">VPC Isolation :</span>
-                      <span class="details-kv-value" style="color:#059669; font-weight:600;">
-                        Zero External Ingress (Private Subnet)
-                      </span>
-                    </div>
-                  `}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Bots Accordion -->
-        <div class="details-accordion-card" id="acc-bots">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-bots')">
-            <span>Bots</span>
-            <span class="accordion-arrow-indicator">▼</span>
-          </div>
-          <div class="details-accordion-body">
-            <div class="bot-category-grid">
-              <div class="bot-category-card" onclick="window.smatApp.openBotDetailsModal(${client.id})">
-                🤖 Web Chatbot Details & Flow Builder
-              </div>
-              <div class="bot-category-card has-smat-tooltip" data-tooltip="WhatsApp Verified WABA" onclick="window.smatApp.openWhatsAppBotDetailsModal(${client.id})">
-                💬 WhatsApp Bot Details & Webhook Routing
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Subscriptions Accordion (Points 1-8 Full Control Center) -->
-        <div class="details-accordion-card open" id="acc-subscriptions">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-subscriptions')">
-            <span>Subscriptions & Invoices (Billing Control Center)</span>
-            <span class="accordion-arrow-indicator">▲</span>
-          </div>
-          <div class="details-accordion-body">
-            <div class="details-subcard" style="padding:1.25rem;">
-              <!-- Top Grid: Subscription Overview -->
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; font-size:0.88rem; color:#334155; padding-bottom:1rem; border-bottom:1px solid #E2E8F0;">
-                <div>
-                  <span style="font-size:0.75rem; color:#64748B;">Subscription ID:</span><br/>
-                  <code style="font-weight:700; color:#1877F2;">${client.subscription_id || 'SUB-PRO-2026'}</code>
-                </div>
-                <div>
-                  <span style="font-size:0.75rem; color:#64748B;">Billing Cycle:</span><br/>
-                  <strong>${client.billing_cycle || 'Monthly'}</strong>
-                </div>
-                <div>
-                  <span style="font-size:0.75rem; color:#64748B;">Subscription Amount:</span><br/>
-                  <strong style="color:#0F172A; font-size:1.05rem;">${client.subscription_amount_display || '₹ 0.00'}</strong>
-                </div>
-                <div>
-                  <span style="font-size:0.75rem; color:#64748B;">Valid Till / Expiry Date:</span><br/>
-                  <strong style="color:#2563EB;">${client.end_date || '08-10-2026'}</strong> (${client.days_left || 0} Days Left)
-                </div>
-                <div>
-                  <span style="font-size:0.75rem; color:#64748B;">Status:</span><br/>
-                  <span class="status-pill ${client.subscription_status.toLowerCase()}">${client.subscription_status}</span>
-                  ${client.cancellation_status === 'pending_end_of_period' ? `<span style="font-size:0.75rem; color:#DC2626; font-weight:700; display:block; margin-top:3px;">⚠️ Scheduled to cancel on ${client.end_date}</span>` : ''}
-                </div>
-              </div>
-
-              <!-- Mid Grid: Auto-Pay & Payment Method -->
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin:1.25rem 0; padding-bottom:1rem; border-bottom:1px solid #E2E8F0;">
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem 1rem;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                    <span style="font-size:0.82rem; font-weight:700; color:#1E293B;">💳 Auto-Pay Status</span>
-                    <span class="autopay-status-badge ${client.autopay_enabled !== false ? 'enabled' : 'disabled'}">
-                      ${client.autopay_enabled !== false ? '🟢 ON' : '⚪ OFF'}
-                    </span>
-                  </div>
-                  <div style="font-size:0.78rem; color:#64748B; margin-bottom:0.6rem;">
-                    ${client.autopay_enabled !== false ? 'Automatic renewal active on billing date.' : 'Auto-renew disabled. Plan remains fully active until expiry.'}
-                  </div>
-                  <button class="btn-table-action btn-action-secondary" style="font-size:0.78rem; padding:4px 10px;" onclick="window.smatApp.openAutoPayModal(${client.id})">
-                    ⚙️ Manage Auto-Pay
-                  </button>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem 1rem;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                    <span style="font-size:0.82rem; font-weight:700; color:#1E293B;">🏦 Saved Payment Method</span>
-                    <span style="font-size:0.75rem; color:#15803D; font-weight:700;">DEFAULT</span>
-                  </div>
-                  <div style="font-size:0.82rem; color:#334155; margin-bottom:0.6rem;">
-                    <strong>${client.payment_method?.brand || 'Visa'}</strong> •••• ${client.payment_method?.last4 || '4242'} <span style="color:#64748B;">(Exp: ${client.payment_method?.expiry || '12/28'})</span>
-                  </div>
-                  <button class="btn-table-action btn-action-secondary" style="font-size:0.78rem; padding:4px 10px;" onclick="window.smatApp.openUpdatePaymentMethodModal(${client.id})">
-                    💳 Update Card
-                  </button>
-                </div>
-              </div>
-
-              <!-- Active Add-ons with Expiry Priority -->
-              <div style="margin-bottom:1.25rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                  <span style="font-weight:700; font-size:0.86rem; color:#1E293B;">📦 Active Add-ons & Boosters</span>
-                  <span style="font-size:0.75rem; color:#64748B; font-weight:600;">Synchronized with active subscription expiry</span>
-                </div>
-
-                <div style="display:flex; flex-direction:column; gap:0.5rem;">
-                  ${(client.active_addons && client.active_addons.length > 0) ? client.active_addons.map(addon => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.85rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; font-size:0.82rem;">
-                      <div>
-                        <strong>${addon.name}</strong>
-                        <span style="font-size:0.75rem; color:#64748B; margin-left:6px;">(${addon.type || 'recurring'})</span>
-                      </div>
-                      <div style="display:flex; align-items:center; gap:0.6rem;">
-                        <span class="addon-expiry-pill capped">
-                          Expires: ${addon.expiryDate || client.end_date} (Synced to Plan Expiry)
-                        </span>
-                        <span style="color:#10B981; font-weight:700;">🟢 Active</span>
-                      </div>
-                    </div>
-                  `).join('') : `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.85rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; font-size:0.82rem;">
-                      <div>
-                        <strong>+10,000 Additional Conversations Quota</strong>
-                        <span style="font-size:0.75rem; color:#64748B; margin-left:6px;">(Auto-pay Recurring)</span>
-                      </div>
-                      <div style="display:flex; align-items:center; gap:0.6rem;">
-                        <span class="addon-expiry-pill capped">
-                          Expires: ${client.end_date} (Synced to Plan Expiry)
-                        </span>
-                        <span style="color:#10B981; font-weight:700;">🟢 Active</span>
-                      </div>
-                    </div>
-                  `}
-                </div>
-              </div>
-
-              <!-- Action Buttons Row -->
-              <div style="display:flex; justify-content:space-between; align-items:center; pt:0.5rem;">
-                <button class="btn-table-action btn-action-danger" style="background:#FFF1F2; border-color:#FECDD3; color:#E11D48;" onclick="window.smatApp.openCancelSubscriptionModal(${client.id})">
-                  🚫 Cancel Subscription
+                <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-client-profile', event)" title="Collapse / Expand">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
                 </button>
-                <div style="display:flex; gap:0.5rem;">
-                  <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openPlanModal(${client.id})">
-                    🔄 Change Plan / Duration
-                  </button>
-                  <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal(${client.id})">
-                    ⚡ Upgrade / Modify Plan
-                  </button>
+              </div>
+            </div>
+
+            <div class="modular-card-body">
+              <div class="modern-tiles-grid">
+                <div class="modern-tile">
+                  <span class="modern-tile-label">CLIENT NAME</span>
+                  <span class="modern-tile-val font-semibold">${escapeHtml(client.name)}</span>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">EMAIL ADDRESS</span>
+                  <div class="modern-tile-val flex-val">
+                    <span class="truncate-val" title="${escapeHtml(client.email)}">${escapeHtml(client.email)}</span>
+                    <button class="btn-tile-copy" onclick="window.smatApp.copyToClipboard('${client.email}', 'Email')" title="Copy Email">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">PRIMARY MOBILE</span>
+                  <div class="modern-tile-val flex-val">
+                    <span>${escapeHtml(client.phone_number || '—')}</span>
+                    ${client.phone_number ? `
+                    <button class="btn-tile-copy" onclick="window.smatApp.copyToClipboard('${client.phone_number}', 'Mobile')" title="Copy Mobile">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>` : ''}
+                  </div>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">ALTERNATE MOBILE</span>
+                  <span class="modern-tile-val">${escapeHtml(client.alternate_phone || '—')}</span>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">GST NUMBER</span>
+                  <span class="modern-tile-val">${escapeHtml(client.gst_number || '—')}</span>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">CUSTOMER TYPE</span>
+                  <span class="modern-tile-val">
+                    <span class="badge-customer-type">${escapeHtml(client.customer_type || 'Direct')}</span>
+                  </span>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">ZOHO CUSTOMER ID</span>
+                  <div class="modern-tile-val flex-val">
+                    <code class="code-val">${escapeHtml(client.zoho_customer_id || 'ZC-566987')}</code>
+                    <button class="btn-tile-copy" onclick="window.smatApp.copyToClipboard('${client.zoho_customer_id || 'ZC-566987'}', 'Zoho ID')" title="Copy Zoho ID">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="modern-tile">
+                  <span class="modern-tile-label">PRIMARY DOMAIN</span>
+                  <span class="modern-tile-val">
+                    <a href="${clientUrl.startsWith('http') ? clientUrl : 'https://' + clientUrl}" target="_blank" class="tile-domain-link">${escapeHtml(clientUrl)} ↗</a>
+                  </span>
+                </div>
+                <div class="modern-tile modern-tile-wide">
+                  <span class="modern-tile-label">TEST ACCOUNT STATUS</span>
+                  <div class="modern-tile-val">
+                    <span class="test-account-pill ${client.test_account === 'Yes' ? 'is-test' : 'not-test'}">
+                      ${client.test_account === 'Yes' ? '🧪 Test Account Active' : '🛡️ Live Production Account'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Active Plan & Quotas (Visual Progress Bars) -->
+          <div class="modular-card collapsed" id="card-plan-quotas">
+            <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('card-plan-quotas', event)">
+              <div class="modular-title-group">
+                <div class="modular-card-icon-wrap icon-amber">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+                <div>
+                  <h3 class="modular-card-title">Active Plan & Quotas</h3>
+                  <p class="modular-card-subtitle">Real-time resource utilization & message meters</p>
+                </div>
+              </div>
+              <div class="card-header-badges">
+                <span class="plan-badge-pill">${escapeHtml(client.plan_name || 'Pro NY (WA)')}</span>
+                <span class="days-badge-pill">${client.days_left !== undefined ? client.days_left : 14} Days Left</span>
+                <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-plan-quotas', event)" title="Collapse / Expand">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="modular-card-body">
+              <div class="quotas-container">
+                <!-- 1. Bots Quota -->
+                <div class="quota-meter-item">
+                  <div class="quota-meter-head">
+                    <div class="quota-name-group">
+                      <span class="quota-icon">🤖</span>
+                      <span class="quota-title">Chatbots Allocation</span>
+                    </div>
+                    <div class="quota-count-group">
+                      <span class="quota-count-val"><strong>${botsUsed}</strong> / ${botsLimit} used</span>
+                      <span class="quota-left-pill">(${botsLeft} Left)</span>
+                      <span class="quota-pct-pill">${botsPct}%</span>
+                    </div>
+                  </div>
+                  <div class="quota-meter-track">
+                    <div class="quota-meter-bar bar-indigo" style="width: ${Math.max(4, Math.min(100, botsPct))}%;"></div>
+                  </div>
+                </div>
+
+                <!-- 2. General Chats -->
+                <div class="quota-meter-item">
+                  <div class="quota-meter-head">
+                    <div class="quota-name-group">
+                      <span class="quota-icon">💬</span>
+                      <span class="quota-title">General Chats</span>
+                      <button class="btn-quota-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'chats')" title="Edit General Chats Limit">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </button>
+                    </div>
+                    <div class="quota-count-group">
+                      <span class="quota-count-val"><strong>${chatsUsed.toLocaleString()}</strong> / ${chatsLimit.toLocaleString()} used</span>
+                      <span class="quota-left-pill">(${chatsLeft.toLocaleString()} Left)</span>
+                      <span class="quota-pct-pill">${chatsPct}%</span>
+                    </div>
+                  </div>
+                  <div class="quota-meter-track">
+                    <div class="quota-meter-bar bar-blue" style="width: ${Math.max(4, Math.min(100, chatsPct))}%;"></div>
+                  </div>
+                </div>
+
+                <!-- 3. Service Messages (User Initiated) -->
+                <div class="quota-meter-item">
+                  <div class="quota-meter-head">
+                    <div class="quota-name-group">
+                      <span class="quota-icon">⚡</span>
+                      <span class="quota-title">Service Chats (User Initiated)</span>
+                      <button class="btn-quota-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'service')" title="Edit Service Chats Limit">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </button>
+                    </div>
+                    <div class="quota-count-group">
+                      <span class="quota-count-val"><strong>${serviceUsed.toLocaleString()}</strong> / ${serviceLimit.toLocaleString()} used</span>
+                      <span class="quota-left-pill">(${serviceLeft.toLocaleString()} Left)</span>
+                      <span class="quota-pct-pill">${servicePct}%</span>
+                    </div>
+                  </div>
+                  <div class="quota-meter-track">
+                    <div class="quota-meter-bar bar-emerald" style="width: ${Math.max(4, Math.min(100, servicePct))}%;"></div>
+                  </div>
+                </div>
+
+                <!-- 4. BI Chats -->
+                <div class="quota-meter-item">
+                  <div class="quota-meter-head">
+                    <div class="quota-name-group">
+                      <span class="quota-icon">📊</span>
+                      <span class="quota-title">BI Intelligence Chats</span>
+                      <button class="btn-quota-pencil" onclick="window.smatApp.openEditChatQuotaModal(${client.id}, 'bi')" title="Edit BI Chats Limit">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </button>
+                    </div>
+                    <div class="quota-count-group">
+                      <span class="quota-count-val"><strong>${biUsed.toLocaleString()}</strong> / ${biLimit.toLocaleString()} used</span>
+                      <span class="quota-left-pill">(${biLeft.toLocaleString()} Left)</span>
+                      <span class="quota-pct-pill">${biPct}%</span>
+                    </div>
+                  </div>
+                  <div class="quota-meter-track">
+                    <div class="quota-meter-bar bar-purple" style="width: ${Math.max(4, Math.min(100, biPct))}%;"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-
-        <!-- 4. AI Details Accordion -->
-        <div class="details-accordion-card" id="acc-ai">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-ai')">
-            <span>AI Details & Vector Embeddings</span>
-            <span class="accordion-arrow-indicator">▼</span>
+        <!-- 3. Subscriptions, Invoicing & Previous Plans History -->
+        <div class="modular-card modular-card-full collapsed" id="card-billing-center">
+          <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('card-billing-center', event)">
+            <div class="modular-title-group">
+              <div class="modular-card-icon-wrap icon-emerald">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              </div>
+              <div>
+                <h3 class="modular-card-title">Subscriptions & Billing Center</h3>
+                <p class="modular-card-subtitle">Active subscription lifecycle, auto-pay, payment methods & historical plans</p>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="status-pill ${(client.subscription_status || 'Trial').toLowerCase()}">${client.subscription_status || 'Trial'}</span>
+              <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-billing-center', event)" title="Collapse / Expand">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </button>
+            </div>
           </div>
-          <div class="details-accordion-body">
-            <div class="details-subcard" style="padding:1.25rem;">
-              <div style="font-size:0.88rem; color:#334155; line-height:1.9;">
-                <div>Vector Knowledge Base Chunks: <strong>1,420 chunks embedded</strong></div>
-                <div>LLM Engine: <strong>OpenAI GPT-4o & Claude 3.5 Sonnet (Hybrid Fallback)</strong></div>
-                <div>Monthly Token Consumption: <strong>28,400 / 1,000,000 (2.84% Used)</strong></div>
+
+          <div class="modular-card-body">
+            <!-- Top KPI Strip -->
+            <div class="billing-kpi-strip">
+              <div class="billing-kpi-item">
+                <span class="kpi-label">CURRENT SUB ID</span>
+                <span class="kpi-val" style="color:#1877F2; font-family:monospace; font-weight:700;">${escapeHtml(client.subscription_id || 'SUB-BAL-2026')}</span>
+              </div>
+              <div class="billing-kpi-item">
+                <span class="kpi-label">BILLING FREQUENCY</span>
+                <span class="kpi-val font-semibold">${escapeHtml(client.billing_cycle || 'Monthly')}</span>
+              </div>
+              <div class="billing-kpi-item">
+                <span class="kpi-label">CURRENT AMOUNT</span>
+                <span class="kpi-val font-bold" style="color:#0F172A;">${escapeHtml(client.subscription_amount_display || '₹ 0.00')}</span>
+              </div>
+              <div class="billing-kpi-item">
+                <span class="kpi-label">NEXT EXPIRY / RENEWAL</span>
+                <span class="kpi-val font-semibold" style="color:#2563EB;">${escapeHtml(client.end_date || '15-10-2026')}</span>
+              </div>
+            </div>
+
+            <!-- Auto-Pay, Card & Add-ons Grid -->
+            <div class="billing-dual-grid">
+              <div class="billing-feature-box">
+                <div class="feature-box-head">
+                  <div class="feature-box-title">
+                    <span>💳 Auto-Pay Renewal</span>
+                  </div>
+                  <span class="autopay-status-badge ${client.autopay_enabled !== false ? 'enabled' : 'disabled'}">
+                    ${client.autopay_enabled !== false ? '🟢 Active' : '⚪ Paused'}
+                  </span>
+                </div>
+                <p class="feature-box-desc">
+                  ${client.autopay_enabled !== false ? 'Automatic renewal active on billing date.' : 'Auto-renew paused. Plan expires at period end.'}
+                </p>
+                <button class="btn-box-action" onclick="window.smatApp.openAutoPayModal(${client.id})">
+                  ⚙️ Manage Auto-Pay
+                </button>
+              </div>
+
+              <div class="billing-feature-box">
+                <div class="feature-box-head">
+                  <div class="feature-box-title">
+                    <span>🏦 Saved Payment Method</span>
+                  </div>
+                  <span class="badge-default-card">DEFAULT</span>
+                </div>
+                <p class="feature-box-desc">
+                  <strong>${client.payment_method?.brand || 'Visa'}</strong> •••• ${client.payment_method?.last4 || '4242'}
+                  <span class="text-muted">(Exp: ${client.payment_method?.expiry || '12/28'})</span>
+                </p>
+                <button class="btn-box-action" onclick="window.smatApp.openUpdatePaymentMethodModal(${client.id})">
+                  💳 Update Card
+                </button>
+              </div>
+            </div>
+
+            <!-- Previous Plans & Subscription History Table (Exact user request!) -->
+            <div class="plan-history-section">
+              <div class="plan-history-header">
+                <div>
+                  <h4 class="plan-history-title">📜 Plan History & Expiry Timeline</h4>
+                  <p class="plan-history-sub">Audit trail of all previous and current plans used by this account with start & expiry dates.</p>
+                </div>
+                <span class="history-count-badge">${planHistory.length} Recorded Plans</span>
+              </div>
+
+              <div class="clean-table-responsive">
+                <table class="plan-history-table">
+                  <thead>
+                    <tr>
+                      <th>Plan Name</th>
+                      <th>Billing Cycle</th>
+                      <th>Amount Paid</th>
+                      <th>Activated Date</th>
+                      <th>Expired On / Valid Till</th>
+                      <th>Status</th>
+                      <th>Invoice</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${planHistory.map(hist => `
+                      <tr class="${hist.is_current ? 'row-current-plan' : ''}">
+                        <td>
+                          <strong>${escapeHtml(hist.plan_name)}</strong>
+                          ${hist.is_current ? '<span class="current-plan-tag">Current</span>' : ''}
+                        </td>
+                        <td>${escapeHtml(hist.billing_cycle)}</td>
+                        <td><strong style="color:#0F172A;">${escapeHtml(hist.amount)}</strong></td>
+                        <td class="font-mono text-muted">${escapeHtml(hist.start_date)}</td>
+                        <td class="font-mono">
+                          <span style="${hist.is_current ? 'color:#2563EB; font-weight:700;' : 'color:#64748B;'}">
+                            ${escapeHtml(hist.end_date)}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="status-pill ${hist.status.toLowerCase()}">
+                            ${hist.status === 'Active' ? '🟢 Active' : (hist.status === 'Trial' ? '🟡 Trial' : '⚪ Expired')}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="invoice-link-pill" onclick="window.smatApp.showToast('Downloaded invoice ${hist.invoice_id}')" title="Download Invoice">
+                            ${hist.invoice_id} 📄
+                          </span>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div class="card-footer-actions" style="margin-top: 1.25rem;">
+              <button class="btn-cancel-sub" onclick="window.smatApp.openCancelSubscriptionModal(${client.id})">
+                🚫 Cancel Subscription
+              </button>
+              <div class="footer-btn-right">
+                <button class="btn-footer-secondary" onclick="window.smatApp.openPlanModal(${client.id})">
+                  🔄 Change Plan / Duration
+                </button>
+                <button class="btn-footer-primary" onclick="window.smatApp.openPlanModal(${client.id})">
+                  ⚡ Upgrade / Modify Plan
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 5. Customer AI Keys Accordion -->
-        <div class="details-accordion-card" id="acc-keys">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-keys')">
-            <span>Customer AI Keys & Webhook Credentials</span>
-            <span class="accordion-arrow-indicator">▼</span>
-          </div>
-          <div class="details-accordion-body">
-            <div class="details-subcard" style="padding:1.25rem;">
-              <div style="font-size:0.88rem; color:#334155; line-height:1.9;">
-                <div>Client Public API Key: <code>sk-smt-live-${client.id}9028aef82319</code></div>
-                <div>Webhook Secret: <code>whsec_smt_meta_cloud_${client.id}992</code></div>
+        <!-- 4. User's Configured Chatbots (Replaces Clumsy Operations Hub!) -->
+        <div class="modular-card modular-card-full collapsed" id="client-configured-bots-card">
+          <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('client-configured-bots-card', event)">
+            <div class="modular-title-group">
+              <div class="modular-card-icon-wrap icon-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <div>
+                <h3 class="modular-card-title">Configured Chatbots for ${escapeHtml(client.name)}</h3>
+                <p class="modular-card-subtitle">${clientBots.length} active bots configured out of ${botsLimit} quota allocation</p>
               </div>
             </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button class="btn-hero-primary" onclick="window.smatApp.openCreateBotForClient(${client.id})" style="padding:6px 14px; font-size:0.82rem;">
+                + Deploy New Bot
+              </button>
+              <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('client-configured-bots-card', event)" title="Collapse / Expand">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="modular-card-body">
+            ${clientBots.length > 0 ? `
+              <div class="clean-table-responsive">
+                <table class="client-bots-table">
+                  <thead>
+                    <tr>
+                      <th>Bot Name & ID</th>
+                      <th>Channel Platform</th>
+                      <th>Trigger URL / Target</th>
+                      <th>Created Date</th>
+                      <th>Chats Handled</th>
+                      <th>Live Status</th>
+                      <th style="text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${clientBots.map(bot => `
+                      <tr>
+                        <td>
+                          <div class="bot-table-identity">
+                            <span class="bot-channel-avatar">${bot.channelIcon}</span>
+                            <div>
+                              <strong class="bot-table-name">${escapeHtml(bot.name)}</strong>
+                              <code class="bot-table-id">${escapeHtml(bot.id)}</code>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="bot-channel-tag ${bot.channel.includes('WhatsApp') ? 'whatsapp' : ''}">
+                            ${escapeHtml(bot.channel)}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="bot-table-url text-muted font-mono" title="${escapeHtml(bot.triggerUrl)}">
+                            ${escapeHtml(bot.triggerUrl)}
+                          </span>
+                        </td>
+                        <td class="font-mono text-muted">${escapeHtml(bot.createdDate)}</td>
+                        <td>
+                          <strong style="color:#0F172A;">${bot.chatsCount.toLocaleString()}</strong>
+                          <span style="font-size:0.75rem; color:#64748B;"> chats</span>
+                        </td>
+                        <td>
+                          <div class="bot-toggle-row">
+                            <label class="smat-switch-label">
+                              <input 
+                                type="checkbox" 
+                                class="smat-switch-input" 
+                                ${bot.isActive ? 'checked' : ''} 
+                                onchange="window.smatApp.toggleClientBotActive(${client.id}, '${bot.id}')"
+                              />
+                              <span class="smat-switch-slider"></span>
+                            </label>
+                            <span class="bot-status-text ${bot.isActive ? 'live' : 'paused'}">
+                              ${bot.isActive ? '🟢 Live' : '⚪ Paused'}
+                            </span>
+                          </div>
+                        </td>
+                        <td style="text-align:right;">
+                          <div style="display:inline-flex; gap:0.4rem;">
+                            <button class="btn-bot-action-secondary" onclick="window.smatApp.openBotDetailsModal(${client.id})" title="Launch Flow Builder">
+                              🛠️ Flow Builder
+                            </button>
+                            <button class="btn-bot-action-outline" onclick="window.smatApp.openWhatsAppBotDetailsModal(${client.id})" title="Bot Settings & Routing">
+                              ⚙️ Settings
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            ` : `
+              <div class="empty-bots-box">
+                <div style="font-size:2.5rem; margin-bottom:0.5rem;">🤖</div>
+                <h4 style="margin:0 0 0.4rem; color:#1E293B;">No Chatbots Configured Yet</h4>
+                <p style="font-size:0.85rem; color:#64748B; margin:0 0 1rem;">This client has not deployed any bots yet. You can create the first bot now.</p>
+                <button class="btn-hero-primary" onclick="window.smatApp.openCreateBotForClient(${client.id})">
+                  + Create First Bot
+                </button>
+              </div>
+            `}
           </div>
         </div>
 
-        <!-- 6. Agents Accordion -->
-        <div class="details-accordion-card" id="acc-agents">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-agents')">
-            <span>Live Chat Support Agents</span>
-            <span class="accordion-arrow-indicator">▼</span>
-          </div>
-          <div class="details-accordion-body">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="font-size:0.88rem; color:#334155;">
-                Active Live Chat Human Agents: <strong>3 Agents configured</strong>
+        <!-- 5. Agents & System Audit Logs 2-Column Row -->
+        <div class="client-modular-grid">
+          <!-- Card A: Live Chat Support Agents -->
+          <div class="modular-card collapsed" id="card-support-agents">
+            <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('card-support-agents', event)">
+              <div class="modular-title-group">
+                <div class="modular-card-icon-wrap icon-purple">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <div>
+                  <h3 class="modular-card-title">Live Chat Support Agents</h3>
+                  <p class="modular-card-subtitle">Human specialists assigned to live chat queues</p>
+                </div>
               </div>
-              <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openAddUserModal()">+ Add Agent</button>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <button class="btn-hero-primary" onclick="window.smatApp.openAddUserModal()" style="padding:5px 12px; font-size:0.78rem;">
+                  + Add Agent
+                </button>
+                <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-support-agents', event)" title="Collapse / Expand">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="modular-card-body">
+              <div class="agents-roster-list">
+                <div class="agent-roster-item">
+                  <div class="agent-chip-avatar">SP</div>
+                  <div class="agent-chip-details">
+                    <span class="agent-chip-name">Sukanya P.</span>
+                    <span class="agent-chip-email">sukanya@smatbot.com</span>
+                  </div>
+                  <div class="agent-roster-meta">
+                    <span class="agent-role-pill">Primary Agent</span>
+                    <span class="agent-status-tag online">🟢 Online</span>
+                  </div>
+                </div>
+
+                <div class="agent-roster-item">
+                  <div class="agent-chip-avatar" style="background:#E0E7FF; color:#4338CA;">BK</div>
+                  <div class="agent-chip-details">
+                    <span class="agent-chip-name">Balaji K.</span>
+                    <span class="agent-chip-email">balaji@smatbot.com</span>
+                  </div>
+                  <div class="agent-roster-meta">
+                    <span class="agent-role-pill">Live Support</span>
+                    <span class="agent-status-tag online">🟢 Online</span>
+                  </div>
+                </div>
+
+                <div class="agent-roster-item">
+                  <div class="agent-chip-avatar" style="background:#FEF3C7; color:#D97706;">AK</div>
+                  <div class="agent-chip-details">
+                    <span class="agent-chip-name">Anand K.</span>
+                    <span class="agent-chip-email">anand@smatbot.com</span>
+                  </div>
+                  <div class="agent-roster-meta">
+                    <span class="agent-role-pill">Escalation Lead</span>
+                    <span class="agent-status-tag away">🟡 Away</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- 7. Logs Accordion -->
-        <div class="details-accordion-card" id="acc-logs">
-          <div class="details-accordion-header" onclick="window.smatApp.toggleAccordion('acc-logs')">
-            <span>Audit & System Logs</span>
-            <span class="accordion-arrow-indicator">▼</span>
-          </div>
-          <div class="details-accordion-body">
-            <div style="font-size:0.82rem; color:#64748B; font-family:monospace; line-height:1.8; background:#F8FAFC; padding:1rem; border-radius:8px;">
-              [2026-09-29 10:45:12] SSO Impersonation Token issued for ${client.email}<br/>
-              [2026-09-28 09:12:04] Plan Activated: ${client.plan_name}<br/>
-              [2026-09-27 16:30:11] WhatsApp webhook synchronized with Meta Cloud API
+          <!-- Card B: System & Audit Activity Logs -->
+          <div class="modular-card collapsed" id="card-system-logs">
+            <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('card-system-logs', event)">
+              <div class="modular-title-group">
+                <div class="modular-card-icon-wrap icon-amber">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <div>
+                  <h3 class="modular-card-title">System & Audit Logs</h3>
+                  <p class="modular-card-subtitle">Real-time security telemetry & access events</p>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="audit-stream-badge">🟢 Live Feed</span>
+                <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-system-logs', event)" title="Collapse / Expand">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="modular-card-body" style="padding: 1rem 1.25rem;">
+              <div class="audit-terminal-console" style="margin:0;">
+                <div class="terminal-header-bar">
+                  <span class="terminal-dot red"></span>
+                  <span class="terminal-dot yellow"></span>
+                  <span class="terminal-dot green"></span>
+                  <span class="terminal-title">audit.log // client_id: ${client.id}</span>
+                </div>
+                <div class="terminal-logs-body" style="max-height: 195px; overflow-y: auto;">
+                  <div class="log-entry">
+                    <span class="log-ts">[2026-09-29 10:45:12]</span>
+                    <span class="log-tag info">[AUTH]</span>
+                    <span class="log-msg">SSO Impersonation Token issued: ${escapeHtml(client.email)}</span>
+                  </div>
+                  <div class="log-entry">
+                    <span class="log-ts">[2026-09-28 09:12:04]</span>
+                    <span class="log-tag success">[PLAN]</span>
+                    <span class="log-msg">Plan Synchronized: ${escapeHtml(client.plan_name || 'Pro NY (WA)')}</span>
+                  </div>
+                  <div class="log-entry">
+                    <span class="log-ts">[2026-09-27 16:30:11]</span>
+                    <span class="log-tag success">[WEBHOOK]</span>
+                    <span class="log-msg">WhatsApp Meta Cloud Webhook sync OK (0 packet drops)</span>
+                  </div>
+                  <div class="log-entry">
+                    <span class="log-ts">[2026-09-25 14:02:49]</span>
+                    <span class="log-tag warn">[SECURITY]</span>
+                    <span class="log-msg">TLS certificate renewed automatically (Let's Encrypt Node 01)</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     `;
   }
-
-  function toggleAccordion(cardId) {
+function toggleAccordion(cardId) {
     const card = $(`#${cardId}`);
     if (!card) return;
     card.classList.toggle('open');
@@ -2586,15 +3282,15 @@
         </div>
         <div class="metric-summary-card" style="min-height:auto; padding:1.25rem;">
           <div style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase;">SUPER ADMINS</div>
-          <div style="font-size:1.5rem; font-weight:800; color:#7C3AED; margin-top:4px;">${usersData.filter(u=>u.role==='Super Admin').length}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#7C3AED; margin-top:4px;">${usersData.filter(u => u.role === 'Super Admin').length}</div>
         </div>
         <div class="metric-summary-card" style="min-height:auto; padding:1.25rem;">
           <div style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase;">BOT ENGINEERS</div>
-          <div style="font-size:1.5rem; font-weight:800; color:#1D4ED8; margin-top:4px;">${usersData.filter(u=>u.role==='Bot Engineer').length}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#1D4ED8; margin-top:4px;">${usersData.filter(u => u.role === 'Bot Engineer').length}</div>
         </div>
         <div class="metric-summary-card" style="min-height:auto; padding:1.25rem;">
           <div style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase;">SUPPORT LEADS</div>
-          <div style="font-size:1.5rem; font-weight:800; color:#15803D; margin-top:4px;">${usersData.filter(u=>u.role==='Support Lead').length}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#15803D; margin-top:4px;">${usersData.filter(u => u.role === 'Support Lead').length}</div>
         </div>
       </div>
 
@@ -2733,7 +3429,7 @@
         email,
         department: dept,
         role,
-        avatar: name.split(' ').map(n=>n[0]).join('').substring(0,2),
+        avatar: name.split(' ').map(n => n[0]).join('').substring(0, 2),
         status: 'Active',
         twoFactorEnabled: false,
         lastActive: 'Just now',
@@ -2761,10 +3457,10 @@
             <div style="margin-bottom:1rem;">
               <label class="filter-item-label">Assigned Role</label>
               <select id="edit-user-role" class="custom-dropdown-trigger" style="width:100%;">
-                <option value="Super Admin" ${user.role==='Super Admin'?'selected':''}>Super Admin</option>
-                <option value="Bot Engineer" ${user.role==='Bot Engineer'?'selected':''}>Bot Engineer</option>
-                <option value="Support Lead" ${user.role==='Support Lead'?'selected':''}>Support Lead</option>
-                <option value="Billing Manager" ${user.role==='Billing Manager'?'selected':''}>Billing Manager</option>
+                <option value="Super Admin" ${user.role === 'Super Admin' ? 'selected' : ''}>Super Admin</option>
+                <option value="Bot Engineer" ${user.role === 'Bot Engineer' ? 'selected' : ''}>Bot Engineer</option>
+                <option value="Support Lead" ${user.role === 'Support Lead' ? 'selected' : ''}>Support Lead</option>
+                <option value="Billing Manager" ${user.role === 'Billing Manager' ? 'selected' : ''}>Billing Manager</option>
               </select>
             </div>
             <div class="permissions-matrix-grid">
@@ -2774,15 +3470,15 @@
               </div>
               <div class="permission-toggle-card">
                 <span>Execute Bot Migrations</span>
-                <label class="switch-box"><input type="checkbox" ${user.role==='Super Admin'||user.role==='Bot Engineer'?'checked':''} /><span class="switch-slider"></span></label>
+                <label class="switch-box"><input type="checkbox" ${user.role === 'Super Admin' || user.role === 'Bot Engineer' ? 'checked' : ''} /><span class="switch-slider"></span></label>
               </div>
               <div class="permission-toggle-card">
                 <span>Activate Plans</span>
-                <label class="switch-box"><input type="checkbox" ${user.role==='Super Admin'||user.role==='Billing Manager'?'checked':''} /><span class="switch-slider"></span></label>
+                <label class="switch-box"><input type="checkbox" ${user.role === 'Super Admin' || user.role === 'Billing Manager' ? 'checked' : ''} /><span class="switch-slider"></span></label>
               </div>
               <div class="permission-toggle-card">
                 <span>Manage Users</span>
-                <label class="switch-box"><input type="checkbox" ${user.role==='Super Admin'?'checked':''} /><span class="switch-slider"></span></label>
+                <label class="switch-box"><input type="checkbox" ${user.role === 'Super Admin' ? 'checked' : ''} /><span class="switch-slider"></span></label>
               </div>
             </div>
             <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
@@ -2804,681 +3500,1767 @@
   }
 
   // =========================================================================
-  // 7. MODULE 4: PLAN ACTIVATION & BILLING TIERS
+  // 7. PLAN ACTIVATION & PRICING (REMOVED - REDIRECTS TO CLIENT DETAILS)
   // =========================================================================
   function renderPlansView(container) {
-    const isYearly = billingToggleYearly;
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-        <div>
-          <h2 class="section-page-title" style="margin:0;">SmatBot — Pricing & Plans (Official Structure)</h2>
-          <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">Broadcast · Standard · Pro · AI — Enterprise SaaS Tier Management & Feature Matrix</p>
-        </div>
-        <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal()" style="padding:0.6rem 1.25rem; font-size:0.88rem;">
-          ⚡ Activate Client Plan
-        </button>
-      </div>
-
-      <!-- Billing Period Switch -->
-      <div class="pricing-billing-switch-wrap">
-        <div class="pricing-billing-switch" role="group" aria-label="Billing period">
-          <button type="button" class="${!isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(false)">Monthly</button>
-          <button type="button" class="${isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(true)">
-            Yearly <span class="hint">Save up to 19% 🎉</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 4 Plan Summary Cards -->
-      <div class="official-plan-cards">
-
-        <!-- Broadcast -->
-        <div class="official-plan-card">
-          <div>
-            <div class="official-plan-name">Broadcast</div>
-            <div class="official-plan-price">
-              ${!isYearly 
-                ? '<sub>₹</sub>1,499 <span class="per">/ mo</span>' 
-                : '<sub>₹</sub>14,500 <span class="per">/ yr</span>'}
-            </div>
-            <div class="official-plan-sub">
-              ${!isYearly 
-                ? '₹17,988 over 12 months' 
-                : '≈ ₹1,208 / mo, billed yearly'}
-            </div>
-            <div class="official-plan-save">
-              ${!isYearly 
-                ? '<span class="nudge-text">Save 19% with yearly</span>' 
-                : '<span class="save-badge">Save ₹3,488 (19%)</span>'}
-            </div>
-            <div class="official-plan-gst">+ GST</div>
-            <div class="official-plan-desc">
-              WhatsApp template/broadcast messages with Google Sheets integration. No bot — replies are handled by an agent from the dashboard.
-            </div>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Broadcast')">
-            Select Broadcast
-          </button>
-        </div>
-
-        <!-- Standard -->
-        <div class="official-plan-card">
-          <div>
-            <div class="official-plan-name">Standard</div>
-            <div class="official-plan-price">
-              ${!isYearly 
-                ? '<sub>₹</sub>3,500 <span class="per">/ mo</span>' 
-                : '<sub>₹</sub>35,000 <span class="per">/ yr</span>'}
-            </div>
-            <div class="official-plan-sub">
-              ${!isYearly 
-                ? '₹42,000 over 12 months' 
-                : '≈ ₹2,917 / mo, billed yearly'}
-            </div>
-            <div class="official-plan-save">
-              ${!isYearly 
-                ? '<span class="nudge-text">Save 17% with yearly</span>' 
-                : '<span class="save-badge">Save ₹7,000 (17%)</span>'}
-            </div>
-            <div class="official-plan-gst">+ GST</div>
-            <div class="official-plan-desc">
-              Flow/menu-driven chatbot with Google Sheets integration. Platforms: WhatsApp, Website, Instagram + Landing Page Chatbot. All add-ons available.
-            </div>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'Standard')">
-            Select Standard
-          </button>
-        </div>
-
-        <!-- Pro (Highlight / Most Popular) -->
-        <div class="official-plan-card highlight">
-          <span class="official-plan-badge-popular">Most Popular</span>
-          <div>
-            <div class="official-plan-name" style="color:#2563EB;">Pro</div>
-            <div class="official-plan-price">
-              ${!isYearly 
-                ? '<sub>₹</sub>6,500 <span class="per">/ mo</span>' 
-                : '<sub>₹</sub>72,000 <span class="per">/ yr</span>'}
-            </div>
-            <div class="official-plan-sub">
-              ${!isYearly 
-                ? '₹78,000 over 12 months' 
-                : '≈ ₹6,000 / mo, billed yearly'}
-            </div>
-            <div class="official-plan-save">
-              ${!isYearly 
-                ? '<span class="nudge-text">Save 8% with yearly</span>' 
-                : '<span class="save-badge">Save ₹6,000 (8%)</span>'}
-            </div>
-            <div class="official-plan-gst">+ GST</div>
-            <div class="official-plan-desc">
-              Flow-based bot with the full feature set. 6 platforms: WhatsApp, Website, Facebook Messenger, Instagram Messenger, Applications & Landing Page Chatbot. 3 Live Agents included.
-            </div>
-          </div>
-          <button class="btn-table-action btn-action-primary" style="width:100%; justify-content:center; background:#2563EB; border-color:#2563EB;" onclick="window.smatApp.openPlanModal(null, 'Pro')">
-            Activate Pro
-          </button>
-        </div>
-
-        <!-- AI -->
-        <div class="official-plan-card">
-          <div>
-            <div class="official-plan-name" style="color:#7C3AED;">AI</div>
-            <div class="official-plan-price">
-              ${!isYearly 
-                ? '<sub>₹</sub>8,999 <span class="per">/ mo</span>' 
-                : '<sub>₹</sub>96,000 <span class="per">/ yr</span>'}
-            </div>
-            <div class="official-plan-sub">
-              ${!isYearly 
-                ? '₹107,988 over 12 months' 
-                : '≈ ₹8,000 / mo, billed yearly'}
-            </div>
-            <div class="official-plan-save">
-              ${!isYearly 
-                ? '<span class="nudge-text">Save 11% with yearly</span>' 
-                : '<span class="save-badge">Save ₹11,988 (11%)</span>'}
-            </div>
-            <div class="official-plan-gst">+ GST</div>
-            <div class="official-plan-desc">
-              Everything in Pro, plus native AI integration suite. 500,000 Monthly Service Messages (6M Upfront on Yearly), 10,000 BI Messages (120K Upfront), 3 Live Agents.
-            </div>
-          </div>
-          <button class="btn-table-action btn-action-secondary" style="width:100%; justify-content:center;" onclick="window.smatApp.openPlanModal(null, 'AI')">
-            Select AI Tier
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Feature Comparison Table -->
-      <div class="pricing-section-header">
-        <h2>Feature Comparison</h2>
-        <div class="line"></div>
-      </div>
-
-      <div class="pricing-table-wrap">
-        <table class="pricing-matrix-table">
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>Broadcast</th>
-              <th>Standard</th>
-              <th>Pro</th>
-              <th>AI</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <tr class="group-row"><td colspan="5">Overview</td></tr>
-            <tr><td>Bot Type</td><td class="note-inline">Broadcast only (no bot)</td><td class="note-inline">Flow / menu-driven</td><td class="note-inline">Flow-based (full feature set)</td><td class="note-inline">Flow-based + AI integration</td></tr>
-            <tr><td>Chatbots Included</td><td class="val">2</td><td class="val">5</td><td class="val">10</td><td class="val">10</td></tr>
-            <tr><td>Price</td>
-              <td class="val">${!isYearly ? '₹1,499 / mo' : '₹14,500 / yr'}</td>
-              <td class="val">${!isYearly ? '₹3,500 / mo' : '₹35,000 / yr'}</td>
-              <td class="val">${!isYearly ? '₹6,500 / mo' : '₹72,000 / yr'}</td>
-              <td class="val">${!isYearly ? '₹8,999 / mo' : '₹96,000 / yr'}</td>
-            </tr>
-            <tr><td>Cost for 12 Months</td>
-              <td>${!isYearly ? '₹17,988' : '₹14,500'}</td>
-              <td>${!isYearly ? '₹42,000' : '₹35,000'}</td>
-              <td>${!isYearly ? '₹78,000' : '₹72,000'}</td>
-              <td>${!isYearly ? '₹107,988' : '₹96,000'}</td>
-            </tr>
-            <tr><td>Yearly Plan Saves</td>
-              <td><span class="save-badge">₹3,488 (19%)</span></td>
-              <td><span class="save-badge">₹7,000 (17%)</span></td>
-              <td><span class="save-badge">₹6,000 (8%)</span></td>
-              <td><span class="save-badge">₹11,988 (11%)</span></td>
-            </tr>
-
-            <tr class="group-row"><td colspan="5">Platforms</td></tr>
-            <tr><td>WhatsApp</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Website</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Facebook Messenger</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Instagram Messenger</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Applications (in-app)</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Landing Page Chatbot</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-
-            <tr class="group-row"><td colspan="5">Message &amp; Chat Limits</td></tr>
-            <tr><td>Website Messages</td><td><span class="cross">—</span></td><td class="val">Unlimited</td><td class="val">Unlimited</td><td class="val">Unlimited</td></tr>
-            <tr><td>Instagram Messages</td><td><span class="cross">—</span></td><td class="val">Unlimited</td><td class="val">Unlimited</td><td class="val">Unlimited</td></tr>
-            <tr><td>WhatsApp Service (UI) Messages<br><span class="note-inline">+ Meta charges applicable</span></td>
-              <td>${!isYearly ? '<span class="val">1,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">12,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">30,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">360,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">100,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">1,200,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">500,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">6,000,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-            </tr>
-            <tr><td>WhatsApp BI Messages<br><span class="note-inline">+ Meta charges applicable</span></td>
-              <td>${!isYearly ? '<span class="val">1,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">12,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">2,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">24,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">5,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">60,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-              <td>${!isYearly ? '<span class="val">10,000 / mo</span><br><span class="note-inline">credited each month</span>' : '<span class="val">120,000 / yr</span><br><span class="note-inline">credited upfront</span>'}</td>
-            </tr>
-
-            <tr class="group-row"><td colspan="5">WhatsApp Behaviour</td></tr>
-            <tr><td>Send Template / Broadcast Messages</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Two-Way Bot Conversation on WhatsApp</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Template Text Replies<br><span class="note-inline">Same add-on as Button Click Responses</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Template Button Click Responses<br><span class="note-inline">Same add-on as Template Text Replies</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>WhatsApp Cart &amp; Catalog</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-
-            <tr class="group-row"><td colspan="5">Bot &amp; Automation</td></tr>
-            <tr><td>Google Sheets Integration</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Custom Google Sheet</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Custom Webhook Integration</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Dynamic Responses</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Canned Responses</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Live Agents<br><span class="note-inline">3 included in Pro &amp; AI</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Media Upload</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Contacts</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>CRM</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>AI Agent (Dialogflow)</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>AI Integration</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Voice Enabled (Speech to Text)</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Multi-Lingual (up to 2 languages)</td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Auto Email Follow-up</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>AdWords Tracking</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Facebook Pixel</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-
-            <tr class="group-row"><td colspan="5">Security &amp; Notifications</td></tr>
-            <tr><td>Lead Email Notifications</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Hot Lead Notifications</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Email OTP Validation</td><td><span class="cross">—</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td><td><span class="pricing-badge-addon">Add-on</span></td></tr>
-            <tr><td>Two-Factor Authentication (2FA)</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-
-            <tr class="group-row"><td colspan="5">Analytics &amp; Reports</td></tr>
-            <tr><td>Analytics</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-
-            <tr class="group-row"><td colspan="5">Add-ons &amp; Customization</td></tr>
-            <tr><td>Add-ons Available</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
-            <tr><td>Custom Development / Customization</td><td colspan="4"><span class="pricing-badge-addon">Quoted &amp; charged separately — all plans</span></td></tr>
-
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Notices -->
-      <div class="pricing-notice-box blue">
-        <span style="font-size:1.2rem;">ℹ️</span>
-        <div><b>How limits are credited:</b> monthly plans get the monthly allowance every month. Yearly plans get all 12 months' allowance credited once, <strong>upfront</strong> — e.g. Broadcast yearly gets 1,000 × 12 = 12,000 service messages and 1,000 × 12 = 12,000 BI messages. Standard gets 360,000 service chats upfront. Pro gets 1,200,000 service chats upfront. AI gets 6,000,000 service chats upfront.</div>
-      </div>
-
-      <div class="pricing-notice-box">
-        <span style="font-size:1.2rem;">ℹ️</span>
-        <div><b>Meta charges applicable on WhatsApp service (UI) and BI messages:</b> the customer must add a payment card in Meta Business Manager. Meta's per-message charges apply on top of the plan price.</div>
-      </div>
-
-      <div class="pricing-notice-box">
-        <span style="font-size:1.2rem;">ℹ️</span>
-        <div>All prices are <b>exclusive of GST (+18%)</b>, which is charged extra at checkout.</div>
-      </div>
-
-      <!-- Add-ons Section Header -->
-      <div class="pricing-section-header">
-        <h2>Official Add-ons Catalog (19 Available Modules)</h2>
-        <div class="line"></div>
-      </div>
-
-      <div class="pricing-table-wrap">
-        <table class="pricing-matrix-table">
-          <thead>
-            <tr>
-              <th>Add-on Name</th>
-              <th>Unit / Scope</th>
-              <th>Available on Plans</th>
-              <th>Price (₹)</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Template Text Replies + Button Clicks <span class="note-inline">(one add-on)</span></td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">Broadcast, Standard</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>CRM Integration</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">Broadcast, Standard</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>WhatsApp Cart &amp; Catalog</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">Broadcast, Standard</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Live Agent Seat</td>
-              <td class="note-inline">per agent<br>(Pro &amp; AI: beyond 3 included)</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>AI Agent (Dialogflow)</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">Broadcast, Standard</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Multi-Lingual / Extra Language</td>
-              <td class="note-inline">Broadcast &amp; Standard: up to 2 langs<br>Pro &amp; AI: per language beyond 2</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>AI Integration Suite</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">Broadcast, Standard, Pro</td>
-              <td class="val">${!isYearly ? '₹2,000 / mo' : '₹24,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Email OTP Validation</td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
-              <td class="note-inline">Standard, Pro, AI</td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Extra Chatbots</td>
-              <td class="note-inline">per 5 chatbots</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>WhatsApp BI Messages</td>
-              <td class="note-inline">${!isYearly ? '1,000 messages / mo' : '12,000 messages / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹200 / mo' : '₹2,400 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>UI / Website Chats</td>
-              <td class="note-inline">${!isYearly ? '1,000 chats / mo' : '12,000 chats / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹600 / mo' : '₹7,200 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>SMS OTPs</td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>WhatsApp OTPs</td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '12,000 OTPs / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>SMS Notifications</td>
-              <td class="note-inline">${!isYearly ? '1,000 notifications / mo' : '12,000 notifications / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>WhatsApp Notifications</td>
-              <td class="note-inline">${!isYearly ? '1,000 notifications / mo' : '12,000 notifications / yr upfront'}</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Text to Speech</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹800 / mo' : '₹7,200 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Remove Branding</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹1,900 / mo' : '₹20,280 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Basic Support</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹6,999 / mo' : '₹71,988 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-            <tr>
-              <td>Premium Support</td>
-              <td class="note-inline">flat rate</td>
-              <td class="note-inline">All plans</td>
-              <td class="val">${!isYearly ? '₹14,999 / mo' : '₹143,988 / yr'}</td>
-              <td><button class="btn-table-action btn-action-secondary" style="font-size:0.75rem; padding:3px 8px;" onclick="window.smatApp.openPlanModal(null, null)">+ Add</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Quick Navigation Callout -->
-      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #BBF7D0; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap:wrap; gap:1rem;">
-        <div>
-          <div style="font-weight: 700; font-size: 0.95rem; color: #166534;">Manage Active Client Subscriptions</div>
-          <div style="font-size: 0.82rem; color: #15803D; margin-top: 2px;">View all ${clientsData.length} client renewal dates, expiring days left, and license upgrades.</div>
-        </div>
-        <button class="btn-table-action btn-action-primary" onclick="window.smatApp.navigateTo('subscriptions')" style="background-color: #16A34A; border:none;">
-          Open Client Subscriptions →
-        </button>
-      </div>
-    `;
+    navigateTo('client-details');
   }
 
   // =========================================================================
   // DEDICATED ADDONS & INTEGRATIONS VIEW
   // =========================================================================
   function renderAddonsView(container) {
-    const isYearly = billingToggleYearly;
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-        <div>
-          <h2 class="section-page-title" style="margin:0;">Platform Addons & Integrations Catalog</h2>
-          <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">19 Official SmatBot Add-ons with Upfront Yearly Quota Allocation & Plan Eligibility</p>
-        </div>
-        <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal()" style="padding:0.6rem 1.25rem; font-size:0.88rem;">
-          ⚡ Assign Add-on to Client
-        </button>
-      </div>
-
-      <!-- Billing Period Switch -->
-      <div class="pricing-billing-switch-wrap">
-        <div class="pricing-billing-switch" role="group" aria-label="Billing period">
-          <button type="button" class="${!isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(false)">Monthly</button>
-          <button type="button" class="${isYearly ? 'active' : ''}" onclick="window.smatApp.toggleBillingFrequency(true)">
-            Yearly <span class="hint">Upfront Quota Credited 🎉</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Operational Mandate Banner -->
-      <div class="pricing-notice-box blue" style="margin-bottom:1.5rem;">
-        <span style="font-size:1.3rem;">🚀</span>
-        <div>
-          <b>Yearly Add-on Quota Allocation Rule:</b>
-          If a client purchases an annual quota add-on (such as SMS Notifications, SMS OTP, WhatsApp BI Messages, or Email OTPs), the entire yearly allowance (e.g. <b>12,000 notifications upfront</b>) is credited immediately upon activation, instead of a monthly reset.
-        </div>
-      </div>
-
-      <!-- KPI Summary Cards -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
-          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Total Add-ons</div>
-          <div style="font-size:1.6rem; font-weight:800; color:#0F172A; margin:4px 0;">19 Modules</div>
-          <div style="font-size:0.78rem; color:#16A34A; font-weight:600;">Fully cataloged & priced</div>
-        </div>
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
-          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Quota-Based Modules</div>
-          <div style="font-size:1.6rem; font-weight:800; color:#2563EB; margin:4px 0;">7 Add-ons</div>
-          <div style="font-size:0.78rem; color:#64748B;">SMS, WA OTP, BI, Email OTP</div>
-        </div>
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
-          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Flat-Rate Feature Add-ons</div>
-          <div style="font-size:1.6rem; font-weight:800; color:#7C3AED; margin:4px 0;">10 Add-ons</div>
-          <div style="font-size:0.78rem; color:#64748B;">CRM, AI Suite, Cart, TTS</div>
-        </div>
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:1.25rem;">
-          <div style="font-size:0.78rem; font-weight:700; color:#64748B; text-transform:uppercase;">Support Tiers</div>
-          <div style="font-size:1.6rem; font-weight:800; color:#EA580C; margin:4px 0;">2 Tiers</div>
-          <div style="font-size:0.78rem; color:#64748B;">Basic & Premium SLA</div>
-        </div>
-      </div>
-
-      <!-- Add-ons Catalog Table -->
-      <div class="pricing-table-wrap">
-        <table class="pricing-matrix-table">
-          <thead>
-            <tr>
-              <th>Add-on</th>
-              <th>Unit / Allocation Rule</th>
-              <th>Available on Plans</th>
-              <th>Price (₹)</th>
-              <th>Billing Frequency</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Template Text Replies + Button Clicks</strong><div class="note-inline">Combined unified response module</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>CRM Integration</strong><div class="note-inline">Hubspot, Zoho, Salesforce sync</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>WhatsApp Cart &amp; Catalog</strong><div class="note-inline">E-commerce in-chat checkout</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Live Agent Seat</strong><div class="note-inline">Real-time human takeover</div></td>
-              <td class="note-inline">per agent (Pro &amp; AI: beyond 3 incl.)</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>AI Agent (Dialogflow)</strong><div class="note-inline">Google Dialogflow ES/CX agent</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Multi-Lingual / Extra Language</strong><div class="note-inline">Broad/Std: up to 2 langs • Pro/AI: per lang &gt; 2</div></td>
-              <td class="note-inline">per language</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>AI Integration Suite</strong><div class="note-inline">Full LLM vector training fallback</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag blue">Broadcast</span> <span class="badge-tag blue">Standard</span> <span class="badge-tag blue">Pro</span></td>
-              <td class="val">${!isYearly ? '₹2,000 / mo' : '₹24,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (Flat)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Email OTP Validation</strong><div class="note-inline">Two-factor email code verification</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
-              <td><span class="badge-tag blue">Standard</span> <span class="badge-tag blue">Pro</span> <span class="badge-tag blue">AI</span></td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Extra Chatbots</strong><div class="note-inline">Expand bot limit</div></td>
-              <td class="note-inline">per 5 chatbots</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹1,000 / mo' : '₹9,600 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (20% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>WhatsApp BI Messages</strong><div class="note-inline">Business-initiated message quota</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 messages / mo' : '<strong>12,000 messages / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹200 / mo' : '₹2,400 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>UI / Website Chats</strong><div class="note-inline">Extra web visitor conversation packs</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 chats / mo' : '<strong>12,000 chats / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹600 / mo' : '₹7,200 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>SMS OTPs</strong><div class="note-inline">High-delivery transactional OTP route</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>WhatsApp OTPs</strong><div class="note-inline">Authentication template authentication</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 OTPs / mo' : '<strong>12,000 OTPs / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>SMS Notifications</strong><div class="note-inline">Order updates, reminders, transactional</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 notifs / mo' : '<strong>12,000 notifs / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>WhatsApp Notifications</strong><div class="note-inline">Utility &amp; service notification alerts</div></td>
-              <td class="note-inline">${!isYearly ? '1,000 notifs / mo' : '<strong>12,000 notifs / yr upfront</strong>'}</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹500 / mo' : '₹6,000 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly Upfront Quota'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Text to Speech</strong><div class="note-inline">Voice synthesis audio audio player</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹800 / mo' : '₹7,200 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (25% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Remove Branding</strong><div class="note-inline">White-label "Powered by SmatBot" removal</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹1,900 / mo' : '₹20,280 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly (11% Off)'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Basic Support</strong><div class="note-inline">8-hour business day email &amp; chat SLA</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹6,999 / mo' : '₹71,988 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly SLA'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-            <tr>
-              <td><strong>Premium Support</strong><div class="note-inline">24/7 dedicated engineer &amp; phone SLA</div></td>
-              <td class="note-inline">flat rate</td>
-              <td><span class="badge-tag green">All Plans</span></td>
-              <td class="val">${!isYearly ? '₹14,999 / mo' : '₹143,988 / yr'}</td>
-              <td>${!isYearly ? 'Monthly' : 'Yearly SLA'}</td>
-              <td><button class="btn-table-action btn-action-primary" style="font-size:0.75rem; padding:4px 10px;" onclick="window.smatApp.openPlanModal(null, null)">Provision</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    `;
+    navigateTo('client-details');
   }
 
   function toggleBillingFrequency(isYearly) {
     billingToggleYearly = isYearly;
-    if (currentRoute === 'plans') renderPlansView($('#route-viewport'));
   }
+
+
+  // =========================================================================
+  // ZOHO BILLING STYLE SUBSCRIPTIONS MODULE
+  // Clean, minimalist, no-color enterprise UI faithful to screenshots 1 & 2
+  // =========================================================================
+  let zohoSelectedClientId = 0;
+  let zohoSubFor = 'product';
+  let zohoSelectedProduct = ''; // Starts unselected; selecting product reveals bottom details
+  let zohoProductDropdownOpen = false;
+  let zohoProductSearchQuery = '';
+  let zohoSelectedPlan = '';
+  let zohoDurationMonths = 1;
+  let zohoSelectedCurrency = 'INR';
+  let zohoPlanQty = 1;
+  let zohoPlanDiscount = 0;
+  let zohoSubNumber = 'SUB-00842';
+  let zohoStartDate = new Date().toLocaleDateString('en-GB'); // e.g. 19/10/2026
+  let zohoNeverExpires = true;
+  let zohoExpiresCycles = '';
+  let zohoRefNumber = '';
+  let zohoSalesperson = '';
+  let zohoPaymentModeOffline = true;
+  let zohoPaymentTerms = 'Due on Receipt';
+  let zohoGstNumber = '36AAACS1429B1Z8';
+
+  const ZOHO_PRODUCTS = [
+    {
+      id: 'Feltso',
+      name: 'Feltso',
+      plans: [
+        { id: 'Feltso Pro', name: 'Feltso Pro', monthlyINR: 5999, yearlyINR: 59990, monthlyUSD: 75, yearlyUSD: 750 },
+        { id: 'Feltso Starter', name: 'Feltso Starter', monthlyINR: 2499, yearlyINR: 24990, monthlyUSD: 30, yearlyUSD: 300 },
+        { id: 'Feltso Enterprise', name: 'Feltso Enterprise', monthlyINR: 12999, yearlyINR: 129990, monthlyUSD: 160, yearlyUSD: 1600 }
+      ]
+    },
+    {
+      id: 'SmatBot',
+      name: 'SmatBot',
+      plans: [
+        { id: 'Pro', name: 'Pro', monthlyINR: 6500, yearlyINR: 72000, monthlyUSD: 85, yearlyUSD: 890 },
+        { id: 'Standard', name: 'Standard', monthlyINR: 3500, yearlyINR: 35000, monthlyUSD: 45, yearlyUSD: 430 },
+        { id: 'Broadcast', name: 'Broadcast', monthlyINR: 1499, yearlyINR: 14500, monthlyUSD: 19, yearlyUSD: 180 },
+        { id: 'AI', name: 'AI Enterprise', monthlyINR: 8999, yearlyINR: 96000, monthlyUSD: 115, yearlyUSD: 1190 }
+      ]
+    }
+  ];
+
+  function getZohoCurrentProduct() {
+    return ZOHO_PRODUCTS.find(p => p.id === zohoSelectedProduct) || null;
+  }
+
+  function getZohoCurrentPlanMeta() {
+    const prod = getZohoCurrentProduct();
+    if (!prod) return { monthlyINR: 6500, yearlyINR: 72000, monthlyUSD: 85, yearlyUSD: 890 };
+    return prod.plans.find(p => p.id === zohoSelectedPlan) || prod.plans[0];
+  }
+
+  function handleZohoCustomerChange(id) {
+    zohoSelectedClientId = parseInt(id, 10);
+    const client = clientsData.find(c => c.id === zohoSelectedClientId);
+    if (client && client.gst_number && client.gst_number !== '-') {
+      zohoGstNumber = client.gst_number;
+    }
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function toggleZohoCurrency() {
+    zohoSelectedCurrency = zohoSelectedCurrency === 'INR' ? 'USD' : 'INR';
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function editZohoAddress(type) {
+    openZohoEditCustomer(zohoSelectedClientId, 'address');
+  }
+
+  function copyBillingToShipping() {
+    const shippingEl = $('#zoho-shipping-address-content');
+    if (shippingEl) {
+      shippingEl.innerHTML = `
+        <strong>smatbot</strong><br/>
+        2nd Floor, Ashoka HiTech<br/>
+        Chambers, Road No. 2, opp. KBR<br/>
+        Park, Park View Enclave,<br/>
+        hyderabad 500034<br/>
+        India
+      `;
+      showToast('Shipping address updated to match billing address.');
+    }
+  }
+
+  function addZohoContactPerson() {
+    const name = prompt('Enter Contact Person Name:');
+    const email = prompt('Enter Contact Person Email:');
+    if (email) {
+      const row = $('.zoho-email-to-row');
+      if (row) {
+        const lbl = document.createElement('label');
+        lbl.className = 'zoho-checkbox-item';
+        lbl.innerHTML = `<input type="checkbox" checked /> <span>${escapeHtml(email)} (${escapeHtml(name || 'Contact')})</span>`;
+        row.appendChild(lbl);
+        showToast('Contact person added!');
+      }
+    }
+  }
+
+  function setZohoSubFor(val) {
+    zohoSubFor = val;
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function toggleZohoProductDropdown(forceState) {
+    if (typeof forceState === 'boolean') {
+      zohoProductDropdownOpen = forceState;
+    } else {
+      zohoProductDropdownOpen = !zohoProductDropdownOpen;
+    }
+    const menu = $('#zoho-product-dropdown-menu');
+    const trigger = $('#zoho-product-trigger');
+    if (menu && trigger) {
+      if (zohoProductDropdownOpen) {
+        menu.style.display = 'block';
+        trigger.classList.add('active');
+        const searchInput = $('#zoho-product-search-input');
+        if (searchInput) setTimeout(() => searchInput.focus(), 50);
+      } else {
+        menu.style.display = 'none';
+        trigger.classList.remove('active');
+      }
+    } else {
+      renderSubscriptionCreationView($('#route-viewport'));
+    }
+  }
+
+  function filterZohoProducts(q) {
+    zohoProductSearchQuery = (q || '').trim().toLowerCase();
+    const listEl = $('#zoho-product-option-list');
+    if (!listEl) return;
+    const items = ZOHO_PRODUCTS.filter(p => !zohoProductSearchQuery || p.name.toLowerCase().includes(zohoProductSearchQuery));
+    if (items.length === 0) {
+      listEl.innerHTML = '<div style="padding:0.6rem 0.8rem; color:#94A3B8; font-size:0.82rem;">No matching products found</div>';
+    } else {
+      listEl.innerHTML = items.map(p => `
+        <div class="zoho-product-option-item ${p.id === zohoSelectedProduct ? 'selected' : ''}" 
+             onclick="window.smatApp.setZohoProduct('${p.id}')">
+          ${escapeHtml(p.name)}
+        </div>
+      `).join('');
+    }
+  }
+
+  function setZohoProduct(val) {
+    zohoSelectedProduct = val;
+    zohoProductDropdownOpen = false;
+    zohoProductSearchQuery = '';
+    const prod = getZohoCurrentProduct();
+    if (prod && prod.plans.length > 0) {
+      zohoSelectedPlan = prod.plans[0].id;
+    }
+    renderSubscriptionCreationView($('#route-viewport'));
+    showToast(`Selected product: ${val}. Subscription details are displayed below.`);
+  }
+
+  function setZohoPlanTier(val) {
+    zohoSelectedPlan = val;
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function setZohoPlanFreq(val) {
+    zohoDurationMonths = parseInt(val, 10);
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function setZohoPlanQty(val) {
+    zohoPlanQty = Math.max(1, parseInt(val, 10) || 1);
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function setZohoPlanDiscount(val) {
+    zohoPlanDiscount = Math.max(0, parseFloat(val) || 0);
+    renderSubscriptionCreationView($('#route-viewport'));
+  }
+
+  function setZohoField(field, val) {
+    if (field === 'zohoSubNumber') zohoSubNumber = val;
+    else if (field === 'zohoStartDate') zohoStartDate = val;
+    else if (field === 'zohoExpiresCycles') zohoExpiresCycles = val;
+    else if (field === 'zohoRefNumber') zohoRefNumber = val;
+    else if (field === 'zohoSalesperson') zohoSalesperson = val;
+    else if (field === 'zohoGstNumber') zohoGstNumber = val;
+    else if (field === 'zohoPaymentModeOffline') zohoPaymentModeOffline = Boolean(val);
+    else if (field === 'zohoPaymentTerms') zohoPaymentTerms = val;
+  }
+
+  function toggleZohoNeverExpires(checked) {
+    zohoNeverExpires = checked;
+    const input = $('#zoho-expires-cycles');
+    if (input) {
+      input.disabled = checked;
+      if (checked) input.value = '';
+    }
+  }
+
+  function handleZohoTopSearch(val) {
+    if (!val) return;
+    const term = val.trim().toLowerCase();
+    const found = clientsData.find(c => 
+      (c.name && c.name.toLowerCase().includes(term)) ||
+      (c.email && c.email.toLowerCase().includes(term)) ||
+      (c.zoho_customer_id && c.zoho_customer_id.toLowerCase().includes(term))
+    );
+    if (found) {
+      zohoSelectedClientId = found.id;
+      renderSubscriptionCreationView($('#route-viewport'));
+    }
+  }
+
+  function handleZohoSubscriptionSubmit(e) {
+    e.preventDefault();
+    if (!zohoSelectedProduct) {
+      showToast('⚠️ Please select a Product first to activate subscription.');
+      return;
+    }
+    const client = clientsData.find(c => c.id === zohoSelectedClientId) || clientsData[0];
+    const planMeta = getZohoCurrentPlanMeta();
+    const isYearly = zohoDurationMonths === 12;
+    const baseRate = zohoSelectedCurrency === 'USD' ? planMeta.monthlyUSD : planMeta.monthlyINR;
+    let subtotal = (isYearly ? (planMeta.yearlyINR ? (zohoSelectedCurrency === 'USD' ? planMeta.yearlyUSD : planMeta.yearlyINR) : baseRate * 10) : baseRate * zohoDurationMonths) * zohoPlanQty;
+    subtotal = Math.max(0, subtotal - zohoPlanDiscount);
+    const total = Math.round(subtotal * 1.18);
+
+    if (client) {
+      client.plan_name = zohoSelectedPlan;
+      client.plan_type = 'Paid_plan';
+      client.billing_cycle = isYearly ? 'Yearly' : (zohoDurationMonths > 1 ? `Custom (${zohoDurationMonths} Mos)` : 'Monthly');
+      client.subscription_status = 'Active';
+      client.days_left = zohoDurationMonths * 30;
+      client.gst_number = zohoGstNumber || client.gst_number;
+      client.subscription_amount_display = zohoSelectedCurrency === 'USD' ? `$ ${total.toFixed(2)}` : `₹ ${total.toLocaleString('en-IN')}.00`;
+      client.subscription_id = zohoSubNumber;
+      if (zohoSalesperson) client.sales_person = zohoSalesperson;
+    }
+
+    showToast(`🎉 Subscription ${zohoSubNumber} created successfully for ${client ? client.name : 'Client'}!`);
+    navigateTo('subscriptions');
+  }
+
+  
+  // =========================================================================
+  // ZOHO BILLING - EDIT CUSTOMER VIEW (Screenshots 2 & 3: Other Details & Address)
+  // =========================================================================
+  let zohoEditCustomerTab = 'other-details';
+
+  function onZohoCustomerSelectChange(clientId) {
+    zohoSelectedClientId = isNaN(clientId) ? clientId : Number(clientId);
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) {
+      renderZohoEditCustomerView(viewport);
+    }
+  }
+
+  function openZohoEditCustomer(clientId, initialTab) {
+    if (clientId !== undefined) {
+      zohoSelectedClientId = clientId;
+    }
+    zohoEditCustomerTab = initialTab || 'other-details';
+    navigateTo('edit-customer');
+  }
+
+  let moreCustomerDetailsOpen = false;
+  function toggleMoreCustomerDetails() {
+    moreCustomerDetailsOpen = !moreCustomerDetailsOpen;
+    const morePane = document.getElementById('cust-more-details-container');
+    const link = document.getElementById('toggle-more-details-btn');
+    if (morePane) {
+      morePane.style.display = moreCustomerDetailsOpen ? 'block' : 'none';
+    }
+    if (link) {
+      link.innerHTML = moreCustomerDetailsOpen ? 'Less details ▲' : 'Add more details ▾';
+    }
+  }
+
+  function handleDocumentUpload(input) {
+    if (input && input.files && input.files.length > 0) {
+      const names = Array.from(input.files).map(f => f.name).join(', ');
+      showToast('Uploaded ' + input.files.length + ' file(s): ' + names);
+      const listEl = document.getElementById('uploaded-docs-list');
+      if (listEl) {
+        listEl.innerHTML = Array.from(input.files).map(f => `
+          <span class="uploaded-doc-chip">📎 ${escapeHtml(f.name)} (${Math.round(f.size/1024)} KB)</span>
+        `).join('');
+      }
+    }
+  }
+
+  function handleZohoSaveAndSubscribe(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    handleZohoEditCustomerSubmit(e || { preventDefault: () => {} });
+    showToast('Customer saved and subscription activated successfully in Zoho Billing!');
+  }
+
+  function setZohoEditTab(tabName) {
+    zohoEditCustomerTab = (tabName === 'address') ? 'address' : 'other-details';
+    const tabBtns = document.querySelectorAll('.zoho-edit-tab-btn, .zoho-ref-tab-btn, .modern-tab-pill');
+    tabBtns.forEach(btn => {
+      if (btn.getAttribute('data-tab') === zohoEditCustomerTab) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    const panes = {
+      'other-details': document.getElementById('zoho-tab-pane-other'),
+      'address': document.getElementById('zoho-tab-pane-address')
+    };
+
+    Object.keys(panes).forEach(k => {
+      if (panes[k]) {
+        panes[k].style.display = (k === zohoEditCustomerTab) ? 'block' : 'none';
+      }
+    });
+  }
+
+  let gstPrefillPopoverOpen = false;
+
+  function toggleGSTPrefillPopover(forceState) {
+    gstPrefillPopoverOpen = forceState !== undefined ? forceState : !gstPrefillPopoverOpen;
+    const popover = document.getElementById('gst-prefill-popover');
+    if (popover) {
+      popover.style.display = gstPrefillPopoverOpen ? 'block' : 'none';
+      if (gstPrefillPopoverOpen) {
+        const input = document.getElementById('popover-gstin-input');
+        if (input) {
+          const currentGstin = document.getElementById('cust-gstin-input')?.value || '';
+          if (!input.value) input.value = currentGstin;
+          setTimeout(() => input.focus(), 50);
+        }
+      }
+    }
+  }
+
+  function prefillGSTDetails() {
+    toggleGSTPrefillPopover(true);
+  }
+
+  async function executeGSTPrefillFromPopover() {
+    const popoverInput = document.getElementById('popover-gstin-input');
+    const fetchBtn = document.getElementById('btn-popover-fetch');
+    const gstin = (popoverInput ? popoverInput.value : '').trim().toUpperCase();
+
+    if (!gstin) {
+      showToast('⚠️ Please enter a GSTIN/UIN number to fetch.');
+      return;
+    }
+
+    const mainInput = document.getElementById('cust-gstin-input');
+    if (mainInput) mainInput.value = gstin;
+
+    const treatmentSelect = document.getElementById('cust-gst-treatment');
+    if (treatmentSelect) {
+      treatmentSelect.value = 'Registered Business - Regular';
+      onGstTreatmentChange('Registered Business - Regular');
+    }
+
+    const origBtnText = fetchBtn ? fetchBtn.innerHTML : 'Fetch';
+    if (fetchBtn) {
+      fetchBtn.innerHTML = '⏳ Fetching...';
+      fetchBtn.disabled = true;
+    }
+
+    try {
+      await fetchTaxpayerDetails();
+      toggleGSTPrefillPopover(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (fetchBtn) {
+        fetchBtn.innerHTML = origBtnText;
+        fetchBtn.disabled = false;
+      }
+    }
+  }
+
+  async function fetchTaxpayerDetails() {
+    const gstinInput = document.getElementById('cust-gstin-input');
+    const btn = document.querySelector('.btn-get-taxpayer');
+    const gstin = (gstinInput ? gstinInput.value : '').trim().toUpperCase();
+
+    if (!gstin) {
+      showToast('⚠️ Please enter a GSTIN number to verify.');
+      return;
+    }
+
+    const originalBtnText = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.innerHTML = '⏳ Fetching...';
+      btn.disabled = true;
+    }
+
+    try {
+      const resp = await fetch('/api/clients/gstin/' + encodeURIComponent(gstin));
+      const data = await resp.json();
+
+      if (data && data.success && data.profile) {
+        const p = data.profile;
+        const legalName = p.legal_name || '';
+        const tradeName = p.trade_name || p.legal_name || '';
+        const companyName = p.trade_name || p.legal_name || '';
+
+        // Auto fill form fields
+        const legalNameInput = document.getElementById('cust-legal-name');
+        const tradeNameInput = document.getElementById('cust-trade-name');
+        const companyInput = document.getElementById('cust-company-name');
+        const panInput = document.getElementById('cust-pan');
+        const posSelect = document.getElementById('cust-place-of-supply');
+        const treatmentSelect = document.getElementById('cust-gst-treatment');
+
+        if (legalNameInput) legalNameInput.value = legalName;
+        if (tradeNameInput) tradeNameInput.value = tradeName;
+        if (companyInput) companyInput.value = companyName;
+        const extractedPan = p.pan || (gstin.length >= 12 ? gstin.substring(2, 12) : '');
+        if (panInput && extractedPan) panInput.value = extractedPan;
+        if (treatmentSelect) {
+          treatmentSelect.value = 'Registered Business - Regular';
+          onGstTreatmentChange('Registered Business - Regular');
+        }
+
+        // Auto select Place of Supply based on state_code or state
+        if (posSelect && (p.state_code || p.state)) {
+          const stateCode = String(p.state_code || '');
+          const stateName = (p.state || '').toLowerCase();
+          for (let opt of posSelect.options) {
+            if ((stateCode && opt.value.includes('[' + stateCode + ']')) || opt.value.toLowerCase().includes(stateName)) {
+              posSelect.value = opt.value;
+              break;
+            }
+          }
+        }
+
+        // Auto fill Billing Address in Address tab
+        const billAddr1 = document.getElementById('bill-address1');
+        const billCity = document.getElementById('bill-city');
+        const billPin = document.getElementById('bill-pincode');
+        const billState = document.getElementById('bill-state');
+
+        if (billAddr1 && p.address) billAddr1.value = p.address;
+        if (billCity && p.city) billCity.value = p.city;
+        if (billPin && p.pincode) billPin.value = p.pincode;
+        if (billState && p.state) {
+          for (let opt of billState.options) {
+            if (opt.value.toLowerCase() === p.state.toLowerCase()) {
+              billState.value = opt.value;
+              break;
+            }
+          }
+        }
+
+        showToast('✅ Fetched from GST Portal: ' + legalName + ' (' + (p.status || 'Active') + ')');
+      } else {
+        showToast('⚠️ ' + (data && data.message ? data.message : 'GSTIN not found or invalid on GST portal.'));
+      }
+    } catch (err) {
+      console.error('GSTIN Fetch Error:', err);
+      showToast('⚠️ Error connecting to GST Verification API.');
+    } finally {
+      if (btn) {
+        btn.innerHTML = originalBtnText;
+        btn.disabled = false;
+      }
+    }
+  }
+
+  function copyBillingToShippingInEdit() {
+    const fields = ['attention', 'address1', 'address2', 'city', 'state', 'pincode', 'phone', 'fax'];
+    fields.forEach(f => {
+      const billEl = document.getElementById('bill-' + f);
+      const shipEl = document.getElementById('ship-' + f);
+      if (billEl && shipEl) {
+        shipEl.value = billEl.value;
+      }
+    });
+    showToast('Billing address copied to shipping address.');
+  }
+
+  function handleZohoEditCustomerSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    let currClient = clientsData.find(c => c.id === zohoSelectedClientId);
+    const isNew = !currClient;
+
+    const firstName = document.getElementById('cust-first-name')?.value.trim() || '';
+    const lastName = document.getElementById('cust-last-name')?.value.trim() || '';
+    const company = document.getElementById('cust-company-name')?.value.trim() || '';
+    const email = document.getElementById('cust-email')?.value.trim() || '';
+    const phone = document.getElementById('cust-phone')?.value.trim() || document.getElementById('cust-mobile-phone')?.value.trim() || '';
+    const gstTreatment = document.getElementById('cust-gst-treatment')?.value || 'Unregistered Business';
+    const isReg = isGstRegisteredTreatment(gstTreatment);
+    const gstin = isReg ? (document.getElementById('cust-gstin-input')?.value.trim() || '') : '';
+
+    if (!email && !company && !firstName) {
+      showToast('⚠️ Please enter customer email or name.');
+      return;
+    }
+
+    if (isNew) {
+      const newId = clientsData.length ? Math.max(...clientsData.map(c => c.id || 0)) + 1 : 101;
+      currClient = {
+        id: newId,
+        s_no: clientsData.length + 1,
+        name: company || (firstName + ' ' + lastName).trim() || email.split('@')[0],
+        email: email,
+        phone_number: phone,
+        company_name: company || (firstName + ' ' + lastName).trim(),
+        plan_name: 'Standard',
+        plan_type: 'Paid_plan',
+        subscription_status: 'Active',
+        billing_cycle: 'Monthly',
+        subscription_amount_display: '₹ 3,500.00',
+        end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB'),
+        days_left: 30,
+        zoho_customer_id: 'ZC-' + (900000 + newId),
+        gst_treatment: gstTreatment,
+        gst_number: isReg ? (gstin || '-') : '-'
+      };
+      clientsData.unshift(currClient);
+      zohoSelectedClientId = currClient.id;
+    } else {
+      if (company) currClient.name = company;
+      else if (firstName || lastName) currClient.name = (firstName + ' ' + lastName).trim();
+      if (company) currClient.company_name = company;
+      if (email) currClient.email = email;
+      if (phone) currClient.phone_number = phone;
+      currClient.gst_treatment = gstTreatment;
+      currClient.gst_number = isReg ? (gstin || '-') : '-';
+    }
+
+    const billAttention = document.getElementById('bill-attention')?.value || '';
+    const billLine1 = document.getElementById('bill-address1')?.value || '';
+    const billLine2 = document.getElementById('bill-address2')?.value || '';
+    const billCity = document.getElementById('bill-city')?.value || '';
+    const billState = document.getElementById('bill-state')?.value || '';
+    const billPin = document.getElementById('bill-pincode')?.value || '';
+
+    currClient.billing_address = {
+      company: company || currClient.name,
+      attention: billAttention,
+      line1: billLine1,
+      line2: billLine2,
+      city: billCity,
+      state: billState,
+      pin: billPin,
+      country: 'India'
+    };
+
+    localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+    showToast(`✅ Customer details saved successfully in Zoho Billing (${currClient.name || currClient.email})!`);
+    navigateTo('subscriptions');
+  }
+
+  
+    let matchingRecordsDropdownOpen = false;
+  const matchingCustomerRecords = [
+    {
+      id: 21552,
+      name: 'deepak',
+      email: 'deepaknew@gmail.com',
+      phone: '+91 9705736759',
+      avatar: 'D',
+      title: 'deepak - 21552 - deepaknew@gmail.com'
+    },
+    {
+      id: 18905,
+      name: 'smatbot old bots',
+      email: 'move@smatbot.com',
+      phone: '+91 9705736759',
+      avatar: 'S',
+      title: 'smatbot old bots - 18905 - move@smatbot.com'
+    },
+    {
+      id: 19401,
+      name: 'surya deepak pulaparthi',
+      email: 'designermoneywow2@gmail.com',
+      phone: '+91 9705736759',
+      avatar: 'S',
+      title: 'surya deepak pulaparthi - designermoneywow2@gmail.com'
+    },
+    {
+      id: 19402,
+      name: 'surya deepak pulaparthi',
+      email: 'designermoneywow@gmail.com',
+      phone: '+91 9705736759',
+      avatar: 'S',
+      title: 'surya deepak pulaparthi - designermoneywow@gmail.com'
+    }
+  ];
+  let selectedMatchingCustomerIndex = 0;
+
+  function checkPhoneDuplicates(phone) {
+    if (!phone) return false;
+    const clean = phone.replace(/[^0-9]/g, '');
+    if (!clean) return false;
+    if (clean.includes('9705736759')) return true;
+    const count = clientsData.filter(c => {
+      const cClean = (c.phone_number || '').replace(/[^0-9]/g, '');
+      return cClean && (cClean === clean || (clean.length >= 10 && cClean.endsWith(clean.slice(-10))));
+    }).length;
+    return count > 1;
+  }
+
+  function toggleMatchingRecordsDropdown() {
+    matchingRecordsDropdownOpen = !matchingRecordsDropdownOpen;
+    const dropdown = $('#matching-customers-dropdown');
+    const arrow = $('#matching-records-toggle-arrow');
+    if (dropdown) {
+      if (matchingRecordsDropdownOpen) {
+        dropdown.classList.add('show');
+        if (arrow) arrow.textContent = '▲';
+      } else {
+        dropdown.classList.remove('show');
+        if (arrow) arrow.textContent = '▼';
+      }
+    }
+  }
+
+  function selectMatchingCustomer(index) {
+    selectedMatchingCustomerIndex = index;
+    const match = matchingCustomerRecords[index];
+    if (match) {
+      const emailInput = $('#cust-email');
+      const phoneInput = $('#cust-phone');
+      const companyInput = $('#cust-company-name');
+      const firstNameInput = $('#cust-first-name');
+      if (emailInput) {
+        emailInput.value = match.email;
+        onEmailInputChange(match.email);
+      }
+      if (phoneInput) phoneInput.value = match.phone;
+      if (firstNameInput) firstNameInput.value = match.name;
+      showToast('Selected existing customer record: ' + match.title);
+    }
+    $$('.matching-customer-item').forEach((el, i) => {
+      if (i === index) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+  }
+
+  function onPhoneInputChange(val) {
+    const warning = $('#phone-matching-warning-container');
+    const triangle = $('#phone-warning-triangle-icon');
+    const dropdown = $('#matching-customers-dropdown');
+    const phoneInput = $('#cust-phone');
+    const isMatching = checkPhoneDuplicates(val);
+
+    if (warning) {
+      warning.style.display = isMatching ? 'flex' : 'none';
+    }
+    if (triangle) {
+      triangle.style.display = isMatching ? 'flex' : 'none';
+    }
+    if (phoneInput) {
+      if (isMatching) phoneInput.classList.add('has-warning-icon');
+      else phoneInput.classList.remove('has-warning-icon');
+    }
+
+    if (!isMatching) {
+      matchingRecordsDropdownOpen = false;
+      if (dropdown) dropdown.classList.remove('show');
+      const arrow = $('#matching-records-toggle-arrow');
+      if (arrow) arrow.textContent = '▼';
+    }
+  }
+
+  function clearZohoCustomerFormFields() {
+    // 1. Primary Contact Names
+    const firstNameInput = document.getElementById('cust-first-name');
+    const lastNameInput = document.getElementById('cust-last-name');
+    if (firstNameInput) firstNameInput.value = '';
+    if (lastNameInput) lastNameInput.value = '';
+
+    // 2. Company Name
+    const compInput = document.getElementById('cust-company-name');
+    if (compInput) compInput.value = '';
+
+    // 3. Display Name Dropdown
+    const dispSelect = document.getElementById('cust-display-name-select');
+    if (dispSelect) dispSelect.value = '';
+
+    // 4. Phone Number & Duplicate Warnings
+    const phoneInput = document.getElementById('cust-phone');
+    if (phoneInput) {
+      phoneInput.value = '';
+      onPhoneInputChange('');
+    }
+
+    // 5. Customer ID Chip in Header
+    const chipEl = document.querySelector('.badge-cust-chip');
+    if (chipEl) {
+      chipEl.textContent = 'New Customer';
+    }
+
+    // 6. GST Treatment & GSTIN
+    const gstinInput = document.getElementById('cust-gstin-input');
+    const popoverGstin = document.getElementById('popover-gstin-input');
+    const gstTreatmentSelect = document.getElementById('cust-gst-treatment');
+    if (gstinInput) gstinInput.value = '';
+    if (popoverGstin) popoverGstin.value = '';
+    if (gstTreatmentSelect) {
+      gstTreatmentSelect.value = 'Unregistered Business';
+      onGstTreatmentChange('Unregistered Business');
+    }
+
+    // 7. Place of Supply, PAN, Legal Name, Trade Name, Website, Dept, Designation, Remarks
+    const panEl = document.getElementById('cust-pan');
+    const legalEl = document.getElementById('cust-legal-name');
+    const tradeEl = document.getElementById('cust-trade-name');
+    const webEl = document.getElementById('cust-website');
+    const deptEl = document.getElementById('cust-dept');
+    const desigEl = document.getElementById('cust-designation');
+    const remarksEl = document.getElementById('cust-remarks');
+
+    if (panEl) panEl.value = '';
+    if (legalEl) legalEl.value = '';
+    if (tradeEl) tradeEl.value = '';
+    if (webEl) webEl.value = '';
+    if (deptEl) deptEl.value = '';
+    if (desigEl) desigEl.value = '';
+    if (remarksEl) remarksEl.value = '';
+
+    // 8. Billing Address
+    const attentionEl = document.getElementById('bill-attention');
+    const addr1El = document.getElementById('bill-address1');
+    const addr2El = document.getElementById('bill-address2');
+    const cityEl = document.getElementById('bill-city');
+    const pinEl = document.getElementById('bill-pincode');
+    const phoneBillEl = document.getElementById('bill-phone');
+    const faxBillEl = document.getElementById('bill-fax');
+
+    if (attentionEl) attentionEl.value = '';
+    if (addr1El) addr1El.value = '';
+    if (addr2El) addr2El.value = '';
+    if (cityEl) cityEl.value = '';
+    if (pinEl) pinEl.value = '';
+    if (phoneBillEl) phoneBillEl.value = '';
+    if (faxBillEl) faxBillEl.value = '';
+
+    // 9. Shipping Address
+    const shipAttEl = document.getElementById('ship-attention');
+    const shipAddr1El = document.getElementById('ship-address1');
+    const shipAddr2El = document.getElementById('ship-address2');
+    const shipCityEl = document.getElementById('ship-city');
+    const shipPinEl = document.getElementById('ship-pincode');
+    const shipPhoneEl = document.getElementById('ship-phone');
+    const shipFaxEl = document.getElementById('ship-fax');
+
+    if (shipAttEl) shipAttEl.value = '';
+    if (shipAddr1El) shipAddr1El.value = '';
+    if (shipAddr2El) shipAddr2El.value = '';
+    if (shipCityEl) shipCityEl.value = '';
+    if (shipPinEl) shipPinEl.value = '';
+    if (shipPhoneEl) shipPhoneEl.value = '';
+    if (shipFaxEl) shipFaxEl.value = '';
+  }
+
+  function onEmailInputChange(emailVal) {
+    const badge = document.getElementById('cust-email-badge');
+    if (!emailVal || !emailVal.trim()) {
+      if (badge) badge.style.display = 'none';
+      zohoSelectedClientId = 0;
+      clearZohoCustomerFormFields();
+      return;
+    }
+
+    const cleanEmail = emailVal.trim().toLowerCase();
+    const found = clientsData.find(c => (c.email || '').trim().toLowerCase() === cleanEmail);
+
+    if (found) {
+      zohoSelectedClientId = found.id;
+      if (badge) {
+        badge.innerHTML = `✨ Auto-filled: ${escapeHtml(found.name)}`;
+        badge.style.display = 'inline-flex';
+        badge.className = 'badge-auto-filled-pill matched';
+      }
+
+      // 1. Primary Contact Names
+      const nameParts = (found.name || '').trim().split(' ');
+      const fName = nameParts[0] || '';
+      const lName = nameParts.slice(1).join(' ') || '';
+      const firstNameInput = document.getElementById('cust-first-name');
+      const lastNameInput = document.getElementById('cust-last-name');
+      if (firstNameInput) firstNameInput.value = fName;
+      if (lastNameInput) lastNameInput.value = lName;
+
+      // 2. Company Name
+      const compInput = document.getElementById('cust-company-name');
+      if (compInput) compInput.value = found.company_name || (found.name !== fName ? found.name : 'smatbot');
+
+      // 3. Display Name Dropdown
+      const dispSelect = document.getElementById('cust-display-name-select');
+      if (dispSelect) {
+        dispSelect.value = String(found.id);
+      }
+
+      // 4. Phone Number & Duplicate Check
+      const phoneInput = document.getElementById('cust-phone');
+      if (phoneInput && found.phone_number) {
+        phoneInput.value = found.phone_number;
+        onPhoneInputChange(found.phone_number);
+      }
+
+      // 5. Customer ID Chip in Header
+      const chipEl = document.querySelector('.badge-cust-chip');
+      if (chipEl) {
+        chipEl.textContent = found.zoho_customer_id || ('ZC-' + (900000 + found.id));
+      }
+
+      // 6. GSTIN & GST Treatment
+      const gstinInput = document.getElementById('cust-gstin-input');
+      const popoverGstin = document.getElementById('popover-gstin-input');
+      const gVal = found.gst_number && found.gst_number !== '-' ? found.gst_number : '';
+      const gstTreatmentSelect = document.getElementById('cust-gst-treatment');
+      if (gVal) {
+        if (gstinInput) gstinInput.value = gVal;
+        if (popoverGstin) popoverGstin.value = gVal;
+        if (gstTreatmentSelect) {
+          gstTreatmentSelect.value = found.gst_treatment || 'Registered Business - Regular';
+          onGstTreatmentChange(gstTreatmentSelect.value);
+        }
+      } else {
+        if (gstinInput) gstinInput.value = '';
+        if (popoverGstin) popoverGstin.value = '';
+        if (gstTreatmentSelect) {
+          gstTreatmentSelect.value = found.gst_treatment || 'Unregistered Business';
+          onGstTreatmentChange(gstTreatmentSelect.value);
+        }
+      }
+
+      // 7. Place of Supply & PAN & Legal Name
+      if (found.legal_name && document.getElementById('cust-legal-name')) {
+        document.getElementById('cust-legal-name').value = found.legal_name;
+      }
+      if (found.pan && document.getElementById('cust-pan')) {
+        document.getElementById('cust-pan').value = found.pan;
+      }
+
+      // 8. Billing Address
+      const bAddr = found.billing_address || {};
+      const attentionEl = document.getElementById('bill-attention');
+      const addr1El = document.getElementById('bill-address1');
+      const addr2El = document.getElementById('bill-address2');
+      const cityEl = document.getElementById('bill-city');
+      const pinEl = document.getElementById('bill-pincode');
+      const phoneBillEl = document.getElementById('bill-phone');
+      const stateEl = document.getElementById('bill-state');
+
+      if (attentionEl) attentionEl.value = bAddr.attention || found.name || '';
+      if (addr1El && bAddr.line1) addr1El.value = bAddr.line1;
+      if (addr2El && bAddr.line2) addr2El.value = bAddr.line2;
+      if (cityEl && bAddr.city) cityEl.value = bAddr.city;
+      if (pinEl && bAddr.pin) pinEl.value = bAddr.pin;
+      if (phoneBillEl && (bAddr.phone || found.phone_number)) phoneBillEl.value = bAddr.phone || found.phone_number;
+
+      if (stateEl && bAddr.state && stateEl.options && typeof stateEl.options[Symbol.iterator] === 'function') {
+        for (let opt of stateEl.options) {
+          if (opt && opt.value && opt.value.toLowerCase().includes(bAddr.state.toLowerCase())) {
+            stateEl.value = opt.value;
+            break;
+          }
+        }
+      } else if (stateEl && bAddr.state) {
+        stateEl.value = bAddr.state;
+      }
+
+      showToast(`✨ Existing customer found! Details auto-filled for ${found.name}.`);
+    } else {
+      // New Customer: reset clientId, clear previous lingering fields, show "New Customer" badge!
+      zohoSelectedClientId = 0;
+      clearZohoCustomerFormFields();
+      if (badge) {
+        badge.innerHTML = `New Customer`;
+        badge.style.display = 'inline-flex';
+        badge.className = 'badge-auto-filled-pill new-pill';
+      }
+    }
+  }
+
+  function isGstRegisteredTreatment(val) {
+    if (!val) return false;
+    const v = val.toLowerCase();
+    if (v.includes('unregistered') || v.includes('consumer') || v.includes('overseas')) return false;
+    return v.includes('registered') || v.includes('special economic zone') || v.includes('deemed export');
+  }
+
+  function onGstTreatmentChange(val) {
+    const isReg = isGstRegisteredTreatment(val);
+    const gstinGroup = document.getElementById('cust-gstin-row-group');
+    if (gstinGroup) {
+      gstinGroup.style.display = isReg ? 'flex' : 'none';
+    }
+  }
+
+  function onZohoCustomerSelectChange(val) {
+    if (!val) {
+      zohoSelectedClientId = 0;
+      const emailInput = document.getElementById('cust-email');
+      if (emailInput) emailInput.value = '';
+      const badge = document.getElementById('cust-email-badge');
+      if (badge) badge.style.display = 'none';
+      clearZohoCustomerFormFields();
+      return;
+    }
+    const clientId = parseInt(val);
+    const client = clientsData.find(c => c.id === clientId);
+    if (client) {
+      zohoSelectedClientId = client.id;
+      const emailInput = document.getElementById('cust-email');
+      if (emailInput && client.email) {
+        emailInput.value = client.email;
+        onEmailInputChange(client.email);
+      }
+    }
+  }
+
+  function renderZohoEditCustomerView(container) {
+    const isExplicit = Boolean(zohoSelectedClientId && clientsData.find(c => c.id === zohoSelectedClientId));
+    const currClient = isExplicit ? clientsData.find(c => c.id === zohoSelectedClientId) : {
+      id: 0,
+      name: '',
+      email: '',
+      phone_number: '',
+      zoho_customer_id: 'New Customer',
+      gst_number: '',
+      gst_treatment: 'Unregistered Business',
+      company_name: '',
+      pan: '',
+      legal_name: '',
+      trade_name: '',
+      billing_address: {
+        attention: '',
+        line1: '',
+        line2: '',
+        city: '',
+        state: 'Telangana',
+        pin: '',
+        phone: '',
+        fax: ''
+      },
+      shipping_address: {
+        attention: '',
+        line1: '',
+        line2: '',
+        city: '',
+        state: 'Telangana',
+        pin: '',
+        phone: '',
+        fax: ''
+      }
+    };
+
+    const nameParts = (currClient.name || '').trim().split(' ');
+    const firstName = currClient.name ? (nameParts[0] || '') : '';
+    const lastName = currClient.name ? (nameParts.slice(1).join(' ') || '') : '';
+    const displayName = currClient.name && currClient.email ? (currClient.name + ' - ' + currClient.email) : '';
+    const companyName = currClient.company_name || '';
+    const gstin = currClient.gst_number && currClient.gst_number !== '-' ? currClient.gst_number : '';
+    const defaultTreatment = currClient.gst_treatment || (gstin ? 'Registered Business - Regular' : 'Unregistered Business');
+    const isGstRegistered = isGstRegisteredTreatment(defaultTreatment);
+    const isDuplicate = checkPhoneDuplicates(currClient.phone_number);
+
+    // Reset dropdown state on page load
+    matchingRecordsDropdownOpen = false;
+
+    const pan = currClient.pan || '';
+    const currency = currClient.currency || 'INR- Indian Rupee';
+    const paymentTerms = currClient.payment_terms || 'Due on Receipt';
+    const website = currClient.website || '';
+    const department = currClient.department || '';
+    const designation = currClient.designation || '';
+    const social = currClient.social_links || {};
+    const xTwitter = social.x || '';
+    const skype = social.skype || '';
+    const facebook = social.facebook || '';
+    const remarks = currClient.remarks || '';
+    const taxPref = currClient.tax_preference || 'Taxable';
+
+    const bAddr = currClient.billing_address || {
+      attention: '',
+      line1: '',
+      line2: '',
+      city: '',
+      state: 'Telangana',
+      pin: '',
+      phone: '',
+      fax: ''
+    };
+
+    const sAddr = currClient.shipping_address || {
+      attention: '',
+      line1: '',
+      line2: '',
+      city: '',
+      state: 'Telangana',
+      pin: '',
+      phone: '',
+      fax: ''
+    };
+
+    container.innerHTML = `
+      <div class="modern-edit-customer-page zoho-reference-edit-customer-page">
+        <!-- Top Breadcrumb & Header Bar -->
+        <div class="modern-edit-header-bar zoho-edit-header-row">
+          <div class="header-left-col">
+            <button type="button" class="btn-modern-back btn-zoho-back" onclick="window.smatApp.navigateTo('subscriptions')" title="Back to Subscriptions">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Back to Subscriptions</span>
+            </button>
+            <div class="header-title-row">
+              <h1 class="modern-page-title zoho-edit-title">Edit Customer</h1>
+            </div>
+          </div>
+          <div class="header-right-col">
+            <button type="button" class="btn-gst-quick-prefill" onclick="window.smatApp.prefillGSTDetails()">
+              <span>⚡</span>
+              <span>Prefill from GSTIN</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- GST Quick Helper Banner with Dropdown Popover (Exact Match to User Reference Screenshot) -->
+        <div class="modern-gst-banner-card zoho-gst-banner-row slim-reference-gst-banner" style="position: relative;">
+          <div class="gst-banner-inline-strip">
+            <span class="gst-banner-icon" title="Automated GSTIN Portal Prefill">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#2563EB" fill-opacity="0.2"></path>
+                <path d="M19 2L20 5L23 6L20 7L19 10L18 7L15 6L18 5L19 2Z" fill="#2563EB"></path>
+              </svg>
+            </span>
+            <span class="gst-banner-message">
+              Prefill Customer details from the GST portal using the Customer's GSTIN.
+            </span>
+            <a href="javascript:void(0)" class="btn-gst-prefill-link gst-prefill-link" onclick="window.smatApp.toggleGSTPrefillPopover()">
+              Prefill ›
+            </a>
+          </div>
+
+          <!-- Popover Card (Screenshot Match) -->
+          <div id="gst-prefill-popover" class="gst-prefill-popover-card" style="display: ${gstPrefillPopoverOpen ? 'block' : 'none'};">
+            <div class="gst-popover-header">
+              <span class="gst-popover-title">Prefill Customer Details From the GST Portal</span>
+              <button type="button" class="btn-close-gst-popover" onclick="window.smatApp.toggleGSTPrefillPopover(false)" title="Close">✕</button>
+            </div>
+            <div class="gst-popover-body">
+              <span class="gst-popover-label">GSTIN/UIN*</span>
+              <input type="text" id="popover-gstin-input" class="gst-popover-input" placeholder="Enter GSTIN/UIN" value="${escapeHtml(gstin)}" onkeydown="if(event.key==='Enter'){event.preventDefault(); window.smatApp.executeGSTPrefillFromPopover();}" />
+              <button type="button" id="btn-popover-fetch" class="btn-popover-fetch" onclick="window.smatApp.executeGSTPrefillFromPopover()">Fetch</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Form with Modular Cards -->
+        <form id="zoho-edit-customer-form" class="modern-customer-form zoho-clean-edit-form" onsubmit="window.smatApp.handleZohoEditCustomerSubmit(event)">
+          
+          <!-- Single Unified Zoho Billing Form Canvas (Clean, Compact, Authentic Enterprise Layout) -->
+          <div class="zoho-unified-form-canvas">
+            
+            <!-- 1. Customer Type Row -->
+            <div class="zoho-form-row">
+              <label class="zoho-row-label">
+                <span>Customer Type</span>
+              </label>
+              <div class="zoho-row-control">
+                <div class="zoho-radio-group-inline">
+                  <label class="zoho-radio-inline active" id="seg-cust-business">
+                    <input type="radio" name="cust_type" value="Business" checked onchange="document.getElementById('seg-cust-business').classList.add('active'); document.getElementById('seg-cust-indiv').classList.remove('active');" />
+                    <span>Business</span>
+                  </label>
+                  <label class="zoho-radio-inline" id="seg-cust-indiv">
+                    <input type="radio" name="cust_type" value="Individual" onchange="document.getElementById('seg-cust-indiv').classList.add('active'); document.getElementById('seg-cust-business').classList.remove('active');" />
+                    <span>Individual</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Email Address (FIRST FIELD for auto-fill flow; preserved for test compliance) -->
+            <div class="zoho-form-row email-lookup-field-group">
+              <label class="zoho-row-label required" for="cust-email">
+                <span>Email Address*</span>
+                <span class="info-glyph-chip zoho-info-glyph" title="Official billing email. Existing email will automatically populate customer details!">ⓘ</span>
+              </label>
+              <div class="zoho-row-control">
+                <div class="input-wrapper-prefix zoho-email-field-box">
+                  <span class="input-prefix-icon email-prefix-icon">✉</span>
+                  <input 
+                    type="email" 
+                    id="cust-email" 
+                    list="existing-clients-email-list" 
+                    class="modern-input-field has-prefix email-input zoho-input-text" 
+                    value="${escapeHtml(currClient.email || '')}" 
+                    placeholder="Enter or select customer email..." 
+                    oninput="window.smatApp.onEmailInputChange(this.value)" 
+                    onchange="window.smatApp.onEmailInputChange(this.value)"
+                    autocomplete="off" 
+                  />
+                  <datalist id="existing-clients-email-list">
+                    ${clientsData.map(c => `<option value="${escapeHtml(c.email)}">${escapeHtml(c.name)} (${escapeHtml(c.company_name || 'Client')})</option>`).join('')}
+                  </datalist>
+                </div>
+                <div style="margin-top: 4px;">
+                  <span id="cust-email-badge" class="badge-auto-filled-pill matched" style="display: ${currClient.email ? 'inline-flex' : 'none'};">
+                    ✨ Auto-filled: ${escapeHtml(currClient.name || '')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Primary Contact -->
+            <div class="zoho-form-row">
+              <label class="zoho-row-label">
+                <span>Primary Contact</span>
+                <span class="info-glyph-chip zoho-info-glyph" title="Primary authorized contact person for billing">ⓘ</span>
+              </label>
+              <div class="zoho-row-control">
+                <div class="zoho-primary-contact-row">
+                  <select class="modern-input-field modern-select zoho-input-select" id="cust-salutation" style="width: 85px; flex-shrink: 0;">
+                    <option value="Salutation">Salutation</option>
+                    <option value="Mr." selected>Mr.</option>
+                    <option value="Mrs.">Mrs.</option>
+                    <option value="Ms.">Ms.</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Dr.">Dr.</option>
+                  </select>
+                  <input type="text" id="cust-first-name" class="modern-input-field zoho-input-text" placeholder="First Name" value="${escapeHtml(firstName)}" />
+                  <input type="text" id="cust-last-name" class="modern-input-field zoho-input-text" placeholder="Last Name" value="${escapeHtml(lastName)}" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Company Name -->
+            <div class="zoho-form-row">
+              <label class="zoho-row-label" for="cust-company-name">
+                <span>Company Name</span>
+              </label>
+              <div class="zoho-row-control">
+                <div class="input-wrapper-prefix">
+                  <span class="input-prefix-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M9 8h1"></path><path d="M9 12h1"></path><path d="M9 16h1"></path><path d="M14 8h1"></path><path d="M14 12h1"></path><path d="M14 16h1"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path></svg>
+                  </span>
+                  <input type="text" id="cust-company-name" class="modern-input-field has-prefix zoho-input-text" placeholder="Company Name" value="${escapeHtml(companyName)}" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Display Name* -->
+            <div class="zoho-form-row">
+              <label class="zoho-row-label required" for="cust-display-name-select">
+                <span>Display Name*</span>
+                <span class="info-glyph-chip zoho-info-glyph" title="Display name appears on all invoices and statements">ⓘ</span>
+              </label>
+              <div class="zoho-row-control">
+                <select id="cust-display-name-select" class="modern-input-field modern-select zoho-input-select" onchange="window.smatApp.onZohoCustomerSelectChange(this.value)">
+                  <option value="" ${!currClient.id ? 'selected' : ''}>-- Select existing customer (or enter email above) --</option>
+                  ${clientsData.map(c => `
+                    <option value="${c.id}" ${c.id === currClient.id ? 'selected' : ''}>
+                      ${escapeHtml(c.name)} - ${escapeHtml(c.email)}
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- 6. Phone -->
+            <div class="zoho-form-row phone-field-container-row phone-anchor-cell">
+              <label class="zoho-row-label">
+                <span>Phone</span>
+                <span class="info-glyph-chip zoho-info-glyph" title="Work and mobile contact numbers">ⓘ</span>
+              </label>
+              <div class="zoho-row-control">
+                <div class="zoho-single-phone-input-row">
+                  <select class="modern-input-field modern-select phone-code-select zoho-input-select" id="cust-phone-code" style="width: 80px; flex-shrink: 0;">
+                    <option value="+91" selected>+91</option>
+                    <option value="+1">+1</option>
+                    <option value="+44">+44</option>
+                    <option value="+971">+971</option>
+                  </select>
+                  <div class="zoho-phone-input-inner-wrapper">
+                    <input 
+                      type="text" 
+                      id="cust-phone" 
+                      class="modern-input-field phone-input zoho-input-text ${isDuplicate ? 'has-warning-icon' : ''}" 
+                      placeholder="Work Phone" 
+                      value="${escapeHtml(currClient.phone_number || '')}" 
+                      oninput="window.smatApp.onPhoneInputChange(this.value)" 
+                    />
+                    <!-- Orange Warning Triangle inside input on right -->
+                    <div id="phone-warning-triangle-icon" class="phone-input-warning-triangle" style="display:${isDuplicate ? 'flex' : 'none'};" title="Phone number already exists in records">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Duplicate Warning Alert Line (Shown if Duplicate) -->
+                <div id="phone-matching-warning-container" class="zoho-duplicate-phone-alert" style="display:${isDuplicate ? 'flex' : 'none'};">
+                  <span class="alert-orange-circle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                  <span class="alert-muted-text">Mobile Number already exists</span>
+                  <button type="button" class="btn-toggle-existing-records" onclick="window.smatApp.toggleMatchingRecordsDropdown()">
+                    <span id="matching-records-toggle-label">View</span>
+                    <span id="matching-records-toggle-arrow">▼</span>
+                  </button>
+                </div>
+
+                <!-- Floating Matching Customer Records Card -->
+                <div id="matching-customers-dropdown" class="matching-customers-card">
+                  <div class="matching-card-header">
+                    <div class="matching-card-title-row">
+                      <span>Matching Customer Records</span>
+                      <span class="badge-match-count">4 Matches</span>
+                    </div>
+                  </div>
+                  <div class="matching-records-scroll-list">
+                    <div class="matching-customer-item active" onclick="window.smatApp.selectMatchingCustomer(0)">
+                      <div class="matching-avatar-circle active-avatar">D</div>
+                      <div class="matching-customer-info">
+                        <div class="matching-name-title">deepak - 21552 - deepaknew@gmail.com</div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                          <span>deepaknew@gmail.com</span>
+                        </div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                          <span>+91 9705736759</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="matching-customer-item" onclick="window.smatApp.selectMatchingCustomer(1)">
+                      <div class="matching-avatar-circle">S</div>
+                      <div class="matching-customer-info">
+                        <div class="matching-name-title">smatbot old bots - 18905 - move@smatbot.com</div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                          <span>move@smatbot.com</span>
+                        </div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                          <span>+91 9705736759</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="matching-customer-item" onclick="window.smatApp.selectMatchingCustomer(2)">
+                      <div class="matching-avatar-circle">S</div>
+                      <div class="matching-customer-info">
+                        <div class="matching-name-title">surya deepak pulaparthi - designermoneywow2@gmail.com</div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                          <span>designermoneywow2@gmail.com</span>
+                        </div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                          <span>+91 9705736759</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="matching-customer-item" onclick="window.smatApp.selectMatchingCustomer(3)">
+                      <div class="matching-avatar-circle">S</div>
+                      <div class="matching-customer-info">
+                        <div class="matching-name-title">surya deepak pulaparthi - designermoneywow@gmail.com</div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                          <span>designermoneywow@gmail.com</span>
+                        </div>
+                        <div class="matching-meta-line">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                          <span>+91 9705736759</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7. Customer Language -->
+            <div class="zoho-form-row">
+              <label class="zoho-row-label" for="cust-language">
+                <span>Customer Language</span>
+                <span class="info-glyph-chip zoho-info-glyph" title="Language preference for billing receipts & notification templates">ⓘ</span>
+              </label>
+              <div class="zoho-row-control">
+                <select class="modern-input-field modern-select zoho-input-select" id="cust-language">
+                  <option value="English" selected>English</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="Telugu">Telugu</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="German">German</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- UNDERLINE TABS BAR (Exact match to Zoho Billing screenshots) -->
+            <div class="zoho-reference-tabs-bar">
+              <button type="button" class="zoho-ref-tab-btn zoho-edit-tab-btn ${zohoEditCustomerTab === 'other-details' ? 'active' : ''}" data-tab="other-details" onclick="window.smatApp.setZohoEditTab('other-details')">
+                Other Details
+              </button>
+              <button type="button" class="zoho-ref-tab-btn zoho-edit-tab-btn ${zohoEditCustomerTab === 'address' ? 'active' : ''}" data-tab="address" onclick="window.smatApp.setZohoEditTab('address')">
+                Address
+              </button>
+            </div>
+              <!-- TAB PANE 1: Other Details / Tax Information (Screenshot 1 & Screenshot 4) -->
+              <div id="zoho-tab-pane-other" style="display:${zohoEditCustomerTab === 'other-details' ? 'block' : 'none'};">
+                <!-- 1. GST Treatment* -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label required">
+                    <span>GST Treatment*</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <select class="modern-input-field modern-select zoho-input-select" id="cust-gst-treatment" onchange="window.smatApp.onGstTreatmentChange(this.value)">
+                      <option value="Unregistered Business" ${defaultTreatment === 'Unregistered Business' ? 'selected' : ''}>Unregistered Business</option>
+                      <option value="Registered Business - Regular" ${defaultTreatment === 'Registered Business - Regular' ? 'selected' : ''}>Registered Business - Regular</option>
+                      <option value="Registered Business - Composition" ${defaultTreatment === 'Registered Business - Composition' ? 'selected' : ''}>Registered Business - Composition</option>
+                      <option value="Consumer" ${defaultTreatment === 'Consumer' ? 'selected' : ''}>Consumer</option>
+                      <option value="Overseas" ${defaultTreatment === 'Overseas' ? 'selected' : ''}>Overseas</option>
+                      <option value="Special Economic Zone" ${defaultTreatment.includes('Special Economic Zone') ? 'selected' : ''}>Special Economic Zone (SEZ)</option>
+                      <option value="Deemed Export" ${defaultTreatment === 'Deemed Export' ? 'selected' : ''}>Deemed Export</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- GSTIN / UIN Details (Only Asked If User Is GST Registered; Hidden If Unregistered) -->
+                <div id="cust-gstin-row-group" class="zoho-form-row form-field-group gstin-conditional-group" style="display: ${isGstRegistered ? 'flex' : 'none'};">
+                  <div class="zoho-row-label">
+                    <span>GSTIN / UIN</span>
+                    <span class="info-glyph-chip zoho-info-glyph" title="15-digit Goods & Services Tax Identification Number">ⓘ</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <div class="modern-gstin-action-group zoho-gstin-input-group">
+                      <input type="text" id="cust-gstin-input" class="modern-input-field gstin-input zoho-input-text" value="${escapeHtml(gstin)}" placeholder="e.g. 36AAACS1429B1Z8" />
+                      <button type="button" class="btn-zoho-taxpayer-fetch btn-get-taxpayer" onclick="window.smatApp.fetchTaxpayerDetails()">
+                        Get Taxpayer details
+                      </button>
+                    </div>
+                    <div class="zoho-mandatory-warning-text" style="margin-top:4px;">
+                      <span>▲ GST Identification Number is mandatory for GST registered contact.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Place of Supply* -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label required">
+                    <span>Place of Supply*</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <select class="modern-input-field modern-select zoho-input-select" id="cust-place-of-supply">
+                      <option value="[TS] - Telangana" selected>[TS] - Telangana</option>
+                      <option value="[AP] - Andhra Pradesh">[AP] - Andhra Pradesh</option>
+                      <option value="[MH] - Maharashtra">[MH] - Maharashtra</option>
+                      <option value="[KA] - Karnataka">[KA] - Karnataka</option>
+                      <option value="[DL] - Delhi">[DL] - Delhi</option>
+                      <option value="[TN] - Tamil Nadu">[TN] - Tamil Nadu</option>
+                      <option value="[GJ] - Gujarat">[GJ] - Gujarat</option>
+                      <option value="[WB] - West Bengal">[WB] - West Bengal</option>
+                      <option value="[UP] - Uttar Pradesh">[UP] - Uttar Pradesh</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 3. PAN ⓘ (Screenshot 1) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>PAN</span>
+                    <span class="info-glyph-chip zoho-info-glyph" title="Permanent Account Number">ⓘ</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <input type="text" id="cust-pan" class="modern-input-field zoho-input-text" placeholder="e.g. ABCDE1234F" value="${escapeHtml(pan)}" />
+                  </div>
+                </div>
+
+                <!-- Business Legal Name & Business Trade Name (Directly visible with Tax fields) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>Business Legal Name</span>
+                    <span class="info-glyph-chip zoho-info-glyph" title="Official registered entity legal name from GST certificate">ⓘ</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <input type="text" id="cust-legal-name" class="modern-input-field zoho-input-text" placeholder="e.g. SmatBot Technologies Private Limited" value="${escapeHtml(currClient.legal_name || '')}" />
+                  </div>
+                </div>
+
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>Business Trade Name</span>
+                    <span class="info-glyph-chip zoho-info-glyph" title="Operating trade / brand name from GST records">ⓘ</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <input type="text" id="cust-trade-name" class="modern-input-field zoho-input-text" placeholder="e.g. SmatBot AI" value="${escapeHtml(currClient.trade_name || '')}" />
+                  </div>
+                </div>
+
+                <!-- 4. Tax Preference* (Screenshot 1) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label required">
+                    <span>Tax Preference*</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <div class="modern-radio-row">
+                      <label class="radio-label-item">
+                        <input type="radio" name="tax_preference" value="Taxable" ${taxPref === 'Taxable' ? 'checked' : ''} />
+                        <span>Taxable</span>
+                      </label>
+                      <label class="radio-label-item">
+                        <input type="radio" name="tax_preference" value="Tax Exempt" ${taxPref === 'Tax Exempt' ? 'checked' : ''} />
+                        <span>Tax Exempt</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. Currency (Screenshot 1) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>Currency</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <select class="modern-input-field modern-select zoho-input-select" id="cust-currency">
+                      <option value="INR- Indian Rupee" ${currency.includes('INR') ? 'selected' : ''}>INR- Indian Rupee</option>
+                      <option value="USD - United States Dollar" ${currency.includes('USD') ? 'selected' : ''}>USD - United States Dollar</option>
+                      <option value="EUR - Euro" ${currency.includes('EUR') ? 'selected' : ''}>EUR - Euro</option>
+                      <option value="GBP - British Pound" ${currency.includes('GBP') ? 'selected' : ''}>GBP - British Pound</option>
+                      <option value="AED - UAE Dirham" ${currency.includes('AED') ? 'selected' : ''}>AED - UAE Dirham</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 6. Payment Terms (Screenshot 1) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>Payment Terms</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <select class="modern-input-field modern-select zoho-input-select" id="cust-payment-terms">
+                      <option value="Due on Receipt" ${paymentTerms === 'Due on Receipt' ? 'selected' : ''}>Due on Receipt</option>
+                      <option value="Net 15" ${paymentTerms === 'Net 15' ? 'selected' : ''}>Net 15</option>
+                      <option value="Net 30" ${paymentTerms === 'Net 30' ? 'selected' : ''}>Net 30</option>
+                      <option value="Net 45" ${paymentTerms === 'Net 45' ? 'selected' : ''}>Net 45</option>
+                      <option value="Net 60" ${paymentTerms === 'Net 60' ? 'selected' : ''}>Net 60</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 7. Documents (Screenshot 1) -->
+                <div class="zoho-form-row form-field-group">
+                  <div class="zoho-row-label">
+                    <span>Documents</span>
+                  </div>
+                  <div class="zoho-row-control">
+                    <input type="file" id="cust-documents-input" multiple style="display:none;" onchange="window.smatApp.handleDocumentUpload(this)" />
+                    <button type="button" class="btn-upload-documents" onclick="document.getElementById('cust-documents-input').click()">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      <span>Upload File</span>
+                      <span style="font-size:10px; margin-left:4px;">▾</span>
+                    </button>
+                    <div class="upload-helper-subtext">You can upload a maximum of 10 files, 10MB each</div>
+                    <div id="uploaded-docs-list" class="uploaded-docs-list-box"></div>
+                  </div>
+                </div>
+
+                <!-- ADD MORE DETAILS TOGGLE LINK (Screenshot 1 & 4) -->
+                <div class="more-details-toggle-row" style="margin-top: 1.25rem;">
+                  <a href="javascript:void(0)" class="link-add-more-details" id="toggle-more-details-btn" onclick="window.smatApp.toggleMoreCustomerDetails()">
+                    ${moreCustomerDetailsOpen ? 'Less details ▲' : 'Add more details ▾'}
+                  </a>
+                </div>
+
+                <!-- EXPANDABLE EXTRA FIELDS CONTAINER (Screenshot 4) -->
+                <div id="cust-more-details-container" class="more-details-expandable-box" style="display:${moreCustomerDetailsOpen ? 'block' : 'none'}; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #F1F5F9;">
+                  <!-- Website URL (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>Website URL</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <div class="input-wrapper-prefix">
+                        <span class="input-prefix-icon">🌐</span>
+                        <input type="text" id="cust-website" class="modern-input-field has-prefix zoho-input-text" placeholder="ex: www.zylker.com" value="${escapeHtml(website)}" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Department (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>Department</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <input type="text" id="cust-department" class="modern-input-field zoho-input-text" placeholder="Department" value="${escapeHtml(department)}" />
+                    </div>
+                  </div>
+
+                  <!-- Designation (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>Designation</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <input type="text" id="cust-designation" class="modern-input-field zoho-input-text" placeholder="Designation" value="${escapeHtml(designation)}" />
+                    </div>
+                  </div>
+
+                  <!-- X (Twitter) (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>X</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <div class="input-wrapper-prefix">
+                        <span class="input-prefix-icon" style="font-weight:700;">𝕏</span>
+                        <input type="text" id="cust-x-twitter" class="modern-input-field has-prefix zoho-input-text" placeholder="Username" value="${escapeHtml(xTwitter)}" />
+                      </div>
+                      <div class="field-sub-helper-url">https://x.com/</div>
+                    </div>
+                  </div>
+
+                  <!-- Skype Name/Number (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>Skype Name/Number</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <div class="input-wrapper-prefix">
+                        <span class="input-prefix-icon" style="color:#00AFF0; font-weight:700;">Ⓢ</span>
+                        <input type="text" id="cust-skype" class="modern-input-field has-prefix zoho-input-text" placeholder="Skype ID or Number" value="${escapeHtml(skype)}" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Facebook (Screenshot 4) -->
+                  <div class="zoho-form-row form-field-group">
+                    <div class="zoho-row-label">
+                      <span>Facebook</span>
+                    </div>
+                    <div class="zoho-row-control">
+                      <div class="input-wrapper-prefix">
+                        <span class="input-prefix-icon" style="color:#1877F2; font-weight:700;">ⓕ</span>
+                        <input type="text" id="cust-facebook" class="modern-input-field has-prefix zoho-input-text" placeholder="Profile or Page name" value="${escapeHtml(facebook)}" />
+                      </div>
+                      <div class="field-sub-helper-url">http://www.facebook.com/</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB PANE 2: Address (Screenshot 2 & Screenshot 3) -->
+              <div id="zoho-tab-pane-address" style="display:${zohoEditCustomerTab === 'address' ? 'block' : 'none'};">
+                <div class="modern-address-dual-grid zoho-address-dual-columns">
+                  <!-- Billing Address Box -->
+                  <div class="modern-address-box zoho-address-column">
+                    <div class="address-box-header zoho-addr-col-header">
+                      <div class="addr-box-title addr-title">
+                        <span>Billing Address</span>
+                      </div>
+                    </div>
+                    <div class="address-box-fields zoho-addr-fields-stack">
+                      <div class="addr-item addr-field-item">
+                        <label>Attention</label>
+                        <input type="text" id="bill-attention" class="modern-input-field zoho-input-text" value="${escapeHtml(bAddr.attention || currClient.name || '')}" placeholder="Attention" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Country/Region</label>
+                        <div class="input-select-with-clear">
+                          <select class="modern-input-field modern-select zoho-input-select" id="bill-country">
+                            <option value="India" selected>India</option>
+                            <option value="United States">United States</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Address</label>
+                        <textarea id="bill-address1" class="modern-input-field modern-textarea zoho-input-text" rows="2" placeholder="Address line 1">${escapeHtml(bAddr.line1 || '')}</textarea>
+                        <textarea id="bill-address2" class="modern-input-field modern-textarea zoho-input-text" rows="2" style="margin-top:6px;" placeholder="Address line 2">${escapeHtml(bAddr.line2 || '')}</textarea>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>City</label>
+                        <input type="text" id="bill-city" class="modern-input-field zoho-input-text" value="${escapeHtml(bAddr.city || '')}" placeholder="City" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>State</label>
+                        <select class="modern-input-field modern-select zoho-input-select" id="bill-state">
+                          <option value="Hyderabad" selected>Hyderabad</option>
+                          <option value="Telangana">Telangana</option>
+                          <option value="Andhra Pradesh">Andhra Pradesh</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Delhi">Delhi</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                        </select>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Pin Code</label>
+                        <input type="text" id="bill-pincode" class="modern-input-field zoho-input-text" value="${escapeHtml(bAddr.pin || '')}" placeholder="Pin Code" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Phone</label>
+                        <div class="modern-phone-input-row" style="max-width:100%;">
+                          <select class="modern-input-field modern-select phone-code-select" style="width: 85px;">
+                            <option value="+91" selected>+91</option>
+                            <option value="+1">+1</option>
+                          </select>
+                          <input type="text" id="bill-phone" class="modern-input-field zoho-input-text" value="${escapeHtml(bAddr.phone || currClient.phone_number || '')}" placeholder="Phone" />
+                        </div>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Fax Number</label>
+                        <input type="text" id="bill-fax" class="modern-input-field zoho-input-text" value="${escapeHtml(bAddr.fax || '')}" placeholder="Fax Number" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Shipping Address Box (Screenshot 2: Shipping Address ( ⬇ Copy billing address )) -->
+                  <div class="modern-address-box zoho-address-column">
+                    <div class="address-box-header zoho-addr-col-header">
+                      <div class="addr-box-title addr-title">
+                        <span>Shipping Address</span>
+                        <span style="font-weight:400; font-size:12.5px; color:#64748B;">(</span>
+                        <a href="javascript:void(0)" class="link-copy-billing-inline link-copy-address" onclick="window.smatApp.copyBillingToShippingInEdit()">
+                          ⬇ Copy billing address
+                        </a>
+                        <span style="font-weight:400; font-size:12.5px; color:#64748B;">)</span>
+                      </div>
+                    </div>
+                    <div class="address-box-fields zoho-addr-fields-stack">
+                      <div class="addr-item addr-field-item">
+                        <label>Attention</label>
+                        <input type="text" id="ship-attention" class="modern-input-field zoho-input-text" value="${escapeHtml(sAddr.attention || '')}" placeholder="Attention" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Country/Region</label>
+                        <div class="input-select-with-clear">
+                          <select class="modern-input-field modern-select zoho-input-select" id="ship-country">
+                            <option value="India" selected>India</option>
+                            <option value="United States">United States</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Address</label>
+                        <textarea id="ship-address1" class="modern-input-field modern-textarea zoho-input-text" rows="2" placeholder="Address line 1">${escapeHtml(sAddr.line1 || '')}</textarea>
+                        <textarea id="ship-address2" class="modern-input-field modern-textarea zoho-input-text" rows="2" style="margin-top:6px;" placeholder="Address line 2">${escapeHtml(sAddr.line2 || '')}</textarea>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>City</label>
+                        <input type="text" id="ship-city" class="modern-input-field zoho-input-text" value="${escapeHtml(sAddr.city || '')}" placeholder="City" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>State</label>
+                        <select class="modern-input-field modern-select zoho-input-select" id="ship-state">
+                          <option value="Hyderabad" selected>Hyderabad</option>
+                          <option value="Telangana">Telangana</option>
+                          <option value="Andhra Pradesh">Andhra Pradesh</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Delhi">Delhi</option>
+                        </select>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Pin Code</label>
+                        <input type="text" id="ship-pincode" class="modern-input-field zoho-input-text" value="${escapeHtml(sAddr.pin || '')}" placeholder="Pin Code" />
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Phone</label>
+                        <div class="modern-phone-input-row" style="max-width:100%;">
+                          <select class="modern-input-field modern-select phone-code-select" style="width: 85px;">
+                            <option value="+91" selected>+91</option>
+                            <option value="+1">+1</option>
+                          </select>
+                          <input type="text" id="ship-phone" class="modern-input-field zoho-input-text" value="${escapeHtml(sAddr.phone || '')}" placeholder="Phone" />
+                        </div>
+                      </div>
+                      <div class="addr-item addr-field-item">
+                        <label>Fax Number</label>
+                        <input type="text" id="ship-fax" class="modern-input-field zoho-input-text" value="${escapeHtml(sAddr.fax || '')}" placeholder="Fax Number" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Blue Future Transaction Warning Callout (Screenshot 3) -->
+                <div class="address-future-callout">
+                  <span class="info-circle-icon">ℹ</span>
+                  <div>
+                    <strong>This address will apply only to future transactions.</strong><br>
+                    <span>To update for existing transactions, select them in the respective module and update the address using <strong>Bulk Update</strong>. <a href="https://www.zoho.com/in/billing/kb/customers/bulk-update-address.html" target="_blank" rel="noopener noreferrer" class="callout-link">Learn More</a></span>
+                  </div>
+                </div>
+
+                <!-- Amber Address Notes (Screenshot 3) -->
+                <div class="address-notes-callout">
+                  <strong>Note:</strong>
+                  <ul style="margin: 4px 0 0 18px; padding: 0;">
+                    <li>Add and manage additional addresses from this Customers details section.</li>
+                    <li>You can customise how customers' addresses are displayed in transaction PDFs. To do this, go to Settings &gt; Preferences &gt; Customers, and navigate to the Address Format sections.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          <!-- Bottom Sticky Actions Bar (Screenshot 2, 3, 4: [Save] [Save and Subscribe] [Cancel]) -->
+          <div class="modern-edit-footer-bar zoho-edit-footer-actions">
+            <div class="footer-buttons-group">
+              <button type="submit" class="btn-modern-save btn-zoho-save-primary" id="btn-save-customer">
+                Save
+              </button>
+              <button type="button" class="btn-save-subscribe-customer" id="btn-save-subscribe-customer" onclick="window.smatApp.handleZohoSaveAndSubscribe(event)">
+                Save and Subscribe
+              </button>
+              <button type="button" class="btn-modern-cancel btn-zoho-cancel-secondary" id="btn-cancel-customer" onclick="window.smatApp.navigateTo('subscriptions')">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+    function renderSubscriptionCreationView(container) {
+    renderZohoEditCustomerView(container);
+  }
+
 
   // =========================================================================
   // 7B. MODULE 4B: ACTIVE CLIENT SUBSCRIPTIONS DEDICATED VIEW
@@ -3497,7 +5279,7 @@
 
     if (subSearch && subSearch.trim()) {
       const q = subSearch.trim().toLowerCase();
-      list = list.filter(c => 
+      list = list.filter(c =>
         (c.name && c.name.toLowerCase().includes(q)) ||
         (c.email && c.email.toLowerCase().includes(q)) ||
         (c.plan_name && c.plan_name.toLowerCase().includes(q)) ||
@@ -3572,11 +5354,8 @@
           <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">View live client license tiers, renewal cycles, and upgrade plans.</p>
         </div>
         <div style="display:flex; gap:0.5rem;">
-          <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.navigateTo('plans')">
-            ⚙️ View Pricing Tiers
-          </button>
-          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal()">
-            ⚡ + Activate Subscription
+          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.navigateTo('subscription')">
+            ⚡ + Add Subscription
           </button>
         </div>
       </div>
@@ -3637,9 +5416,9 @@
                   No subscriptions match your search. <button onclick="window.smatApp.resetSubFilters()" style="color:#1877F2; background:none; border:none; cursor:pointer; font-weight:700;">Reset Filter</button>
                 </td>
               </tr>
-            ` : paginatedSubs.map(c => `
+            ` : paginatedSubs.map((c, idx) => `
               <tr>
-                <td style="font-weight:600; color:#64748B;">${c.s_no}</td>
+                <td style="font-weight:600; color:#64748B;">${startIdx + idx + 1}</td>
                 <td>
                   <span style="font-weight:700; color:#1E293B; cursor:pointer;" onclick="window.smatApp.openClientDetailsPage(${c.id})">${c.name}</span>
                   <div style="font-size:0.75rem; color:#64748B;">${c.email}</div>
@@ -3750,8 +5529,8 @@
         <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:620px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
             <div>
-              <div style="font-size:1.18rem; font-weight:800; color:#1E293B;">⚡ Plan Activation & Subscription Wizard</div>
-              <div style="font-size:0.8rem; color:#64748B;">Manage flexible durations, add-on expiry sync, and plan tier transitions</div>
+              <div style="font-size:1.18rem; font-weight:800; color:#1E293B;">⚡ Client Subscription Management</div>
+              <div style="font-size:0.8rem; color:#64748B;">Manage flexible durations, add-on expiry sync, and tier transitions</div>
             </div>
             <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
           </div>
@@ -3792,7 +5571,7 @@
             <!-- Dynamic Calculation Display -->
             <div id="plan-price-calc-box" style="background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#1E40AF;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span><strong>Flexible Pricing Calculation:</strong></span>
+                <span><strong>Subscription Duration & Cost:</strong></span>
                 <span id="calc-formula-display" style="font-weight:700;">₹ 11,999 × 10 = ₹ 1,19,990.00 (Yearly)</span>
               </div>
               <div style="font-size:0.75rem; color:#3B82F6; margin-top:3px;">
@@ -3859,7 +5638,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.75rem; border-top:1px solid #E2E8F0;">
               <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
               <button type="submit" id="plan-submit-btn" class="btn-table-action btn-action-primary">
-                ⚡ Confirm & Activate Plan
+                ⚡ Update Subscription
               </button>
             </div>
           </form>
@@ -3908,7 +5687,7 @@
           submitBtn.style.background = '#1877F2';
           submitBtn.style.borderColor = '#1877F2';
           submitBtn.style.color = '#FFFFFF';
-          submitBtn.innerHTML = '⚡ Confirm & Activate Plan';
+          submitBtn.innerHTML = '⚡ Update Subscription';
         }
       }
     }
@@ -3946,7 +5725,7 @@
     });
   }
 
-  // Helper: Apply Plan Activation
+  // Helper: Apply Subscription Update
   function applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons) {
     const meta = getPlanMeta(selectedPlan);
     const isYearly = durationMonths === 12;
@@ -3980,9 +5759,10 @@
       };
     });
 
-    showToast(`Plan successfully activated for ${targetClient.name} (${durationMonths} Mos)!`);
+    showToast(`Subscription successfully updated for ${targetClient.name} (${durationMonths} Mos)!`);
     closeModal();
-    if (currentRoute === 'plans') renderPlansView($('#route-viewport'));
+    if (currentRoute === 'subscriptions') renderClientSubscriptionsView($('#route-viewport'));
+    else if (currentRoute === 'renewals') renderRenewalsView($('#route-viewport'));
     else if (currentRoute === 'client-details') renderClientDetailsView($('#route-viewport'));
     else if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
   }
@@ -4452,7 +6232,7 @@
 
   function renderClientPortalSimulator(client) {
     const app = $('#app-mount');
-    
+
     // Determine the client bot name matching Screenshot 2 (AlignBooks for Shrishti Jajodia or company name)
     let botList = [];
     if (client.name.includes('Shrishti') || client.email.includes('alignbooks')) {
@@ -4726,9 +6506,9 @@
               </span>
             </div>
             <p style="font-size:0.83rem; color:#64748B; line-height:1.5; margin-bottom:1rem;">
-              ${client.autopay_enabled !== false 
-                ? 'Your subscription is set to renew automatically using your saved card. Disabling will not cancel your current term.' 
-                : 'Auto-renewal is paused. Your current subscription stays active until ' + client.end_date + '.'}
+              ${client.autopay_enabled !== false
+        ? 'Your subscription is set to renew automatically using your saved card. Disabling will not cancel your current term.'
+        : 'Auto-renewal is paused. Your current subscription stays active until ' + client.end_date + '.'}
             </p>
             <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openAutoPayModal(${client.id})">
               ⚙️ Manage Auto-Pay
@@ -4828,7 +6608,7 @@
 
     if (renewalSearch && renewalSearch.trim()) {
       const q = renewalSearch.trim().toLowerCase();
-      list = list.filter(c => 
+      list = list.filter(c =>
         (c.email && c.email.toLowerCase().includes(q)) ||
         (c.plan_name && c.plan_name.toLowerCase().includes(q)) ||
         (c.subscription_id && c.subscription_id.toLowerCase().includes(q))
@@ -4947,9 +6727,9 @@
                   No renewals match your filter. <button onclick="window.smatApp.resetRenewalFilters()" style="color:#1877F2; background:none; border:none; cursor:pointer; font-weight:700;">Reset Filter</button>
                 </td>
               </tr>
-            ` : paginatedRenewals.map(c => `
+            ` : paginatedRenewals.map((c, idx) => `
               <tr>
-                <td style="font-weight:600; color:#64748B;">${c.s_no}</td>
+                <td style="font-weight:600; color:#64748B;">${startIdx + idx + 1}</td>
                 <td>
                   <span style="font-weight:700; color:#1E293B; cursor:pointer;" onclick="window.smatApp.openClientDetailsPage(${c.id})">${c.email}</span>
                   <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${c.email}', 'email')" title="Copy Email">
@@ -5095,7 +6875,6 @@
         </div>
         <div style="display:flex; gap:0.5rem;">
           <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.navigateTo('client-details')">← View All Clients</button>
-          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openAddClientModal()">+ New Deployment / Partner</button>
         </div>
       </div>
 
@@ -5300,63 +7079,599 @@
   // =========================================================================
   // 9B. MODULE 6: DISCOUNT COUPONS & VOUCHERS SYSTEM
   // =========================================================================
+  // =========================================================================
+  // 9B. MODULE 6: DISCOUNT COUPONS & VOUCHERS SYSTEM (Zoho Billing Ref)
+  // =========================================================================
+  let couponFilter = 'all'; // 'all', 'active', 'expired', 'maxed'
+  let couponPage = 1;
+  let couponPageSize = 25;
+  let selectedCouponIds = new Set();
+
   let couponsData = [
     {
       id: 1,
-      code: 'SMAT50',
-      discount: '50% OFF',
-      discount_type: 'percentage',
-      discount_value: 50,
-      applicable_plans: 'Professional, Enterprise AI',
-      usage_limit: '100 Redemptions',
-      used_count: 34,
-      expiry_date: '31-12-2026',
-      status: 'Active'
+      name: '30PERCENTADD',
+      code: '30PERCENTADD',
+      status: 'Expired',
+      discount_value: '30%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
     },
     {
       id: 2,
-      code: 'WELCOME2026',
-      discount: '20% OFF',
-      discount_type: 'percentage',
-      discount_value: 20,
-      applicable_plans: 'All Annual Subscriptions',
-      usage_limit: 'Unlimited',
-      used_count: 142,
-      expiry_date: '31-12-2026',
-      status: 'Active'
+      name: '50PERCENTADD',
+      code: '50PERCENTADD',
+      status: 'Expired',
+      discount_value: '50%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
     },
     {
       id: 3,
-      code: 'STARTUPFLAT',
-      discount: '₹ 1,000 OFF',
-      discount_type: 'flat',
-      discount_value: 1000,
-      applicable_plans: 'Starter, Pro NY',
-      usage_limit: '50 Redemptions',
-      used_count: 18,
-      expiry_date: '15-11-2026',
-      status: 'Active'
+      name: '90PERCENTADD',
+      code: '90PERCENTADD',
+      status: 'Expired',
+      discount_value: 'Rs.90.00',
+      discount_by: 'Flat',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
     },
     {
       id: 4,
-      code: 'EARLYBIRD',
-      discount: '30% OFF',
-      discount_type: 'percentage',
-      discount_value: 30,
-      applicable_plans: 'All Plans',
-      usage_limit: '25 Redemptions',
-      used_count: 25,
-      expiry_date: '01-09-2026',
-      status: 'Expired'
+      name: '10PERCENTADD',
+      code: '10PERCENTADD',
+      status: 'Expired',
+      discount_value: '10%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 5,
+      name: '15PERCENTADD',
+      code: '15PERCENTADD',
+      status: 'Expired',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 6,
+      name: '20PERCENTADD',
+      code: '20PERCENTADD',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 7,
+      name: '25PERCENTADD',
+      code: '25PERCENTADD',
+      status: 'Expired',
+      discount_value: '25%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 8,
+      name: '99PERCENTD',
+      code: '99PERCENTD',
+      status: 'Expired',
+      discount_value: 'Rs.99.00',
+      discount_by: 'Flat',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 9,
+      name: '95PERCENTD',
+      code: '95PERCENTD',
+      status: 'Expired',
+      discount_value: '95%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 10,
+      name: '90PERCENTD',
+      code: '90PERCENTD',
+      status: 'Expired',
+      discount_value: '90%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 11,
+      name: '50PERCENTD',
+      code: '50PERCENTD',
+      status: 'Expired',
+      discount_value: '50%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 12,
+      name: '30PERCENTD',
+      code: '30PERCENTD',
+      status: 'Expired',
+      discount_value: '30%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 13,
+      name: '25PERCENTD',
+      code: '25PERCENTD',
+      status: 'Expired',
+      discount_value: '25%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 14,
+      name: '20PERCENTD',
+      code: '20PERCENTD',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 15,
+      name: '15PERCENTD',
+      code: '15PERCENTD',
+      status: 'Expired',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 16,
+      name: '10PERCENT',
+      code: '10PERCENT',
+      status: 'Expired',
+      discount_value: '10%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
+    },
+    {
+      id: 17,
+      name: 'SWAPNIL95',
+      code: 'SWAPNIL95',
+      status: 'Active',
+      discount_value: '95%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 50,
+      valid_upto: '-'
+    },
+    {
+      id: 18,
+      name: 'SWAPNIL98',
+      code: 'SWAPNIL98',
+      status: 'Active',
+      discount_value: '98%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 50,
+      valid_upto: '-'
+    },
+    {
+      id: 19,
+      name: 'Ismail_test',
+      code: 'test_ismail',
+      status: 'Active',
+      discount_value: '90%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: '-',
+      valid_upto: '-'
+    },
+    {
+      id: 20,
+      name: 'ismail2',
+      code: 'test_ismail2',
+      status: 'Active',
+      discount_value: '90%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 2,
+      valid_upto: '-'
+    },
+    {
+      id: 21,
+      name: 'ismail_99',
+      code: '99_ismail',
+      status: 'Active',
+      discount_value: '99%',
+      discount_by: 'Percentage',
+      redemption_type: 'Forever',
+      max_redemption: '-',
+      valid_upto: '-'
+    },
+    {
+      id: 22,
+      name: 'TESTDEEPAK99',
+      code: 'TESTDEEPAK99',
+      status: 'Maxed Out',
+      discount_value: '99.6%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '13/07/2023'
+    },
+    {
+      id: 23,
+      name: 'TESTTWICE',
+      code: 'TESTTWICE',
+      status: 'Maxed Out',
+      discount_value: '98%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '04/08/2023'
+    },
+    {
+      id: 24,
+      name: 'SMATDEEPAK15',
+      code: 'SMATDEEPAK15',
+      status: 'Maxed Out',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '30/09/2023'
+    },
+    {
+      id: 25,
+      name: 'SMATDEEPAK10',
+      code: 'SMATDEEPAK10',
+      status: 'Maxed Out',
+      discount_value: '10%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '31/10/2023'
+    },
+    {
+      id: 26,
+      name: 'Reseller Discount',
+      code: 'ResellerDiscount',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'Forever',
+      max_redemption: '-',
+      valid_upto: '01/01/2024'
+    },
+    {
+      id: 27,
+      name: 'SMAT20OFF',
+      code: 'SMAT20OFF',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '13/02/2023'
+    },
+    {
+      id: 28,
+      name: 'SMATDINESH20',
+      code: 'SMATDINESH20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'Forever',
+      max_redemption: 50,
+      valid_upto: '01/01/2024'
+    },
+    {
+      id: 29,
+      name: 'THUBSMAT15',
+      code: 'THUBSMAT15',
+      status: 'Expired',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 50,
+      valid_upto: '31/12/2023'
+    },
+    {
+      id: 30,
+      name: 'SMAT25NEW',
+      code: 'SMAT25NEW',
+      status: 'Expired',
+      discount_value: '25%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 20,
+      valid_upto: '30/04/2023'
+    },
+    {
+      id: 31,
+      name: 'SMATNEW10',
+      code: 'SMATNEW10',
+      status: 'Expired',
+      discount_value: '10%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 15,
+      valid_upto: '30/04/2023'
+    },
+    {
+      id: 32,
+      name: 'SMATBOT20',
+      code: 'SMATBOT20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 200,
+      valid_upto: '30/04/2023'
+    },
+    {
+      id: 33,
+      name: 'SMATBOT15',
+      code: 'SMATBOT15',
+      status: 'Expired',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 200,
+      valid_upto: '30/04/2023'
+    },
+    {
+      id: 34,
+      name: 'SHAILESH20',
+      code: 'SHAILESH20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 50,
+      valid_upto: '26/08/2023'
+    },
+    {
+      id: 35,
+      name: 'SMAT50OFF',
+      code: 'SMAT50OFF',
+      status: 'Expired',
+      discount_value: '50%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 20,
+      valid_upto: '31/12/2023'
+    },
+    {
+      id: 36,
+      name: 'SMAT100OFF',
+      code: 'SMAT100OFF',
+      status: 'Expired',
+      discount_value: '100%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '21/06/2023'
+    },
+    {
+      id: 37,
+      name: 'SMATADDON20',
+      code: 'SMATADDON20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 50,
+      valid_upto: '01/01/2024'
+    },
+    {
+      id: 38,
+      name: 'DEEPAK95',
+      code: 'DEEPAK95',
+      status: 'Expired',
+      discount_value: '95%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 10,
+      valid_upto: '21/07/2023'
+    },
+    {
+      id: 39,
+      name: 'FESOTEST1230',
+      code: 'FESOTEST1230',
+      status: 'Expired',
+      discount_value: '95%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: '-',
+      valid_upto: '31/07/2023'
+    },
+    {
+      id: 40,
+      name: 'TESTONCE',
+      code: 'TESTONCE',
+      status: 'Expired',
+      discount_value: '90%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 1,
+      valid_upto: '04/08/2023'
+    },
+    {
+      id: 41,
+      name: 'SMATDEEP25',
+      code: 'SMATDEEP25',
+      status: 'Expired',
+      discount_value: '25%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: '-',
+      valid_upto: '31/12/2023'
+    },
+    {
+      id: 42,
+      name: 'SMATDEEP15',
+      code: 'SMATDEEP15',
+      status: 'Active',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 50,
+      valid_upto: '30/12/2023'
+    },
+    {
+      id: 43,
+      name: 'SmatUday',
+      code: 'SmatUday',
+      status: 'Expired',
+      discount_value: '5.882%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 1,
+      valid_upto: '30/09/2024'
+    },
+    {
+      id: 44,
+      name: 'SMATDEEPAKNEW10',
+      code: 'SMATDEEPAKNEW10',
+      status: 'Expired',
+      discount_value: '10%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 20,
+      valid_upto: '30/12/2023'
+    },
+    {
+      id: 45,
+      name: 'SMATDEEPAKNEW15',
+      code: 'SMATDEEPAKNEW15',
+      status: 'Expired',
+      discount_value: '15%',
+      discount_by: 'Percentage',
+      redemption_type: 'Duration',
+      max_redemption: 20,
+      valid_upto: '31/12/2023'
+    },
+    {
+      id: 46,
+      name: 'TESTDEEPAK75',
+      code: 'TESTDEEPAK75',
+      status: 'Expired',
+      discount_value: '75%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 20,
+      valid_upto: '30/11/2023'
+    },
+    {
+      id: 47,
+      name: 'DIWALI20',
+      code: 'DIWALI20',
+      status: 'Expired',
+      discount_value: '75%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '30/11/2023'
+    },
+    {
+      id: 48,
+      name: 'DIWALI5',
+      code: 'DIWALI5',
+      status: 'Expired',
+      discount_value: '75%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '30/11/2023'
+    },
+    {
+      id: 49,
+      name: 'XMASNY20',
+      code: 'XMASNY20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '01/01/2024'
+    },
+    {
+      id: 50,
+      name: 'XMAS20',
+      code: 'XMAS20',
+      status: 'Expired',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One Time',
+      max_redemption: 100,
+      valid_upto: '01/01/2024'
     }
   ];
 
   function renderCouponsView(container) {
     const activeCouponsCount = couponsData.filter(c => c.status === 'Active').length;
-    const totalRedemptions = couponsData.reduce((acc, c) => acc + (c.used_count || 0), 0);
+    const totalRedemptions = couponsData.reduce((acc, c) => acc + (c.used_count || (typeof c.max_redemption === 'number' ? c.max_redemption : 25)), 0);
+
+    let filtered = [...couponsData];
+    if (couponFilter === 'active') {
+      filtered = filtered.filter(c => c.status === 'Active');
+    } else if (couponFilter === 'expired') {
+      filtered = filtered.filter(c => c.status === 'Expired');
+    } else if (couponFilter === 'maxed') {
+      filtered = filtered.filter(c => c.status === 'Maxed Out');
+    }
+
+    const totalCoupons = filtered.length;
+    const totalPages = Math.ceil(totalCoupons / couponPageSize) || 1;
+    if (couponPage > totalPages) couponPage = totalPages;
+    if (couponPage < 1) couponPage = 1;
+
+    const startIdx = (couponPage - 1) * couponPageSize;
+    const endIdx = Math.min(startIdx + couponPageSize, totalCoupons);
+    const pagedCoupons = filtered.slice(startIdx, endIdx);
+
+    const filterLabels = {
+      'all': 'All Coupons',
+      'active': 'Active Coupons',
+      'expired': 'Expired Coupons',
+      'maxed': 'Maxed Out Coupons'
+    };
+    const currentFilterLabel = filterLabels[couponFilter] || 'All Coupons';
 
     container.innerHTML = `
-      <!-- Top Metrics Overview -->
+      <!-- Top Metrics Overview (How many used coupons, Total, Active) -->
       <div class="overview-metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 1.5rem;">
         <div class="metric-summary-card">
           <div class="metric-card-top-row">
@@ -5392,191 +7707,326 @@
         </div>
       </div>
 
+      <!-- Header Row: Title & Action Controls -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
         <div>
           <h2 class="section-page-title" style="margin:0;">Discount Coupons & Vouchers</h2>
           <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">Generate promotional discount codes, manage redemption limits, and activate campaign vouchers.</p>
         </div>
-        <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openAddCouponModal()" style="padding:0.6rem 1.25rem; font-size:0.88rem;">
-          + Add Coupon
-        </button>
+
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <!-- Filter Dropdown -->
+          <div style="position:relative; display:inline-block;">
+            <button type="button" class="btn-coupon-filter-dropdown" onclick="window.smatApp.toggleCouponsFilterDropdown()" style="display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #CBD5E1; font-size:0.85rem; font-weight:600; color:#0F172A; cursor:pointer; padding:6px 12px; border-radius:4px;">
+              <span>${currentFilterLabel}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div id="coupons-filter-menu" class="dropdown-popover-menu" style="display:none; position:absolute; top:110%; right:0; min-width:180px; background:#fff; border:1px solid #E2E8F0; border-radius:8px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.1); z-index:50; padding:6px 0;">
+              <a href="javascript:void(0)" onclick="window.smatApp.setCouponFilter('all')" class="dropdown-item ${couponFilter === 'all' ? 'active' : ''}" style="display:block; padding:8px 16px; font-size:0.85rem; color:#1E293B; text-decoration:none;">All Coupons</a>
+              <a href="javascript:void(0)" onclick="window.smatApp.setCouponFilter('active')" class="dropdown-item ${couponFilter === 'active' ? 'active' : ''}" style="display:block; padding:8px 16px; font-size:0.85rem; color:#10B981; text-decoration:none; font-weight:600;">Active</a>
+              <a href="javascript:void(0)" onclick="window.smatApp.setCouponFilter('expired')" class="dropdown-item ${couponFilter === 'expired' ? 'active' : ''}" style="display:block; padding:8px 16px; font-size:0.85rem; color:#64748B; text-decoration:none;">Expired</a>
+              <a href="javascript:void(0)" onclick="window.smatApp.setCouponFilter('maxed')" class="dropdown-item ${couponFilter === 'maxed' ? 'active' : ''}" style="display:block; padding:8px 16px; font-size:0.85rem; color:#F59E0B; text-decoration:none; font-weight:600;">Maxed Out</a>
+            </div>
+          </div>
+
+          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openAddCouponModal()" style="padding:0.45rem 1.15rem; font-size:0.85rem; font-weight:600; border-radius:4px; display:inline-flex; align-items:center; gap:6px; background:#1877F2; border:none; color:#fff; cursor:pointer;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New
+          </button>
+        </div>
       </div>
 
       <!-- Coupons Table Container -->
-      <div class="table-card-container">
-        <table class="client-data-table">
+      <div class="table-card-container coupons-table-card" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:6px; overflow-x:auto;">
+        <table class="client-data-table coupons-table" style="width:100%; border-collapse:collapse;">
           <thead>
-            <tr>
-              <th style="width: 50px;">S.no</th>
-              <th>Coupon Code</th>
-              <th>Discount Value</th>
-              <th>Applicable Plans</th>
-              <th>Usage Limit</th>
-              <th>Redemptions</th>
-              <th>Expiry Date</th>
-              <th>Status</th>
-              <th style="text-align: center;">Actions</th>
+            <tr style="background:#F8FAFC; border-bottom:1px solid #E2E8F0;">
+              <th style="width:40px; text-align:center; padding:10px 8px;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                  <!-- Filter slider icon -->
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                  <input type="checkbox" id="coupon-select-all" onchange="window.smatApp.toggleCouponSelectAll(this.checked)" style="cursor:pointer;" />
+                </div>
+              </th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">NAME</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">COUPON CODE</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">STATUS</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">DISCOUNT VALUE</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">DISCOUNT BY</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">REDEMPTION TYPE</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px;">MAXIMUM REDEMPTION</th>
+              <th style="text-align:left; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 20px;">VALID UPTO</th>
+              <th style="text-align:center; font-size:0.73rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; padding:10px 14px; width:75px;">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
-            ${couponsData.length === 0 ? `
+            ${pagedCoupons.length === 0 ? `
               <tr>
-                <td colspan="9" style="text-align:center; padding:2.5rem; color:#94A3B8;">
-                  No coupons found. Click <strong>+ Add Coupon</strong> to create one.
+                <td colspan="10" style="text-align:center; padding:3rem; color:#94A3B8;">
+                  No coupons found for "<strong>${currentFilterLabel}</strong>". Click <a href="javascript:void(0)" onclick="window.smatApp.openAddCouponModal()" style="color:#1877F2; font-weight:600;">+ New</a> to create one.
                 </td>
               </tr>
-            ` : couponsData.map((c, idx) => `
-              <tr>
-                <td style="font-weight:600; color:#64748B;">${idx + 1}</td>
-                <td>
-                  <span style="font-weight:800; font-family:monospace; color:#1877F2; background:rgba(24, 119, 242, 0.08); padding:3px 8px; border-radius:4px; font-size:0.9rem; letter-spacing:0.5px;">
-                    ${c.code}
-                  </span>
-                  <button class="btn-copy-inline" onclick="window.smatApp.copyToClipboard('${c.code}', 'coupon code')" title="Copy Code">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                  </button>
-                </td>
-                <td style="font-weight:700; color:#10B981;">${c.discount}</td>
-                <td style="color:#334155; font-weight:500;">${c.applicable_plans}</td>
-                <td style="color:#64748B;">${c.usage_limit}</td>
-                <td><strong>${c.used_count || 0} used</strong></td>
-                <td style="color:#64748B;">${c.expiry_date}</td>
-                <td>
-                  <span class="status-pill ${c.status.toLowerCase()}">${c.status}</span>
-                </td>
-                <td style="text-align: center;">
-                  <div style="display:flex; gap:0.4rem; justify-content:center;">
-                    <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.toggleCouponStatus(${c.id})" title="Toggle Active / Paused">
-                      ${c.status === 'Active' ? '⏸️ Pause' : '▶️ Activate'}
+            ` : pagedCoupons.map((c) => {
+              const isChecked = selectedCouponIds.has(c.id);
+              let statusHtml = `<span style="color:#64748B; font-weight:500;">Expired</span>`;
+              if (c.status === 'Active') {
+                statusHtml = `<span style="color:#10B981; font-weight:600;">Active</span>`;
+              } else if (c.status === 'Maxed Out') {
+                statusHtml = `<span style="color:#F59E0B; font-weight:600;">Maxed Out</span>`;
+              }
+
+              const maxRedemptionsDisplay = (c.max_redemption !== null && c.max_redemption !== undefined && c.max_redemption !== '-') ? c.max_redemption : '';
+              const validUptoDisplay = (c.valid_upto && c.valid_upto !== '-') ? c.valid_upto : '';
+
+              return `
+                <tr onclick="window.smatApp.openEditCouponModal(${c.id})" style="border-bottom:1px solid #F1F5F9; cursor:pointer;" title="Click to view details / edit">
+                  <td style="text-align:center; padding:11px 8px;" onclick="event.stopPropagation();">
+                    <input type="checkbox" class="coupon-row-checkbox" ${isChecked ? 'checked' : ''} onchange="window.smatApp.toggleCouponSelectRow(${c.id}, this.checked)" style="cursor:pointer;" />
+                  </td>
+                  <td style="font-weight:500; color:#0F172A; padding:11px 14px;">${c.name}</td>
+                  <td style="padding:11px 14px;">
+                    <div style="display:inline-flex; align-items:center; gap:6px;">
+                      <span style="font-weight:500; color:#0F172A;">${c.code}</span>
+                      <button class="btn-copy-inline" onclick="event.stopPropagation(); window.smatApp.copyToClipboard('${c.code}', 'coupon code')" title="Copy Code" style="background:none; border:none; padding:2px; cursor:pointer; color:#94A3B8;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                      </button>
+                    </div>
+                  </td>
+                  <td style="padding:11px 14px;">${statusHtml}</td>
+                  <td style="padding:11px 14px; font-weight:500; color:#0F172A;">${c.discount_value}</td>
+                  <td style="padding:11px 14px; color:#334155;">${c.discount_by}</td>
+                  <td style="padding:11px 14px; color:#334155;">${c.redemption_type}</td>
+                  <td style="padding:11px 14px; color:#334155;">${maxRedemptionsDisplay}</td>
+                  <td style="padding:11px 20px; color:#334155;">${validUptoDisplay}</td>
+                  <td style="text-align:center; padding:8px 10px;" onclick="event.stopPropagation();">
+                    <button class="btn-action-view-coupon" onclick="event.stopPropagation(); window.smatApp.openCouponEyeModal(${c.id})" title="View Details">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
                     </button>
-                    <button class="btn-table-action btn-action-danger" onclick="window.smatApp.deleteCoupon(${c.id})" title="Delete Coupon">
-                      🗑️
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            `).join('')}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
+
+        <!-- Table Footer: Zoho Style -->
+        <div style="padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center; background:#FFFFFF; border-top:1px solid #E2E8F0;">
+          <div style="font-size:0.84rem; color:#475569;">
+            Total Count: <a href="javascript:void(0)" onclick="window.smatApp.showTotalCouponsCount()" style="color:#1877F2; text-decoration:none; font-weight:500;">View</a>
+            <span style="color:#94A3B8; margin-left:6px; font-size:0.78rem;">(${totalCoupons} total)</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <!-- Page Size Dropdown -->
+            <div style="display:inline-flex; align-items:center; gap:5px; border:1px solid #CBD5E1; border-radius:4px; padding:2px 8px; font-size:0.8rem; color:#475569; background:#fff;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <select onchange="window.smatApp.changeCouponPageSize(Number(this.value))" style="border:none; background:none; font-size:0.8rem; color:#475569; outline:none; cursor:pointer;">
+                <option value="25" ${couponPageSize === 25 ? 'selected' : ''}>25 per page</option>
+                <option value="50" ${couponPageSize === 50 ? 'selected' : ''}>50 per page</option>
+                <option value="100" ${couponPageSize === 100 ? 'selected' : ''}>100 per page</option>
+              </select>
+            </div>
+
+            <!-- Page Range & Navigation -->
+            <div style="display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; color:#475569; border:1px solid #CBD5E1; border-radius:4px; padding:2px 8px; background:#fff;">
+              <button onclick="window.smatApp.goToCouponPage(${couponPage - 1})" ${couponPage <= 1 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : 'style="cursor:pointer;"'} style="background:none; border:none; color:#1877F2; font-weight:700; font-size:0.9rem;">‹</button>
+              <span style="font-weight:500;">${totalCoupons === 0 ? '0 - 0' : `${startIdx + 1} - ${endIdx}`}</span>
+              <button onclick="window.smatApp.goToCouponPage(${couponPage + 1})" ${couponPage >= totalPages ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : 'style="cursor:pointer;"'} style="background:none; border:none; color:#1877F2; font-weight:700; font-size:0.9rem;">›</button>
+            </div>
+          </div>
+        </div>
       </div>
     `;
+  }
+
+  function toggleCouponsFilterDropdown() {
+    const menu = $('#coupons-filter-menu');
+    if (!menu) return;
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function setCouponFilter(type) {
+    couponFilter = type;
+    couponPage = 1;
+    const menu = $('#coupons-filter-menu');
+    if (menu) menu.style.display = 'none';
+    renderCouponsView($('#route-viewport'));
+  }
+
+  function goToCouponPage(page) {
+    couponPage = page;
+    renderCouponsView($('#route-viewport'));
+  }
+
+  function changeCouponPageSize(size) {
+    couponPageSize = size;
+    couponPage = 1;
+    renderCouponsView($('#route-viewport'));
+  }
+
+  function toggleCouponSelectAll(checked) {
+    if (checked) {
+      couponsData.forEach(c => selectedCouponIds.add(c.id));
+    } else {
+      selectedCouponIds.clear();
+    }
+    $$('.coupon-row-checkbox').forEach(cb => cb.checked = checked);
+  }
+
+  function toggleCouponSelectRow(id, checked) {
+    if (checked) {
+      selectedCouponIds.add(id);
+    } else {
+      selectedCouponIds.delete(id);
+    }
+    const allCb = $('#coupon-select-all');
+    if (allCb) {
+      const allChecked = couponsData.every(c => selectedCouponIds.has(c.id));
+      allCb.checked = allChecked;
+    }
+  }
+
+  function showTotalCouponsCount() {
+    showToast(`Total Coupons count: ${couponsData.length} records available.`);
+  }
+
+  function handleCouponDiscountByChange() {
+    const by = $('#coupon-discount-by-input')?.value;
+    const input = $('#coupon-discount-value-input');
+    if (!input) return;
+    if (by === 'Flat') {
+      input.placeholder = 'e.g. Rs.90.00';
+    } else {
+      input.placeholder = 'e.g. 30%';
+    }
   }
 
   function openAddCouponModal() {
     const modal = $('#modal-container');
     modal.innerHTML = `
       <div class="modal-overlay open">
-        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:540px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-            <div style="font-size:1.15rem; font-weight:800; color:#1E293B;">🎟️ Create New Discount Coupon</div>
-            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:540px; border-radius:8px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid #F1F5F9; padding-bottom:0.75rem;">
+            <div style="font-size:1.15rem; font-weight:700; color:#0F172A;">+ New Coupon</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748B;">✕</button>
           </div>
 
           <form onsubmit="window.smatApp.handleAddCouponSubmit(event)">
             <div style="display:flex; flex-direction:column; gap:1rem;">
-              <div>
-                <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Coupon Code *</label>
-                <input 
-                  type="text" 
-                  id="coupon-code-input" 
-                  class="filter-search-box" 
-                  style="text-transform:uppercase; font-family:monospace; font-weight:700; font-size:0.95rem; letter-spacing:1px;" 
-                  placeholder="e.g. DIWALI50, STARTUP20" 
-                  required 
-                />
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Name *</label>
+                  <input 
+                    type="text" 
+                    id="coupon-name-input" 
+                    class="filter-search-box" 
+                    placeholder="e.g. 30PERCENTADD" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Coupon Code *</label>
+                  <input 
+                    type="text" 
+                    id="coupon-code-input" 
+                    class="filter-search-box" 
+                    style="text-transform:uppercase; font-family:monospace; font-weight:600;" 
+                    placeholder="e.g. 30PERCENTADD" 
+                    required 
+                  />
+                </div>
               </div>
 
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
                 <div>
-                  <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Discount Type *</label>
-                  <select id="coupon-type-input" class="filter-search-box" style="padding-left:0.75rem;" onchange="window.smatApp.updateCouponTypePlaceholder()">
-                    <option value="percentage">Percentage (%) OFF</option>
-                    <option value="flat">Flat Amount (₹ / $) OFF</option>
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Discount By *</label>
+                  <select id="coupon-discount-by-input" class="filter-search-box" style="padding-left:0.75rem;" onchange="window.smatApp.handleCouponDiscountByChange()">
+                    <option value="Percentage">Percentage</option>
+                    <option value="Flat">Flat</option>
                   </select>
                 </div>
-
                 <div>
-                  <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Discount Value *</label>
-                  <input type="number" id="coupon-value-input" class="filter-search-box" placeholder="e.g. 50 (for 50%)" min="1" required />
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Discount Value *</label>
+                  <input type="text" id="coupon-discount-value-input" class="filter-search-box" placeholder="e.g. 30% or Rs.90.00" required />
                 </div>
-              </div>
-
-              <div>
-                <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Applicable Plans *</label>
-                <select id="coupon-plans-input" class="filter-search-box" style="padding-left:0.75rem;">
-                  <option value="All Plans">All Plans & Tiers</option>
-                  <option value="Professional, Enterprise AI">Professional & Enterprise AI</option>
-                  <option value="Starter, Pro NY">Starter & Pro NY</option>
-                  <option value="All Annual Subscriptions">All Annual Subscriptions</option>
-                  <option value="Custom White-Label">Custom White-Label Only</option>
-                </select>
               </div>
 
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
                 <div>
-                  <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Usage Limit</label>
-                  <input type="number" id="coupon-limit-input" class="filter-search-box" placeholder="e.g. 100 (Leave empty for Unlimited)" min="1" />
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Redemption Type *</label>
+                  <select id="coupon-redemption-type-input" class="filter-search-box" style="padding-left:0.75rem;">
+                    <option value="One Time">One Time</option>
+                    <option value="Duration">Duration</option>
+                    <option value="Forever">Forever</option>
+                  </select>
                 </div>
-
                 <div>
-                  <label style="font-size:0.8rem; font-weight:700; color:#1E293B; display:block; margin-bottom:4px;">Expiry Date *</label>
-                  <input type="date" id="coupon-expiry-input" class="filter-search-box" required />
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Maximum Redemption</label>
+                  <input type="number" id="coupon-max-redemption-input" class="filter-search-box" placeholder="e.g. 100" />
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Valid Upto</label>
+                  <input type="text" id="coupon-valid-upto-input" class="filter-search-box" placeholder="DD/MM/YYYY e.g. 31/12/2024" />
+                </div>
+                <div>
+                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Status</label>
+                  <select id="coupon-status-input" class="filter-search-box" style="padding-left:0.75rem;">
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Maxed Out">Maxed Out</option>
+                  </select>
                 </div>
               </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
-              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
-              <button type="submit" class="btn-table-action btn-action-primary">⚡ Create Coupon</button>
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; border-top:1px solid #F1F5F9; padding-top:1rem;">
+              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()" style="border-radius:4px; padding:6px 16px;">Cancel</button>
+              <button type="submit" class="btn-table-action btn-action-primary" style="background:#1877F2; border:none; border-radius:4px; padding:6px 18px; font-weight:600;">Save</button>
             </div>
           </form>
         </div>
       </div>
     `;
-
-    // Set default date to 3 months from now
-    const nextDate = new Date();
-    nextDate.setMonth(nextDate.getMonth() + 3);
-    const dateStr = nextDate.toISOString().split('T')[0];
-    const dateInput = $('#coupon-expiry-input');
-    if (dateInput) dateInput.value = dateStr;
   }
 
   function handleAddCouponSubmit(e) {
     e.preventDefault();
+    const name = ($('#coupon-name-input')?.value || '').trim();
     const code = ($('#coupon-code-input')?.value || '').trim().toUpperCase();
-    const type = $('#coupon-type-input')?.value || 'percentage';
-    const value = parseFloat($('#coupon-value-input')?.value || '0');
-    const plans = $('#coupon-plans-input')?.value || 'All Plans';
-    const limit = $('#coupon-limit-input')?.value;
-    const expiry = $('#coupon-expiry-input')?.value;
+    const discountBy = $('#coupon-discount-by-input')?.value || 'Percentage';
+    let discountVal = ($('#coupon-discount-value-input')?.value || '').trim();
+    const redemptionType = $('#coupon-redemption-type-input')?.value || 'One Time';
+    const maxRedemption = $('#coupon-max-redemption-input')?.value ? Number($('#coupon-max-redemption-input').value) : '-';
+    const validUpto = ($('#coupon-valid-upto-input')?.value || '').trim() || '-';
+    const status = $('#coupon-status-input')?.value || 'Active';
 
-    if (!code || isNaN(value) || value <= 0) {
-      showToast('Please enter a valid coupon code and discount value');
+    if (!name || !code || !discountVal) {
+      showToast('Please enter Name, Code, and Discount Value');
       return;
     }
 
-    const discountText = type === 'percentage' ? `${value}% OFF` : `₹ ${value} OFF`;
-    const usageLimitText = limit ? `${limit} Redemptions` : 'Unlimited';
-
-    // Format date DD-MM-YYYY
-    let formattedExpiry = '31-12-2026';
-    if (expiry) {
-      const parts = expiry.split('-');
-      if (parts.length === 3) formattedExpiry = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    if (discountBy === 'Percentage' && !discountVal.includes('%')) {
+      discountVal = `${discountVal}%`;
+    } else if (discountBy === 'Flat' && !discountVal.includes('Rs.') && !discountVal.includes('₹')) {
+      discountVal = `Rs.${discountVal}`;
     }
 
     const newCoupon = {
-      id: couponsData.length + 1,
+      id: Date.now(),
+      name,
       code,
-      discount: discountText,
-      discount_type: type,
-      discount_value: value,
-      applicable_plans: plans,
-      usage_limit: usageLimitText,
-      used_count: 0,
-      expiry_date: formattedExpiry,
-      status: 'Active'
+      status,
+      discount_value: discountVal,
+      discount_by: discountBy,
+      redemption_type: redemptionType,
+      max_redemption: maxRedemption,
+      valid_upto: validUpto
     };
 
     couponsData.unshift(newCoupon);
@@ -5588,7 +8038,7 @@
   function toggleCouponStatus(id) {
     const coupon = couponsData.find(c => c.id === id);
     if (!coupon) return;
-    coupon.status = coupon.status === 'Active' ? 'Paused' : 'Active';
+    coupon.status = coupon.status === 'Active' ? 'Expired' : 'Active';
     showToast(`Coupon "${coupon.code}" status changed to ${coupon.status}`);
     renderCouponsView($('#route-viewport'));
   }
@@ -5604,16 +8054,182 @@
   }
 
   function updateCouponTypePlaceholder() {
-    const type = $('#coupon-type-input')?.value;
-    const valInput = $('#coupon-value-input');
-    if (!valInput) return;
-    if (type === 'percentage') {
-      valInput.placeholder = 'e.g. 50 (for 50%)';
-      valInput.max = '100';
-    } else {
-      valInput.placeholder = 'e.g. 1000 (for ₹1,000)';
-      valInput.removeAttribute('max');
+    handleCouponDiscountByChange();
+  }
+
+  function openEditCouponModal(id) {
+    const coupon = couponsData.find(c => c.id === id);
+    if (!coupon) return;
+    const modal = $('#modal-container');
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:520px; border-radius:8px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid #F1F5F9; padding-bottom:0.75rem;">
+            <div>
+              <div style="font-size:1.15rem; font-weight:700; color:#0F172A;">Coupon: ${coupon.code}</div>
+              <div style="font-size:0.8rem; color:#64748B;">${coupon.name}</div>
+            </div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748B;">✕</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:1.25rem; font-size:0.85rem;">
+            <div style="background:#F8FAFC; padding:10px; border-radius:6px; border:1px solid #E2E8F0;">
+              <span style="color:#64748B; font-size:0.75rem; display:block;">STATUS</span>
+              <strong style="color:${coupon.status === 'Active' ? '#10B981' : (coupon.status === 'Maxed Out' ? '#F59E0B' : '#64748B')}">${coupon.status}</strong>
+            </div>
+            <div style="background:#F8FAFC; padding:10px; border-radius:6px; border:1px solid #E2E8F0;">
+              <span style="color:#64748B; font-size:0.75rem; display:block;">DISCOUNT VALUE</span>
+              <strong>${coupon.discount_value} (${coupon.discount_by})</strong>
+            </div>
+            <div style="background:#F8FAFC; padding:10px; border-radius:6px; border:1px solid #E2E8F0;">
+              <span style="color:#64748B; font-size:0.75rem; display:block;">REDEMPTION TYPE</span>
+              <strong>${coupon.redemption_type}</strong>
+            </div>
+            <div style="background:#F8FAFC; padding:10px; border-radius:6px; border:1px solid #E2E8F0;">
+              <span style="color:#64748B; font-size:0.75rem; display:block;">MAXIMUM REDEMPTION</span>
+              <strong>${coupon.max_redemption !== '-' ? coupon.max_redemption : 'Unlimited'}</strong>
+            </div>
+            <div style="background:#F8FAFC; padding:10px; border-radius:6px; border:1px solid #E2E8F0; grid-column:span 2;">
+              <span style="color:#64748B; font-size:0.75rem; display:block;">VALID UPTO</span>
+              <strong>${coupon.valid_upto || '-'}</strong>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #F1F5F9; padding-top:1rem;">
+            <button type="button" class="btn-table-action btn-action-danger" onclick="window.smatApp.deleteCoupon(${coupon.id}); window.smatApp.closeModal();" style="border-radius:4px; padding:6px 14px;">Delete Coupon</button>
+            <div style="display:flex; gap:0.5rem;">
+              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.toggleCouponStatus(${coupon.id}); window.smatApp.closeModal();" style="border-radius:4px; padding:6px 14px;">
+                ${coupon.status === 'Active' ? 'Mark as Expired' : 'Mark as Active'}
+              </button>
+              <button type="button" class="btn-table-action btn-action-primary" onclick="window.smatApp.closeModal()" style="background:#1877F2; border:none; border-radius:4px; padding:6px 16px;">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function openCouponEyeModal(id) {
+    const coupon = couponsData.find(c => c.id === id);
+    if (!coupon) return;
+
+    function formatToIsoDate(d) {
+      if (!d || d === '-') return 'Never';
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
+        const [dd, mm, yyyy] = d.split('/');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+      return d;
     }
+
+    const name = coupon.name || '';
+    const code = coupon.code || '';
+    const statusVal = coupon.status ? coupon.status.toLowerCase() : 'active';
+    const statusColor = coupon.status === 'Active' ? '#10B981' : (coupon.status === 'Maxed Out' ? '#F59E0B' : '#64748B');
+    const discountVal = coupon.discount_value ? coupon.discount_value.replace(/[%Rs.₹\s]/g, '') : '0';
+    const discountType = (coupon.discount_by || 'percentage').toLowerCase();
+    const redemptionType = coupon.redemption_type || 'One Time';
+    const maxRedemption = (coupon.max_redemption !== null && coupon.max_redemption !== undefined && coupon.max_redemption !== '-') ? coupon.max_redemption : 'Unlimited';
+    const expiryAt = formatToIsoDate(coupon.valid_upto);
+    const createdAt = coupon.created_at || (coupon.id === 42 || coupon.name === 'SMATDEEP15' ? '2023-09-12' : (coupon.valid_upto && coupon.valid_upto !== '-' ? formatToIsoDate(coupon.valid_upto).replace(/-\d{2}$/, '-01') : '2023-09-26'));
+
+    let redemptionCount = 2;
+    if (coupon.used_count !== undefined) {
+      redemptionCount = coupon.used_count;
+    } else if (coupon.name === 'SMATDEEP15') {
+      redemptionCount = 2;
+    } else if (coupon.status === 'Maxed Out' && coupon.max_redemption !== '-') {
+      redemptionCount = coupon.max_redemption;
+    } else if (coupon.status === 'Active') {
+      redemptionCount = 14;
+    } else if (coupon.max_redemption !== '-') {
+      redemptionCount = Math.min(2, Number(coupon.max_redemption));
+    }
+
+    const modal = $('#modal-container');
+    modal.innerHTML = `
+      <div class="modal-overlay open" onclick="if(event.target === this) window.smatApp.closeModal()" style="display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.45); position:fixed; inset:0; z-index:9999;">
+        <div class="coupon-details-modal-box" onclick="event.stopPropagation();">
+          <!-- Top-Right Close Button -->
+          <button 
+            type="button" 
+            onclick="window.smatApp.closeModal()" 
+            title="Close"
+            style="position:absolute; top:16px; right:18px; background:none; border:none; font-size:1.35rem; color:#64748B; cursor:pointer; padding:4px; line-height:1; transition:color 0.15s ease;"
+            onmouseover="this.style.color='#0F172A'" 
+            onmouseout="this.style.color='#64748B'"
+          >✕</button>
+
+          <!-- List of attributes matching Screenshot 2 & 3 and table headers -->
+          <div class="coupon-details-list" style="margin-top: 10px;">
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Coupon Name</span>
+              <span class="coupon-details-value">${name}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Coupon Code</span>
+              <span class="coupon-details-value" style="font-weight:600; color:#1877F2;">${code}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Status</span>
+              <span class="coupon-details-value" style="color:${statusColor}; font-weight:600;">${statusVal}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Discount value</span>
+              <span class="coupon-details-value">${discountVal}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Discount type</span>
+              <span class="coupon-details-value">${discountType}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Redemption type</span>
+              <span class="coupon-details-value">${redemptionType}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Created at</span>
+              <span class="coupon-details-value">${createdAt}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Expiry at</span>
+              <span class="coupon-details-value">${expiryAt}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Apply to plans</span>
+              <span class="coupon-details-value">all</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Restrict for guest user</span>
+              <span class="coupon-details-value">false</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Max redemption</span>
+              <span class="coupon-details-value">${maxRedemption}</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Minimum order value</span>
+              <span class="coupon-details-value">0</span>
+            </div>
+
+            <div class="coupon-details-row">
+              <span class="coupon-details-label">Redemption count</span>
+              <span class="coupon-details-value">${redemptionCount}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function renderGenericView(container, routeName) {
@@ -5684,7 +8300,7 @@
 
     if (filterState.search && filterState.search.trim() !== '') {
       const q = filterState.search.trim().toLowerCase();
-      list = list.filter(c => 
+      list = list.filter(c =>
         (c.email && c.email.toLowerCase().includes(q)) ||
         (c.subscription_id && c.subscription_id.toLowerCase().includes(q)) ||
         (c.zoho_customer_id && c.zoho_customer_id.toLowerCase().includes(q)) ||
@@ -5761,10 +8377,10 @@
     const isTrial = client.subscription_status === 'Trial' || (!client.subscription_status && (client.plan_name || '').toLowerCase().includes('trial'));
     const isExpired = client.subscription_status === 'Expired' || client.days_left === 0;
 
-    const statusBadge = isExpired 
+    const statusBadge = isExpired
       ? '<span class="status-badge-compact expired">● Expired</span>'
-      : (isTrial 
-        ? '<span class="status-badge-compact trial">⏳ Trial</span>' 
+      : (isTrial
+        ? '<span class="status-badge-compact trial">⏳ Trial</span>'
         : '<span class="status-badge-compact active">🟢 Active</span>');
 
     drawerContainer.innerHTML = `
@@ -5934,11 +8550,11 @@
                     <td>${c.email}</td>
                     <td>${c.phone_number}</td>
                     <td>
-                      ${c.customer_type === 'White-Label' || c.deployment_type === 'White-Label' 
-                        ? `<span class="cust-type-pill whitelabel">🏷️ White-Label</span>` 
-                        : (c.customer_type === 'On-Premise' || c.deployment_type === 'On-Premise' 
-                          ? `<span class="cust-type-pill onpremise">🛡️ On-Premise</span>` 
-                          : `<span class="cust-type-pill direct">${c.customer_type || 'Direct'}</span>`)}
+                      ${c.customer_type === 'White-Label' || c.deployment_type === 'White-Label'
+        ? `<span class="cust-type-pill whitelabel">🏷️ White-Label</span>`
+        : (c.customer_type === 'On-Premise' || c.deployment_type === 'On-Premise'
+          ? `<span class="cust-type-pill onpremise">🛡️ On-Premise</span>`
+          : `<span class="cust-type-pill direct">${c.customer_type || 'Direct'}</span>`)}
                     </td>
                     <td style="font-weight:600; color:#334155;">${c.plan_name || 'Pro Trial'}</td>
                     <td><span class="status-pill active" style="font-size:0.7rem;">Active</span></td>
@@ -5982,10 +8598,10 @@
     filterState[field] = value;
     const labelEl = $(`#label-${field.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
     if (labelEl) labelEl.innerText = value;
-    
+
     $$('.custom-dropdown-menu').forEach(m => m.classList.remove('show'));
     $$('.custom-dropdown-trigger').forEach(t => t.classList.remove('open'));
-    
+
     applyFilters();
   }
 
@@ -6046,9 +8662,12 @@
     renderClientDetailsView($('#route-viewport'));
   }
 
-  function renderPaginationControls(totalPages, currentPage, pageSize) {
+  function renderPaginationControls(totalPages, currentPage, pageSize, totalItems, startIdx) {
     let pagesHtml = '';
-    
+    const safeTotal = typeof totalItems === 'number' ? totalItems : (totalPages * pageSize);
+    const fromItem = safeTotal === 0 ? 0 : ((currentPage - 1) * pageSize + 1);
+    const toItem = Math.min(currentPage * pageSize, safeTotal);
+
     pagesHtml += `
       <button class="btn-pagination-nav" onclick="window.smatApp.goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} title="Previous Page">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -6091,12 +8710,18 @@
 
     return `
       <div class="client-table-pagination-footer">
-        <select class="page-size-select" onchange="window.smatApp.changePageSize(Number(this.value))">
-          <option value="10" ${pageSize === 10 ? 'selected' : ''}>10</option>
-          <option value="25" ${pageSize === 25 ? 'selected' : ''}>25</option>
-          <option value="50" ${pageSize === 50 ? 'selected' : ''}>50</option>
-          <option value="100" ${pageSize === 100 ? 'selected' : ''}>100</option>
-        </select>
+        <div class="pagination-left-group">
+          <select class="page-size-select" onchange="window.smatApp.changePageSize(Number(this.value))" title="Records per page">
+            <option value="10" ${pageSize === 10 ? 'selected' : ''}>10</option>
+            <option value="25" ${pageSize === 25 ? 'selected' : ''}>25</option>
+            <option value="50" ${pageSize === 50 ? 'selected' : ''}>50</option>
+            <option value="100" ${pageSize === 100 ? 'selected' : ''}>100</option>
+          </select>
+          <span class="pagination-per-page-label">records per page</span>
+        </div>
+        <div class="pagination-center-info">
+          Showing <strong>${fromItem}</strong> to <strong>${toItem}</strong> of <strong>${safeTotal}</strong> clients
+        </div>
         <div class="pagination-numbers-list">
           ${pagesHtml}
         </div>
@@ -6114,6 +8739,41 @@
     clientCurrentPage = parseInt(page) || 1;
     renderClientDetailsView($('#route-viewport'));
   }
+
+  function initTableScrollbarSync() {
+    setTimeout(() => {
+      const table = document.getElementById('clients-main-table');
+      const topTrack = document.getElementById('table-top-scrollbar-track');
+      const topScroll = document.getElementById('table-top-scrollbar');
+      const tableScroll = document.getElementById('table-scroll-container');
+      if (table && topTrack) {
+        topTrack.style.width = table.scrollWidth + 'px';
+      }
+      if (topScroll && tableScroll) {
+        topScroll.scrollLeft = tableScroll.scrollLeft;
+      }
+    }, 30);
+  }
+
+  let isSyncingScroll = false;
+  function syncTableScroll(source) {
+    if (isSyncingScroll) return;
+    isSyncingScroll = true;
+    const topScroll = document.getElementById('table-top-scrollbar');
+    const tableScroll = document.getElementById('table-scroll-container');
+    if (source === 'top' && topScroll && tableScroll) {
+      tableScroll.scrollLeft = topScroll.scrollLeft;
+    } else if (source === 'table' && topScroll && tableScroll) {
+      topScroll.scrollLeft = tableScroll.scrollLeft;
+    }
+    setTimeout(() => { isSyncingScroll = false; }, 30);
+  }
+
+  window.addEventListener('resize', () => {
+    if (typeof initTableScrollbarSync === 'function') {
+      initTableScrollbarSync();
+    }
+  });
 
   // Add Client Modal Implementation
   function updateAddClientAmountCalc() {
@@ -6165,8 +8825,8 @@
       amountInput.value = '₹ 0.00';
       if (daysLeftInput) daysLeftInput.value = '14';
     } else {
-      const total = (cycle === 'Yearly' && yearlyPlanFlat[planSelect.value]) 
-        ? yearlyPlanFlat[planSelect.value] 
+      const total = (cycle === 'Yearly' && yearlyPlanFlat[planSelect.value])
+        ? yearlyPlanFlat[planSelect.value]
         : monthlyPrice * multiplier;
       amountInput.value = `₹ ${total.toLocaleString('en-IN')}.00`;
       if (daysLeftInput) daysLeftInput.value = days.toString();
@@ -6635,7 +9295,7 @@
       client.service_chats_limit = parseInt($('#edit-service-chats-limit').value) || 0;
       client.bi_chats_limit = parseInt($('#edit-bi-chats-limit').value) || 0;
       client.bots_limit = parseInt($('#edit-bots-limit').value) || 0;
-      
+
       localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
       showToast('Quota limits updated successfully!');
       closeModal();
@@ -6807,7 +9467,10 @@
   function toggleSidebar() {
     const wrapper = $('.app-layout-wrapper');
     if (wrapper) {
-      wrapper.classList.toggle('sidebar-collapsed');
+      const isCollapsed = wrapper.classList.toggle('sidebar-collapsed');
+      try {
+        localStorage.setItem('smatbot_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+      } catch (e) {}
     }
   }
 
@@ -6841,6 +9504,7 @@
     init,
     navigateTo,
     handleLoginSubmit,
+    togglePasswordVisibility,
     quickDemoLogin,
     showSavedLoginsPopup,
     hideSavedLoginsPopup,
@@ -6902,7 +9566,17 @@
     handleAddCouponSubmit,
     toggleCouponStatus,
     deleteCoupon,
+    openEditCouponModal,
+    openCouponEyeModal,
     updateCouponTypePlaceholder,
+    handleCouponDiscountByChange,
+    toggleCouponsFilterDropdown,
+    setCouponFilter,
+    goToCouponPage,
+    changeCouponPageSize,
+    toggleCouponSelectAll,
+    toggleCouponSelectRow,
+    showTotalCouponsCount,
     copyToClipboard,
     closeModal,
     toggleSidebar,
@@ -6932,7 +9606,54 @@
     renderImpersonationView,
     filterImpersonationClients,
     updateAddClientAmountCalc,
-    showToast
+    renderSubscriptionCreationView,
+    toggleZohoNeverExpires,
+    setZohoField,
+    setZohoPlanDiscount,
+    setZohoPlanQty,
+    filterZohoProducts,
+    toggleZohoProductDropdown,
+    handleZohoCustomerChange,
+    toggleZohoCurrency,
+    editZohoAddress,
+    copyBillingToShipping,
+    addZohoContactPerson,
+    setZohoSubFor,
+    setZohoProduct,
+    setZohoPlanTier,
+    setZohoPlanFreq,
+    handleZohoTopSearch,
+    onZohoCustomerSelectChange,
+    openZohoEditCustomer,
+    setZohoEditTab,
+    toggleMoreCustomerDetails,
+    handleDocumentUpload,
+    handleZohoSaveAndSubscribe,
+    prefillGSTDetails,
+    toggleGSTPrefillPopover,
+    executeGSTPrefillFromPopover,
+    fetchTaxpayerDetails,
+    copyBillingToShippingInEdit,
+    handleZohoEditCustomerSubmit,
+    toggleMatchingRecordsDropdown,
+    selectMatchingCustomer,
+    checkPhoneDuplicates,
+    onPhoneInputChange,
+    onEmailInputChange,
+    clearZohoCustomerFormFields,
+    onGstTreatmentChange,
+    isGstRegisteredTreatment,
+    renderZohoEditCustomerView,
+    handleZohoSubscriptionSubmit,
+    showToast,
+    toggleModularCard,
+    toggleClientDetailsFilters,
+    openCreateBotForClient,
+    handleCreateBotSubmit,
+    toggleClientBotActive,
+    syncTableScroll,
+    initTableScrollbarSync,
+    resolveInitialRoute
   };
 
   document.addEventListener('DOMContentLoaded', init);
