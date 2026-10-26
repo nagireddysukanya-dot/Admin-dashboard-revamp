@@ -290,6 +290,7 @@
       id: 1,
       name: 'Sukanya Nagireddy',
       email: 'sukanya@smatbot.com',
+      password: 'admin123',
       role: 'Super Admin',
       department: 'Executive Operations',
       avatar: 'SN',
@@ -309,6 +310,7 @@
       id: 2,
       name: 'Arjun Mehta',
       email: 'arjun@smatbot.com',
+      password: 'admin123',
       role: 'Bot Engineer',
       department: 'Bot Engineering & AI',
       avatar: 'AM',
@@ -328,6 +330,7 @@
       id: 3,
       name: 'Rohan Deshmukh',
       email: 'rohan.d@smatbot.com',
+      password: 'admin123',
       role: 'Support Lead',
       department: 'Customer Support SLA',
       avatar: 'RD',
@@ -347,6 +350,7 @@
       id: 4,
       name: 'Elena Rostova',
       email: 'elena@smatbot.com',
+      password: 'admin123',
       role: 'Billing Manager',
       department: 'Finance & Subscriptions',
       avatar: 'ER',
@@ -359,6 +363,26 @@
         activatePlans: true,
         manageUsers: false,
         apiAdmin: false,
+        viewAnalytics: true
+      }
+    },
+    {
+      id: 5,
+      name: 'Admin User',
+      email: 'admin@smatbot.com',
+      password: 'password123',
+      role: 'Super Admin',
+      department: 'Executive Operations',
+      avatar: 'AU',
+      status: 'Active',
+      twoFactorEnabled: true,
+      lastActive: 'Just now',
+      permissions: {
+        manageClients: true,
+        migrateBots: true,
+        activatePlans: true,
+        manageUsers: true,
+        apiAdmin: true,
         viewAnalytics: true
       }
     }
@@ -512,7 +536,32 @@
       clientsData = generateInitialSeedClients();
     }
 
-    usersData = [...SEED_USERS];
+    try {
+      const savedUsers = localStorage.getItem('smatbot_users_data');
+      if (savedUsers) {
+        const parsedUsers = JSON.parse(savedUsers);
+        if (Array.isArray(parsedUsers) && parsedUsers.length > 0) {
+          usersData = parsedUsers;
+          // Ensure default seed users exist and have updated passwords
+          SEED_USERS.forEach(su => {
+            const existing = usersData.find(u => u.email.toLowerCase() === su.email.toLowerCase());
+            if (!existing) {
+              usersData.push({ ...su });
+            } else if (!existing.password) {
+              existing.password = su.password;
+            }
+          });
+        } else {
+          usersData = [...SEED_USERS];
+        }
+      } else {
+        usersData = [...SEED_USERS];
+      }
+    } catch (err) {
+      usersData = [...SEED_USERS];
+    }
+    localStorage.setItem('smatbot_users_data', JSON.stringify(usersData));
+
     migrationsData = [...SEED_MIGRATIONS];
 
     // Ensure light theme
@@ -673,6 +722,9 @@
               <h1 class="smat-split-login-heading">Login</h1>
               <p class="smat-split-login-subheading">Please enter your credentials to continue.</p>
 
+              <!-- Dynamic Alert Notification Container -->
+              <div id="smat-login-alert-container"></div>
+
               <!-- Form Inputs -->
               <form id="admin-login-form" onsubmit="window.smatApp.handleLoginSubmit(event)">
                 <!-- Email Address Input -->
@@ -829,23 +881,120 @@
 
   function handleLoginSubmit(e) {
     e.preventDefault();
-    const email = $('#login-email-input').value.trim();
-    const password = $('#login-password-input').value.trim();
+    const emailInput = $('#login-email-input');
+    const passInput = $('#login-password-input');
+    const alertBox = $('#smat-login-alert-container');
 
-    // Record login into previous history
+    const email = emailInput ? emailInput.value.trim() : '';
+    const password = passInput ? passInput.value.trim() : '';
+
+    // Clear previous visual error indicators
+    if (emailInput) emailInput.classList.remove('has-error');
+    if (passInput) passInput.classList.remove('has-error');
+    if (alertBox) alertBox.innerHTML = '';
+
+    if (!email) {
+      if (emailInput) {
+        emailInput.classList.add('has-error');
+        emailInput.focus();
+      }
+      if (alertBox) {
+        alertBox.innerHTML = `
+          <div class="smat-login-error-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Please enter your email address.</span>
+          </div>
+        `;
+      }
+      showToast('❌ Please enter your email address.');
+      return;
+    }
+
+    if (!password) {
+      if (passInput) {
+        passInput.classList.add('has-error');
+        passInput.focus();
+      }
+      if (alertBox) {
+        alertBox.innerHTML = `
+          <div class="smat-login-error-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Please enter your password.</span>
+          </div>
+        `;
+      }
+      showToast('❌ Please enter your password.');
+      return;
+    }
+
+    // Verify user exists in registered team users (fallback to SEED_USERS if init hasn't run)
+    if (!usersData || usersData.length === 0) {
+      usersData = [...SEED_USERS];
+    }
+    const user = usersData.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+      if (emailInput) {
+        emailInput.classList.add('has-error');
+        if (typeof emailInput.focus === 'function') emailInput.focus();
+      }
+      if (alertBox) {
+        alertBox.innerHTML = `
+          <div class="smat-login-error-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <span>❌ No account found with this email. Please verify or ask your admin to add you in Team & Users.</span>
+          </div>
+        `;
+      }
+      showToast('❌ No account found with this email.');
+      return;
+    }
+
+    // Verify password strictly
+    const expectedPassword = user.password || 'admin123';
+    if (password !== expectedPassword) {
+      if (passInput) {
+        passInput.classList.add('has-error');
+        if (typeof passInput.focus === 'function') passInput.focus();
+        if (typeof passInput.select === 'function') passInput.select();
+      }
+      if (alertBox) {
+        alertBox.innerHTML = `
+          <div class="smat-login-error-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <span>❌ Incorrect password. Please try again.</span>
+          </div>
+        `;
+      }
+      showToast('❌ Incorrect password. Please try again.');
+      return;
+    }
+
+    // Credentials Verified Successfully
     recordLoginHistory(email, password);
-
-    const user = usersData.find(u => u.email.toLowerCase() === email.toLowerCase()) || {
-      name: email.split('@')[0],
-      email: email,
-      role: 'Super Admin',
-      avatar: email.substring(0, 2).toUpperCase()
-    };
 
     currentUser = { ...user };
     isAuthenticated = true;
     localStorage.setItem('smatbot_admin_logged_in', 'true');
     localStorage.setItem('smatbot_admin_user', JSON.stringify(currentUser));
+    localStorage.setItem('smatbot_active_route', 'client-details');
+    window.location.hash = '#client-details';
 
     showToast(`Welcome back, ${currentUser.name}!`);
     loadAppShell();
@@ -857,6 +1006,8 @@
     isAuthenticated = true;
     localStorage.setItem('smatbot_admin_logged_in', 'true');
     localStorage.setItem('smatbot_admin_user', JSON.stringify(currentUser));
+    localStorage.setItem('smatbot_active_route', 'client-details');
+    window.location.hash = '#client-details';
 
     showToast(`Welcome back, ${currentUser.name}!`);
     loadAppShell();
@@ -910,7 +1061,7 @@
       }
     } catch (e) {}
 
-    return 'subscription';
+    return 'client-details';
   }
 
   // =========================================================================
@@ -3330,8 +3481,9 @@ function toggleAccordion(cardId) {
                   </span>
                 </td>
                 <td style="color:#64748B;">${u.lastActive}</td>
-                <td style="text-align: right;">
+                <td style="text-align: right; white-space: nowrap;">
                   <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openEditUserModal(${u.id})">✎ Permissions</button>
+                  <button class="btn-table-action btn-action-danger" onclick="window.smatApp.confirmDeleteUser(${u.id})" style="margin-left:6px; color:#DC2626; border:1px solid #FCA5A5; background:#FEF2F2;" title="Remove User">🗑️ Delete</button>
                 </td>
               </tr>
             `).join('')}
@@ -3365,6 +3517,17 @@ function toggleAccordion(cardId) {
               <div>
                 <label class="filter-item-label">Department</label>
                 <input type="text" id="new-user-dept" class="filter-search-box" placeholder="e.g. Support & Operations" />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+              <div>
+                <label class="filter-item-label">Account Password *</label>
+                <input type="password" id="new-user-password" class="filter-search-box" placeholder="Assign account password" required />
+              </div>
+              <div>
+                <label class="filter-item-label">Confirm Password *</label>
+                <input type="password" id="new-user-confirm-password" class="filter-search-box" placeholder="Confirm password" required />
               </div>
             </div>
 
@@ -3422,14 +3585,37 @@ function toggleAccordion(cardId) {
       const email = $('#new-user-email').value.trim();
       const dept = $('#new-user-dept').value.trim() || 'Operations';
       const role = $('#new-user-role').value;
+      const password = $('#new-user-password').value.trim();
+      const confirmPass = $('#new-user-confirm-password').value.trim();
+
+      if (!password) {
+        showToast('❌ Please specify a password for the new user.');
+        return;
+      }
+      if (password !== confirmPass) {
+        showToast('❌ Passwords do not match. Please re-enter.');
+        return;
+      }
+      if (password.length < 4) {
+        showToast('❌ Password must be at least 4 characters long.');
+        return;
+      }
+
+      // Check for duplicate email
+      const existingUser = usersData.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (existingUser) {
+        showToast(`❌ A user with email "${email}" already exists.`);
+        return;
+      }
 
       const newUser = {
         id: usersData.length + 1,
         name,
         email,
+        password,
         department: dept,
         role,
-        avatar: name.split(' ').map(n => n[0]).join('').substring(0, 2),
+        avatar: name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
         status: 'Active',
         twoFactorEnabled: false,
         lastActive: 'Just now',
@@ -3437,7 +3623,18 @@ function toggleAccordion(cardId) {
       };
 
       usersData.unshift(newUser);
-      showToast(`User ${name} created successfully!`);
+      localStorage.setItem('smatbot_users_data', JSON.stringify(usersData));
+
+      // Also sync to backend API if backend server is running
+      try {
+        fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, role, password })
+        }).catch(() => {});
+      } catch (err) {}
+
+      showToast(`User ${name} created successfully! Password assigned.`);
       closeModal();
       if (currentRoute === 'users') renderUsersView($('#route-viewport'));
     });
@@ -3463,6 +3660,10 @@ function toggleAccordion(cardId) {
                 <option value="Billing Manager" ${user.role === 'Billing Manager' ? 'selected' : ''}>Billing Manager</option>
               </select>
             </div>
+            <div style="margin-bottom:1rem;">
+              <label class="filter-item-label">Reset Password (leave blank to keep current)</label>
+              <input type="password" id="edit-user-password" class="filter-search-box" placeholder="Enter new password to change" />
+            </div>
             <div class="permissions-matrix-grid">
               <div class="permission-toggle-card">
                 <span>Manage Clients</span>
@@ -3481,9 +3682,12 @@ function toggleAccordion(cardId) {
                 <label class="switch-box"><input type="checkbox" ${user.role === 'Super Admin' ? 'checked' : ''} /><span class="switch-slider"></span></label>
               </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
-              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
-              <button type="submit" class="btn-table-action btn-action-primary">Save Permissions</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
+              <button type="button" class="btn-table-action" onclick="window.smatApp.confirmDeleteUser(${user.id})" style="color:#DC2626; border:1px solid #FCA5A5; background:#FEF2F2; font-weight:600;">🗑️ Remove User</button>
+              <div style="display:flex; gap:0.5rem;">
+                <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
+                <button type="submit" class="btn-table-action btn-action-primary">Save Permissions</button>
+              </div>
             </div>
           </form>
         </div>
@@ -3493,10 +3697,77 @@ function toggleAccordion(cardId) {
     $('#edit-user-form').addEventListener('submit', (e) => {
       e.preventDefault();
       user.role = $('#edit-user-role').value;
-      showToast('User permissions updated successfully!');
+      const newPass = $('#edit-user-password') ? $('#edit-user-password').value.trim() : '';
+      if (newPass) {
+        if (newPass.length < 4) {
+          showToast('❌ Password must be at least 4 characters long.');
+          return;
+        }
+        user.password = newPass;
+      }
+      localStorage.setItem('smatbot_users_data', JSON.stringify(usersData));
+      showToast('User permissions and settings updated successfully!');
       closeModal();
       if (currentRoute === 'users') renderUsersView($('#route-viewport'));
     });
+  }
+
+  function confirmDeleteUser(userId) {
+    const user = usersData.find(u => u.id === userId);
+    if (!user) {
+      showToast('❌ User not found.');
+      return;
+    }
+
+    if (currentUser && currentUser.email && user.email.toLowerCase() === currentUser.email.toLowerCase()) {
+      showToast('⚠️ You cannot delete your own currently logged-in account.');
+      return;
+    }
+
+    const modal = $('#modal-container');
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="modal-box-card" style="border-top: 4px solid #EF4444; max-width:480px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div style="font-size:1.15rem; font-weight:800; color:#DC2626;">🗑️ Confirm Delete User</div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+          <p style="font-size:0.92rem; color:#334155; line-height:1.5; margin-bottom:1.25rem;">
+            Are you sure you want to remove <strong>${user.name}</strong> (<code>${user.email}</code>) from the team?
+            <br/><span style="color:#64748B; font-size:0.82rem; margin-top:6px; display:inline-block;">This user will immediately lose platform access and cannot log in.</span>
+          </p>
+          <div style="display:flex; justify-content:flex-end; gap:0.6rem;">
+            <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
+            <button type="button" class="btn-table-action" onclick="window.smatApp.executeDeleteUser(${user.id})" style="background:#DC2626; color:#FFFFFF; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:600; cursor:pointer;">
+              Yes, Delete User
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function executeDeleteUser(userId) {
+    const idx = usersData.findIndex(u => u.id === userId);
+    if (idx === -1) {
+      showToast('❌ User not found.');
+      closeModal();
+      return;
+    }
+
+    const removed = usersData.splice(idx, 1)[0];
+    localStorage.setItem('smatbot_users_data', JSON.stringify(usersData));
+
+    // Also sync with backend API if available
+    try {
+      fetch(`/api/users/${userId}`, { method: 'DELETE' }).catch(() => {});
+    } catch (e) {}
+
+    closeModal();
+    showToast(`🗑️ User "${removed.name}" was successfully removed.`);
+    if (currentRoute === 'users') {
+      renderUsersView($('#route-viewport'));
+    }
   }
 
   // =========================================================================
@@ -9552,6 +9823,8 @@ function toggleAccordion(cardId) {
     viewMigrationLogs,
     openAddUserModal,
     openEditUserModal,
+    confirmDeleteUser,
+    executeDeleteUser,
     openPlanModal,
     toggleBillingFrequency,
     updateSubSearch,

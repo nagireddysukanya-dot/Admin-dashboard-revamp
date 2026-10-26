@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 
 // POST /api/users - Add team user
 router.post('/', (req, res) => {
-  const { name, email, role } = req.body;
+  const { name, email, role, password } = req.body;
 
   if (!name || !email) {
     return res.status(400).json({ success: false, message: 'Name and email are required' });
@@ -23,6 +23,7 @@ router.post('/', (req, res) => {
     id: inMemoryUsers.length + 1,
     name,
     email,
+    password: password || 'admin123',
     role: role || 'Support Lead',
     avatar_url: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
     is_active: 1,

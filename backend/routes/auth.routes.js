@@ -10,8 +10,27 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Email address is required' });
   }
 
-  // Find user or default to Sukanya Nagireddy (Super Admin)
-  const user = inMemoryUsers.find(u => u.email.toLowerCase() === email.trim().toLowerCase()) || inMemoryUsers[0];
+  if (!password) {
+    return res.status(400).json({ success: false, message: 'Password is required' });
+  }
+
+  // Find user by registered email
+  const user = inMemoryUsers.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'No account found with this email address'
+    });
+  }
+
+  const expectedPassword = user.password || 'admin123';
+  if (password !== expectedPassword) {
+    return res.status(401).json({
+      success: false,
+      message: 'Incorrect password. Please try again.'
+    });
+  }
 
   const token = 'smt_jwt_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
 
@@ -24,7 +43,7 @@ router.post('/login', async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      avatar_url: user.avatar_url
+      avatar_url: user.avatar_url || ''
     }
   });
 });

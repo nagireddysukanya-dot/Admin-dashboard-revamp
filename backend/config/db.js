@@ -439,6 +439,7 @@ let inMemoryUsers = [
     id: 1,
     name: 'Sukanya Nagireddy',
     email: 'sukanya@smatbot.com',
+    password: 'admin123',
     role: 'Super Admin',
     department: 'Executive Operations',
     avatar: 'SN',
@@ -450,6 +451,7 @@ let inMemoryUsers = [
     id: 2,
     name: 'Arjun Mehta',
     email: 'arjun@smatbot.com',
+    password: 'admin123',
     role: 'Bot Engineer',
     department: 'Bot Engineering & AI',
     avatar: 'AM',
@@ -461,6 +463,7 @@ let inMemoryUsers = [
     id: 3,
     name: 'Rohan Deshmukh',
     email: 'rohan.d@smatbot.com',
+    password: 'admin123',
     role: 'Support Lead',
     department: 'Customer Support SLA',
     avatar: 'RD',
@@ -472,12 +475,25 @@ let inMemoryUsers = [
     id: 4,
     name: 'Elena Rostova',
     email: 'elena@smatbot.com',
+    password: 'admin123',
     role: 'Billing Manager',
     department: 'Finance & Subscriptions',
     avatar: 'ER',
     status: 'Active',
     twoFactorEnabled: true,
     lastActive: '3h ago'
+  },
+  {
+    id: 5,
+    name: 'Admin User',
+    email: 'admin@smatbot.com',
+    password: 'password123',
+    role: 'Super Admin',
+    department: 'Executive Operations',
+    avatar: 'AU',
+    status: 'Active',
+    twoFactorEnabled: true,
+    lastActive: 'Just now'
   }
 ];
 
