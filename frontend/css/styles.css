@@ -9573,3 +9573,1007 @@ body {
   font-weight: 500;
   word-break: break-word;
 }
+
+/* ==========================================================================
+   New Coupon Modal (Matching Screenshot 1)
+   ========================================================================== */
+.coupon-create-modal-card {
+  background: #FFFFFF;
+  border-radius: 8px;
+  max-width: 880px;
+  width: 95vw;
+  padding: 1.75rem 2rem 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.coupon-create-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.coupon-create-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.coupon-create-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.35rem;
+  color: #64748B;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.coupon-create-modal-close:hover {
+  color: #0F172A;
+}
+
+.coupon-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2.5rem;
+  row-gap: 1.15rem;
+}
+
+.coupon-field-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.coupon-field-label {
+  width: 145px;
+  min-width: 145px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #334155;
+  line-height: 1.3;
+}
+
+.coupon-field-label.required {
+  color: #DC2626; /* Crimson Red matching Screenshot 1 */
+}
+
+.coupon-field-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.coupon-form-control {
+  flex: 1;
+  width: 100%;
+  height: 36px;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #1E293B;
+  background: #FFFFFF;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.coupon-form-control:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.coupon-form-control::placeholder {
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+.coupon-form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px !important;
+  cursor: pointer;
+}
+
+.coupon-discount-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  height: 36px;
+  overflow: hidden;
+  background: #FFFFFF;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.coupon-discount-group:focus-within {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.coupon-discount-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #1E293B;
+  background: transparent;
+  font-family: inherit;
+}
+
+.coupon-discount-select {
+  height: 100%;
+  border: none;
+  border-left: 1px solid #E2E8F0;
+  outline: none;
+  padding: 0 26px 0 10px;
+  font-size: 0.85rem;
+  color: #334155;
+  background-color: #FAFAFA;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.coupon-info-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  cursor: help;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.coupon-info-tooltip:hover {
+  color: #475569;
+}
+
+.coupon-section-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 1.4rem 0 1rem;
+  letter-spacing: -0.1px;
+}
+
+.coupon-modal-divider {
+  border: none;
+  border-top: 1px solid #E2E8F0;
+  margin: 1.5rem 0 1.25rem;
+}
+
+.coupon-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 1.75rem;
+}
+
+.coupon-btn-save {
+  background: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 22px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.coupon-btn-save:hover {
+  background: #1D4ED8;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}
+
+.coupon-btn-cancel {
+  background: #FFFFFF;
+  color: #334155;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.coupon-btn-cancel:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  color: #0F172A;
+}
+
+@media (max-width: 768px) {
+  .coupon-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .coupon-field-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .coupon-field-label {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* ==========================================================================
+   Custom Searchable Dropdown for Coupon Modal (Matching Screenshots 1 to 4)
+   ========================================================================== */
+.coupon-searchable-select {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+
+.coupon-select-trigger {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.coupon-select-trigger:hover {
+  border-color: #94A3B8;
+}
+
+.coupon-select-trigger.active {
+  border-color: #3B82F6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+.coupon-select-trigger.active .coupon-select-chevron {
+  transform: rotate(180deg);
+  stroke: #3B82F6;
+}
+
+.coupon-select-trigger-text {
+  font-size: 0.85rem;
+  color: #1E293B;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coupon-select-trigger-text.placeholder {
+  color: #64748B;
+}
+
+.coupon-select-chevron {
+  flex-shrink: 0;
+  transition: transform 0.2s ease, stroke 0.15s ease;
+}
+
+.coupon-select-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  min-width: 220px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  padding: 8px 6px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.coupon-search-box {
+  position: relative;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.coupon-search-icon {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+  stroke: #94A3B8;
+}
+
+.coupon-search-input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid #3B82F6;
+  border-radius: 6px;
+  padding: 4px 10px 4px 30px;
+  font-size: 0.83rem;
+  color: #1E293B;
+  outline: none;
+  background: #FFFFFF;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.coupon-search-input::placeholder {
+  color: #94A3B8;
+}
+
+.coupon-options-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coupon-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #334155;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  user-select: none;
+}
+
+.coupon-option-item:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.coupon-option-item.selected {
+  background-color: #3B82F6;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.coupon-option-item.selected:hover {
+  background-color: #2563EB;
+}
+
+.coupon-option-check {
+  flex-shrink: 0;
+  stroke: #FFFFFF;
+}
+
+.coupon-action-new-product {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border-top: 1px solid #F1F5F9;
+  color: #2563EB;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  user-select: none;
+  transition: background-color 0.12s ease;
+}
+
+.coupon-action-new-product:hover {
+  background-color: #EFF6FF;
+}
+
+
+/* ==========================================================================
+   ZOHO SUBSCRIPTIONS EXACT REFERENCE STYLING
+   ========================================================================== */
+.zoho-sub-fullpage-wrap {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #111827;
+}
+.sidebar-add-plus-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #1877F2;
+  color: #FFFFFF;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.15s ease;
+}
+.sidebar-add-plus-btn:hover {
+  background: #1664D8;
+  transform: scale(1.1);
+}
+.zoho-btn-continue {
+  background: #1877F2 !important;
+  border-color: #1877F2 !important;
+}
+.zoho-btn-continue:hover {
+  background: #1664D8 !important;
+  border-color: #1664D8 !important;
+}
+
+
+/* Zoho Addons Row Hover Actions (Screenshot 1 & 2 Match) */
+.zoho-addon-table-row {
+  transition: background-color 0.15s ease;
+}
+
+.zoho-addon-table-row:hover {
+  background-color: #FAFAFA;
+}
+
+.zoho-addon-table-row .zoho-addon-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: 0.45rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.zoho-addon-table-row:hover .zoho-addon-row-actions,
+.zoho-addon-table-row:focus-within .zoho-addon-row-actions {
+  opacity: 1;
+  visibility: visible;
+}
+
+.zoho-btn-row-more {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  color: #6B7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.zoho-btn-row-more:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #1F2937;
+}
+
+.zoho-btn-row-delete {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #FCA5A5;
+  background: #FFFFFF;
+  color: #DC2626;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.zoho-btn-row-delete:hover {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #B91C1C;
+}
+
+
+/* Zoho Plan Row Hover Actions (Screenshot 1, 2, 3 Match) */
+.zoho-plan-table-row {
+  transition: background-color 0.15s ease;
+}
+
+.zoho-plan-table-row:hover {
+  background-color: #FAFAFA;
+}
+
+.zoho-plan-table-row .zoho-plan-row-actions {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.45rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.zoho-plan-table-row:hover .zoho-plan-row-actions,
+.zoho-plan-table-row:focus-within .zoho-plan-row-actions,
+.zoho-plan-table-row .zoho-plan-row-actions.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.zoho-addon-table-row .zoho-addon-row-actions.open {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.zoho-btn-row-more.active {
+  border-color: #2563EB !important;
+  color: #2563EB !important;
+  background: #EFF6FF !important;
+}
+
+
+/* Zoho Place of Supply Dropdown Styles (Exact Match to User Reference Screenshot) */
+.zoho-supply-option-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+  margin: 1px 4px;
+  border-radius: 4px;
+  transition: all 0.12s ease;
+}
+
+.zoho-supply-option-item:hover {
+  background: #3B82F6 !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-supply-option-item:hover span {
+  color: #FFFFFF !important;
+}
+
+.zoho-supply-option-item.selected {
+  background: #EEF2F6;
+  color: #1E293B;
+  font-weight: 500;
+}
+
+.zoho-supply-option-item.selected .zoho-supply-check {
+  display: inline-block;
+  color: #2563EB;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+
+/* Zoho Configure Tax Preferences - GST Treatment Dropdown (Screenshots 1 - 5) */
+.zoho-treatment-option-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  cursor: pointer;
+  margin: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.12s ease;
+}
+
+.zoho-treatment-option-item .treatment-text-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.zoho-treatment-option-item .treatment-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1E293B;
+}
+
+.zoho-treatment-option-item .treatment-desc {
+  font-size: 0.74rem;
+  color: #64748B;
+  margin-top: 2px;
+  line-height: 1.25;
+}
+
+.zoho-treatment-option-item:hover,
+.zoho-treatment-option-item.selected {
+  background: #3B82F6 !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-treatment-option-item:hover .treatment-title,
+.zoho-treatment-option-item.selected .treatment-title {
+  color: #FFFFFF !important;
+}
+
+.zoho-treatment-option-item:hover .treatment-desc,
+.zoho-treatment-option-item.selected .treatment-desc {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.zoho-treatment-option-item.selected .zoho-treatment-check {
+  display: inline-block;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
+
+/* Zoho Place of Supply Popover - Positioned Above / Drop-up (paina vachela) */
+.zoho-supply-popover {
+  position: absolute;
+  bottom: calc(100% + 4px) !important;
+  top: auto !important;
+  left: 0;
+  width: 100%;
+  z-index: 99999 !important;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  overflow: hidden;
+}
+
+
+/* Zoho Plan Removal Confirmation Modal Animation (User Screenshot Match) */
+@keyframes zohoSlideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -24px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.zoho-plan-remove-modal {
+  animation: zohoSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+/* Zoho Plan Account Drop-up Styles (Screenshots 3 - 7 Match) */
+.zoho-account-group-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1E293B;
+  padding: 8px 12px 3px 12px;
+  letter-spacing: 0.2px;
+}
+
+.zoho-account-option-item {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  color: #374151;
+  cursor: pointer;
+  margin: 1px 4px;
+  border-radius: 4px;
+  transition: all 0.1s ease;
+  line-height: 1.35;
+}
+
+.zoho-account-option-item.sub-item {
+  padding-left: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.zoho-account-option-item.sub-item .sub-bullet {
+  margin-right: 6px;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.zoho-account-option-item:hover,
+.zoho-account-option-item.selected {
+  background: #3B82F6 !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-account-option-item:hover .sub-bullet,
+.zoho-account-option-item.selected .sub-bullet {
+  color: #FFFFFF !important;
+}
+
+.zoho-account-option-item.header-only {
+  font-weight: 600;
+  cursor: default;
+  color: #475569;
+}
+.zoho-account-option-item.header-only:hover {
+  background: transparent !important;
+  color: #475569 !important;
+}
+
+
+/* Disabled Customer Name in Change Subscription (User Reference Match) */
+.zoho-customer-disabled-wrap,
+.zoho-customer-disabled-wrap * {
+  cursor: not-allowed !important;
+}
+
+#zoho-sub-client-select:disabled {
+  cursor: not-allowed !important;
+  background-color: #F8FAFC !important;
+  color: #334155 !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* ========================================================================= */
+/* ZOHO PLAN TAX SEARCHABLE POPOVER (SCREENSHOTS 3 & 4 MATCH)                */
+/* ========================================================================= */
+.zoho-tax-popover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+.zoho-tax-item {
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  color: #1E293B;
+}
+
+.zoho-tax-item:hover {
+  background: #3B82F6 !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-tax-item:hover .zoho-tax-sub {
+  color: #E0E7FF !important;
+}
+
+.zoho-tax-item:hover .zoho-tax-check svg {
+  stroke: #FFFFFF !important;
+}
+
+.zoho-tax-item.selected {
+  background: #EEF2F6;
+  font-weight: 600;
+}
+
+#zoho-plan-tax-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#zoho-plan-tax-list::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+
+#zoho-plan-tax-list::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+/* ========================================================================= */
+/* ZOHO COUPON SEARCHABLE DROPDOWN (EXACT SCREENSHOT MATCH)                  */
+/* ========================================================================= */
+.zoho-coupon-option {
+  color: #1E293B;
+}
+
+.zoho-coupon-option:hover {
+  background: #3B82F6 !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-coupon-option:hover .zoho-coupon-check svg {
+  stroke: #FFFFFF !important;
+}
+
+.zoho-coupon-option.selected {
+  background: #EEF2F6;
+  font-weight: 600;
+}
+
+#zoho-coupon-results-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#zoho-coupon-results-list::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+
+#zoho-coupon-results-list::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+/* ========================================================================= */
+/* ZOHO DISCOUNT PREFERENCE SEARCHABLE POPOVER (USER SCREENSHOT MATCH)       */
+/* ========================================================================= */
+.zoho-discount-popover {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 8px 6px;
+  min-width: 200px;
+  z-index: 99999;
+}
+
+.zoho-discount-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  font-size: 0.84rem;
+  color: #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  user-select: none;
+  margin-bottom: 2px;
+}
+
+.zoho-discount-option-item:hover {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+.zoho-discount-option-item:hover .zoho-discount-check {
+  color: #FFFFFF !important;
+}
+
+.zoho-discount-option-item.selected {
+  background: #2563EB;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.zoho-discount-option-item.selected .zoho-discount-check {
+  display: inline-block;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* ========================================================================= */
+/* ZOHO CUSTOMER SIDEBAR TAB & SLIDE-OVER DRAWER (SCREENSHOTS 1 & 2 MATCH)   */
+/* ========================================================================= */
+#zoho-customer-sidebar-tab {
+  position: fixed;
+  right: 0;
+  top: 155px;
+  z-index: 9999;
+  background: #334155;
+  color: #FFFFFF;
+  padding: 6px 10px 6px 14px;
+  border-radius: 6px 0 0 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+#zoho-customer-sidebar-tab:hover {
+  background: #1E293B;
+  padding-right: 14px;
+  box-shadow: -4px 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+#zoho-customer-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(1.5px);
+  z-index: 99999;
+  transition: opacity 0.25s ease;
+}
+
+#zoho-customer-sidebar-backdrop.open {
+  display: block;
+}
+
+#zoho-customer-sidebar-drawer {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 380px;
+  max-width: 92vw;
+  height: 100vh;
+  background: #F8FAFC;
+  box-shadow: -6px 0 35px rgba(0, 0, 0, 0.2);
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#zoho-customer-sidebar-drawer.open {
+  right: 0;
+}
+
+.zoho-cust-link-wrapper:hover::after {
+  content: "View in Customers module";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6px;
+  background: #1E293B;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 100010;
+  pointer-events: none;
+}
+
+/* ========================================================================= */
+/* ZOHO PLAN SEARCHABLE DROPDOWN POPOVER (EXACT MATCH TO USER SCREENSHOTS)   */
+/* ========================================================================= */
+.zoho-plan-dropdown-popover {
+  border-radius: 6px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #CBD5E1;
+}
+
+.zoho-plan-option-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #F1F5F9;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.zoho-plan-option-item:last-child {
+  border-bottom: none;
+}
+
+.zoho-plan-option-item:hover,
+.zoho-plan-option-item.active {
+  background: #2563EB !important;
+}
+
+.zoho-plan-option-item:hover .zoho-plan-opt-name,
+.zoho-plan-option-item.active .zoho-plan-opt-name {
+  color: #FFFFFF !important;
+}
+
+.zoho-plan-option-item:hover .zoho-plan-opt-code,
+.zoho-plan-option-item.active .zoho-plan-opt-code {
+  color: #DBEAFE !important;
+}

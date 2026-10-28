@@ -191,16 +191,36 @@
         deployment_type: 'White-Label', custom_domain: 'app.alignbooks.com', sub_clients_count: 36, white_label_brand: 'AlignBooks Automation Hub', ssl_status: 'Active (SSL 🔒)'
       },
       {
-        id: 10, s_no: 10, name: 'Solaris Green Energy #2', phone_number: '+91-9800009460', alternate_phone: '+91-9100006220',
-        email: 'client20@solarisgre.com', customer_type: 'Direct', account_type: 'Client Accounts',
-        plan_name: 'Pro NM', plan_type: 'Paid_plan', billing_cycle: 'Monthly',
-        subscription_amount_display: '₹ 4,999.00', inr_amount: 4999, usd_amount: 65, end_date: '15-02-2027',
-        days_left: 141, bots_limit: 25, bots_used: 0, chats_limit: 50000, chats_used: 2400,
-        service_chats_limit: 1000, service_chats_used: 0, bi_chats_limit: 5000, bi_chats_used: 0,
-        gst_number: '36AAACH7020R1ZZ', url: 'solarisgre.com',
+        id: 10, s_no: 10, name: 'deepak', phone_number: '+91-9705736759', alternate_phone: '',
+        email: 'suryadesigner1234@gmail.com', customer_type: 'Direct', account_type: 'Client Accounts',
+        company_name: 'feso', legal_name: 'FESO SOCIAL MEDIA PRIVATE LIMITED',
+        plan_name: 'Starter New Monthly (Without WA)', plan_type: 'Paid_plan', billing_cycle: 'Monthly',
+        subscription_amount_display: '₹ 1,890.00', inr_amount: 1890, usd_amount: 25, end_date: '27-11-2026',
+        days_left: 30, bots_limit: 5, bots_used: 1, chats_limit: 1000, chats_used: 120,
+        service_chats_limit: 1000, service_chats_used: 120, bi_chats_limit: 500, bi_chats_used: 0,
+        gst_number: '', gst_treatment: 'Unregistered Business', url: 'feso.in',
         test_account: 'No', subscription_status: 'Active', sales_person: 'Rahul Sharma',
-        support_person: 'Kiran Kumar', currency_type: 'INR', zoho_customer_id: '3141005000009490020', subscription_id: 'SUB-SOLARIS-2026',
-        deployment_type: 'On-Premise', server_host: 'Solaris Private On-Prem Datacenter - Node A1', cluster_health: '🟢 100% Operational', engine_version: 'v4.2.0 Enterprise Node', license_key: 'LIC-ONPREM-2026-X010'
+        support_person: 'Sukanya Nagireddy', currency_type: 'INR', zoho_customer_id: 'ZC-01083', subscription_id: 'SUB-01083',
+        billing_address: {
+          attention: 'deepak',
+          company: 'feso',
+          line1: 'test',
+          line2: 'test',
+          city: 'Hyderabad',
+          state: 'Telangana',
+          pin: '500034',
+          country: 'India'
+        },
+        shipping_address: {
+          attention: '',
+          company: '',
+          line1: '',
+          line2: '',
+          city: '',
+          state: 'Telangana',
+          pin: '',
+          country: 'India'
+        }
       }
     ];
 
@@ -1136,21 +1156,15 @@
             </a>
 
             <div class="sidebar-section-title" style="margin-top:0.85rem;">BILLING & SUBSCRIPTIONS</div>
-            <!-- Subscriptions (Zoho Billing Portal) -->
-            <a class="nav-link-item ${currentRoute === 'subscription' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscription')">
-              <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-              </span>
-              <span>Subscriptions</span>
-            </a>
-
-
-            <!-- 3. Client Subscriptions -->
-            <a class="nav-link-item ${currentRoute === 'subscriptions' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscriptions')">
-              <span class="nav-link-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-              </span>
-              <span>Active Subscriptions</span>
+            <!-- Active Subscriptions -->
+            <a class="nav-link-item ${currentRoute === 'subscriptions' || currentRoute === 'change-subscription' || currentRoute === 'new-subscription' || currentRoute === 'subscription' || currentRoute === 'edit-customer' ? 'active' : ''}" onclick="window.smatApp.navigateTo('subscriptions')" style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; gap:0.55rem;">
+                <span class="nav-link-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                </span>
+                <span>Subscriptions</span>
+              </div>
+              <span class="sidebar-add-plus-btn" onclick="event.stopPropagation(); window.smatApp.openZohoSubscription(null);" title="New / Change Subscription">+</span>
             </a>
 
             <!-- 5. Renewals & Expiries -->
@@ -1318,6 +1332,8 @@
       'chatbots': 'Bot Migration Engine & Workflows',
       'users': 'Team & Role-Based Access Control',
       'subscription': 'Edit Customer',
+      'change-subscription': 'Change Subscription',
+      'new-subscription': 'Change Subscription',
       'edit-customer': 'Edit Customer',
       'edit-customer': 'Edit Customer — Zoho Billing Portal',
       'subscriptions': 'Active Client Subscriptions',
@@ -1356,9 +1372,11 @@
       renderChatbotsView(viewport);
     } else if (route === 'users') {
       renderUsersView(viewport);
+    } else if (route === 'change-subscription' || route === 'new-subscription' || route === 'subscriptions') {
+      renderZohoSubscriptionView(viewport);
     } else if (route === 'subscription' || route === 'edit-customer') {
       renderZohoEditCustomerView(viewport);
-    } else if (route === 'subscriptions') {
+    } else if (route === 'subscriptions-directory') {
       renderClientSubscriptionsView(viewport);
     } else if (route === 'renewals') {
       renderRenewalsView(viewport);
@@ -4069,21 +4087,54 @@ function toggleAccordion(cardId) {
     }
   }
 
+  let uploadedCustomerDocs = [];
   function handleDocumentUpload(input) {
     if (input && input.files && input.files.length > 0) {
-      const names = Array.from(input.files).map(f => f.name).join(', ');
-      showToast('Uploaded ' + input.files.length + ' file(s): ' + names);
-      const listEl = document.getElementById('uploaded-docs-list');
-      if (listEl) {
-        listEl.innerHTML = Array.from(input.files).map(f => `
-          <span class="uploaded-doc-chip">📎 ${escapeHtml(f.name)} (${Math.round(f.size/1024)} KB)</span>
-        `).join('');
-      }
+      const newFiles = Array.from(input.files).map(f => ({
+        name: f.name,
+        size: f.size,
+        type: f.type,
+        lastModified: f.lastModified
+      }));
+      uploadedCustomerDocs = uploadedCustomerDocs.concat(newFiles);
+      showToast('Uploaded ' + input.files.length + ' file(s)');
+      renderUploadedCustomerDocsList();
+    }
+  }
+
+  function renderUploadedCustomerDocsList(docs) {
+    const listEl = document.getElementById('uploaded-docs-list');
+    const items = docs || uploadedCustomerDocs;
+    if (!listEl) return;
+    if (!items || items.length === 0) {
+      listEl.innerHTML = '';
+      return;
+    }
+    listEl.innerHTML = items.map((f, i) => {
+      const name = typeof f === 'string' ? f : (f.name || 'document');
+      const sizeKb = f.size ? Math.round(f.size / 1024) + ' KB' : '';
+      return `
+        <span class="uploaded-doc-chip" style="display:inline-flex; align-items:center; gap:6px; background:#F1F5F9; border:1px solid #CBD5E1; padding:3px 8px; border-radius:4px; font-size:12px; margin:2px 4px 2px 0;">
+          <span>📎 ${escapeHtml(name)} ${sizeKb ? `(${sizeKb})` : ''}</span>
+          <button type="button" onclick="window.smatApp.removeUploadedDoc(${i})" style="border:none; background:none; cursor:pointer; color:#94A3B8; font-weight:700;" title="Remove file">✕</button>
+        </span>
+      `;
+    }).join('');
+  }
+
+  function removeUploadedDoc(index) {
+    if (uploadedCustomerDocs && uploadedCustomerDocs.length > index) {
+      uploadedCustomerDocs.splice(index, 1);
+      renderUploadedCustomerDocsList();
     }
   }
 
   function handleZohoSaveAndSubscribe(e) {
     if (e && e.preventDefault) e.preventDefault();
+    let currClient = clientsData.find(c => c.id === zohoSelectedClientId);
+    if (currClient) {
+      currClient.subscription_status = 'Active';
+    }
     handleZohoEditCustomerSubmit(e || { preventDefault: () => {} });
     showToast('Customer saved and subscription activated successfully in Zoho Billing!');
   }
@@ -4191,9 +4242,9 @@ function toggleAccordion(cardId) {
       const resp = await fetch('/api/clients/gstin/' + encodeURIComponent(gstin));
       const data = await resp.json();
 
-      if (data && data.success && data.profile) {
-        const p = data.profile;
-        const legalName = p.legal_name || '';
+      if (data && data.success && (data.profile || data.data)) {
+        const p = data.profile || data.data;
+        const legalName = p.legal_name || p.trade_name || '';
         const tradeName = p.trade_name || p.legal_name || '';
         const companyName = p.trade_name || p.legal_name || '';
 
@@ -4215,12 +4266,16 @@ function toggleAccordion(cardId) {
           onGstTreatmentChange('Registered Business - Regular');
         }
 
+        // Hide warning since GSTIN is verified
+        const warn = document.getElementById('cust-gstin-warning');
+        if (warn) warn.style.display = 'none';
+
         // Auto select Place of Supply based on state_code or state
         if (posSelect && (p.state_code || p.state)) {
           const stateCode = String(p.state_code || '');
           const stateName = (p.state || '').toLowerCase();
           for (let opt of posSelect.options) {
-            if ((stateCode && opt.value.includes('[' + stateCode + ']')) || opt.value.toLowerCase().includes(stateName)) {
+            if ((stateCode && opt.value.includes('[' + stateCode + ']')) || (stateName && opt.value.toLowerCase().includes(stateName))) {
               posSelect.value = opt.value;
               break;
             }
@@ -4238,7 +4293,7 @@ function toggleAccordion(cardId) {
         if (billPin && p.pincode) billPin.value = p.pincode;
         if (billState && p.state) {
           for (let opt of billState.options) {
-            if (opt.value.toLowerCase() === p.state.toLowerCase()) {
+            if (opt.value.toLowerCase() === p.state.toLowerCase() || opt.value.toLowerCase().includes(p.state.toLowerCase())) {
               billState.value = opt.value;
               break;
             }
@@ -4274,17 +4329,70 @@ function toggleAccordion(cardId) {
 
   function handleZohoEditCustomerSubmit(e) {
     if (e && e.preventDefault) e.preventDefault();
-    let currClient = clientsData.find(c => c.id === zohoSelectedClientId);
+    const email = document.getElementById('cust-email')?.value.trim() || '';
+    let currClient = (zohoSelectedClientId !== null && zohoSelectedClientId !== undefined && zohoSelectedClientId !== '')
+      ? clientsData.find(c => c.id === zohoSelectedClientId || c.id === Number(zohoSelectedClientId))
+      : null;
+
+    if (email) {
+      const matchByEmail = clientsData.find(c => (c.email || '').trim().toLowerCase() === email.trim().toLowerCase());
+      if (matchByEmail) {
+        currClient = matchByEmail;
+      } else if (currClient && currClient.email && currClient.email.trim().toLowerCase() !== email.trim().toLowerCase()) {
+        currClient = null;
+      }
+    }
     const isNew = !currClient;
 
     const firstName = document.getElementById('cust-first-name')?.value.trim() || '';
     const lastName = document.getElementById('cust-last-name')?.value.trim() || '';
     const company = document.getElementById('cust-company-name')?.value.trim() || '';
-    const email = document.getElementById('cust-email')?.value.trim() || '';
-    const phone = document.getElementById('cust-phone')?.value.trim() || document.getElementById('cust-mobile-phone')?.value.trim() || '';
+
+    const phoneCode = document.getElementById('cust-phone-code')?.value || '+91';
+    const rawPhone = document.getElementById('cust-phone')?.value.trim() || document.getElementById('cust-mobile-phone')?.value.trim() || '';
+    const phone = rawPhone;
+    const language = document.getElementById('cust-language')?.value || 'English';
     const gstTreatment = document.getElementById('cust-gst-treatment')?.value || 'Unregistered Business';
     const isReg = isGstRegisteredTreatment(gstTreatment);
     const gstin = isReg ? (document.getElementById('cust-gstin-input')?.value.trim() || '') : '';
+    const placeOfSupply = document.getElementById('cust-place-of-supply')?.value || '[TS] - Telangana';
+    const pan = document.getElementById('cust-pan')?.value.trim().toUpperCase() || '';
+    const legalName = document.getElementById('cust-legal-name')?.value.trim() || '';
+    const tradeName = document.getElementById('cust-trade-name')?.value.trim() || '';
+    const taxPrefRadio = document.querySelector('input[name="tax_preference"]:checked');
+    const taxPreference = taxPrefRadio ? taxPrefRadio.value : 'Taxable';
+    const currency = document.getElementById('cust-currency')?.value || 'INR- Indian Rupee';
+    const paymentTerms = document.getElementById('cust-payment-terms')?.value || 'Due on Receipt';
+
+    // Expandable details
+    const website = document.getElementById('cust-website')?.value.trim() || '';
+    const department = document.getElementById('cust-department')?.value.trim() || document.getElementById('cust-dept')?.value.trim() || '';
+    const designation = document.getElementById('cust-designation')?.value.trim() || '';
+    const xTwitter = document.getElementById('cust-x-twitter')?.value.trim() || '';
+    const skype = document.getElementById('cust-skype')?.value.trim() || '';
+    const facebook = document.getElementById('cust-facebook')?.value.trim() || '';
+
+    // Billing Address
+    const billAttention = document.getElementById('bill-attention')?.value || '';
+    const billCountry = document.getElementById('bill-country')?.value || 'India';
+    const billLine1 = document.getElementById('bill-address1')?.value || '';
+    const billLine2 = document.getElementById('bill-address2')?.value || '';
+    const billCity = document.getElementById('bill-city')?.value || '';
+    const billState = document.getElementById('bill-state')?.value || 'Telangana';
+    const billPin = document.getElementById('bill-pincode')?.value || '';
+    const billPhone = document.getElementById('bill-phone')?.value || '';
+    const billFax = document.getElementById('bill-fax')?.value || '';
+
+    // Shipping Address
+    const shipAttention = document.getElementById('ship-attention')?.value || '';
+    const shipCountry = document.getElementById('ship-country')?.value || 'India';
+    const shipLine1 = document.getElementById('ship-address1')?.value || '';
+    const shipLine2 = document.getElementById('ship-address2')?.value || '';
+    const shipCity = document.getElementById('ship-city')?.value || '';
+    const shipState = document.getElementById('ship-state')?.value || 'Telangana';
+    const shipPin = document.getElementById('ship-pincode')?.value || '';
+    const shipPhone = document.getElementById('ship-phone')?.value || '';
+    const shipFax = document.getElementById('ship-fax')?.value || '';
 
     if (!email && !company && !firstName) {
       showToast('⚠️ Please enter customer email or name.');
@@ -4298,7 +4406,9 @@ function toggleAccordion(cardId) {
         s_no: clientsData.length + 1,
         name: company || (firstName + ' ' + lastName).trim() || email.split('@')[0],
         email: email,
+        phone_code: phoneCode,
         phone_number: phone,
+        language: language,
         company_name: company || (firstName + ' ' + lastName).trim(),
         plan_name: 'Standard',
         plan_type: 'Paid_plan',
@@ -4309,7 +4419,47 @@ function toggleAccordion(cardId) {
         days_left: 30,
         zoho_customer_id: 'ZC-' + (900000 + newId),
         gst_treatment: gstTreatment,
-        gst_number: isReg ? (gstin || '-') : '-'
+        gst_number: isReg ? (gstin || '-') : '-',
+        gstin: isReg ? gstin : '',
+        place_of_supply: placeOfSupply,
+        pan: pan,
+        legal_name: legalName,
+        trade_name: tradeName,
+        tax_preference: taxPreference,
+        currency: currency,
+        payment_terms: paymentTerms,
+        documents: [...uploadedCustomerDocs],
+        website: website,
+        department: department,
+        designation: designation,
+        social_links: {
+          x: xTwitter,
+          skype: skype,
+          facebook: facebook
+        },
+        billing_address: {
+          company: company || (firstName + ' ' + lastName).trim(),
+          attention: billAttention,
+          country: billCountry,
+          line1: billLine1,
+          line2: billLine2,
+          city: billCity,
+          state: billState,
+          pin: billPin,
+          phone: billPhone,
+          fax: billFax
+        },
+        shipping_address: {
+          attention: shipAttention,
+          country: shipCountry,
+          line1: shipLine1,
+          line2: shipLine2,
+          city: shipCity,
+          state: shipState,
+          pin: shipPin,
+          phone: shipPhone,
+          fax: shipFax
+        }
       };
       clientsData.unshift(currClient);
       zohoSelectedClientId = currClient.id;
@@ -4318,30 +4468,68 @@ function toggleAccordion(cardId) {
       else if (firstName || lastName) currClient.name = (firstName + ' ' + lastName).trim();
       if (company) currClient.company_name = company;
       if (email) currClient.email = email;
+      currClient.phone_code = phoneCode;
       if (phone) currClient.phone_number = phone;
+      currClient.language = language;
       currClient.gst_treatment = gstTreatment;
       currClient.gst_number = isReg ? (gstin || '-') : '-';
+      currClient.gstin = isReg ? gstin : '';
+      currClient.place_of_supply = placeOfSupply;
+      currClient.pan = pan;
+      currClient.legal_name = legalName;
+      currClient.trade_name = tradeName;
+      currClient.tax_preference = taxPreference;
+      currClient.currency = currency;
+      currClient.payment_terms = paymentTerms;
+      if (uploadedCustomerDocs && uploadedCustomerDocs.length > 0) {
+        currClient.documents = [...uploadedCustomerDocs];
+      }
+      currClient.website = website;
+      currClient.department = department;
+      currClient.designation = designation;
+      currClient.social_links = {
+        x: xTwitter,
+        skype: skype,
+        facebook: facebook
+      };
+      currClient.billing_address = {
+        company: company || currClient.name,
+        attention: billAttention,
+        country: billCountry,
+        line1: billLine1,
+        line2: billLine2,
+        city: billCity,
+        state: billState,
+        pin: billPin,
+        phone: billPhone,
+        fax: billFax
+      };
+      currClient.shipping_address = {
+        attention: shipAttention,
+        country: shipCountry,
+        line1: shipLine1,
+        line2: shipLine2,
+        city: shipCity,
+        state: shipState,
+        pin: shipPin,
+        phone: shipPhone,
+        fax: shipFax
+      };
     }
 
-    const billAttention = document.getElementById('bill-attention')?.value || '';
-    const billLine1 = document.getElementById('bill-address1')?.value || '';
-    const billLine2 = document.getElementById('bill-address2')?.value || '';
-    const billCity = document.getElementById('bill-city')?.value || '';
-    const billState = document.getElementById('bill-state')?.value || '';
-    const billPin = document.getElementById('bill-pincode')?.value || '';
-
-    currClient.billing_address = {
-      company: company || currClient.name,
-      attention: billAttention,
-      line1: billLine1,
-      line2: billLine2,
-      city: billCity,
-      state: billState,
-      pin: billPin,
-      country: 'India'
-    };
-
     localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+
+    // Backward-compatible background sync with server if client exists
+    if (currClient && currClient.id && typeof fetch === 'function') {
+      try {
+        fetch('/api/clients/' + currClient.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currClient)
+        }).catch(() => {});
+      } catch (err) {}
+    }
+
     showToast(`✅ Customer details saved successfully in Zoho Billing (${currClient.name || currClient.email})!`);
     navigateTo('subscriptions');
   }
@@ -4475,19 +4663,25 @@ function toggleAccordion(cardId) {
     if (dispSelect) dispSelect.value = '';
 
     // 4. Phone Number & Duplicate Warnings
+    const phoneCodeEl = document.getElementById('cust-phone-code');
     const phoneInput = document.getElementById('cust-phone');
+    if (phoneCodeEl) phoneCodeEl.value = '+91';
     if (phoneInput) {
       phoneInput.value = '';
       onPhoneInputChange('');
     }
 
-    // 5. Customer ID Chip in Header
+    // 5. Customer Language
+    const langSelect = document.getElementById('cust-language');
+    if (langSelect) langSelect.value = 'English';
+
+    // 6. Customer ID Chip in Header
     const chipEl = document.querySelector('.badge-cust-chip');
     if (chipEl) {
       chipEl.textContent = 'New Customer';
     }
 
-    // 6. GST Treatment & GSTIN
+    // 7. GST Treatment & GSTIN
     const gstinInput = document.getElementById('cust-gstin-input');
     const popoverGstin = document.getElementById('popover-gstin-input');
     const gstTreatmentSelect = document.getElementById('cust-gst-treatment');
@@ -4498,53 +4692,83 @@ function toggleAccordion(cardId) {
       onGstTreatmentChange('Unregistered Business');
     }
 
-    // 7. Place of Supply, PAN, Legal Name, Trade Name, Website, Dept, Designation, Remarks
+    // 8. Place of Supply, PAN, Legal Name, Trade Name, Tax Preference, Currency, Payment Terms
+    const posSelect = document.getElementById('cust-place-of-supply');
     const panEl = document.getElementById('cust-pan');
     const legalEl = document.getElementById('cust-legal-name');
     const tradeEl = document.getElementById('cust-trade-name');
-    const webEl = document.getElementById('cust-website');
-    const deptEl = document.getElementById('cust-dept');
-    const desigEl = document.getElementById('cust-designation');
-    const remarksEl = document.getElementById('cust-remarks');
+    const currencySelect = document.getElementById('cust-currency');
+    const paymentTermsSelect = document.getElementById('cust-payment-terms');
+    const taxPrefTaxable = document.querySelector('input[name="tax_preference"][value="Taxable"]');
 
+    if (posSelect) posSelect.value = '[TS] - Telangana';
     if (panEl) panEl.value = '';
     if (legalEl) legalEl.value = '';
     if (tradeEl) tradeEl.value = '';
+    if (currencySelect) currencySelect.value = 'INR- Indian Rupee';
+    if (paymentTermsSelect) paymentTermsSelect.value = 'Due on Receipt';
+    if (taxPrefTaxable) taxPrefTaxable.checked = true;
+
+    // 9. Document Upload
+    uploadedCustomerDocs = [];
+    const docsList = document.getElementById('uploaded-docs-list');
+    if (docsList) docsList.innerHTML = '';
+
+    // 10. Expandable More Details
+    const webEl = document.getElementById('cust-website');
+    const deptEl = document.getElementById('cust-department') || document.getElementById('cust-dept');
+    const desigEl = document.getElementById('cust-designation');
+    const xEl = document.getElementById('cust-x-twitter');
+    const skypeEl = document.getElementById('cust-skype');
+    const fbEl = document.getElementById('cust-facebook');
+    const remarksEl = document.getElementById('cust-remarks');
+
     if (webEl) webEl.value = '';
     if (deptEl) deptEl.value = '';
     if (desigEl) desigEl.value = '';
+    if (xEl) xEl.value = '';
+    if (skypeEl) skypeEl.value = '';
+    if (fbEl) fbEl.value = '';
     if (remarksEl) remarksEl.value = '';
 
-    // 8. Billing Address
+    // 11. Billing Address
     const attentionEl = document.getElementById('bill-attention');
+    const countryEl = document.getElementById('bill-country');
     const addr1El = document.getElementById('bill-address1');
     const addr2El = document.getElementById('bill-address2');
     const cityEl = document.getElementById('bill-city');
+    const stateEl = document.getElementById('bill-state');
     const pinEl = document.getElementById('bill-pincode');
     const phoneBillEl = document.getElementById('bill-phone');
     const faxBillEl = document.getElementById('bill-fax');
 
     if (attentionEl) attentionEl.value = '';
+    if (countryEl) countryEl.value = 'India';
     if (addr1El) addr1El.value = '';
     if (addr2El) addr2El.value = '';
     if (cityEl) cityEl.value = '';
+    if (stateEl) stateEl.value = 'Telangana';
     if (pinEl) pinEl.value = '';
     if (phoneBillEl) phoneBillEl.value = '';
     if (faxBillEl) faxBillEl.value = '';
 
-    // 9. Shipping Address
+    // 12. Shipping Address
     const shipAttEl = document.getElementById('ship-attention');
+    const shipCountryEl = document.getElementById('ship-country');
     const shipAddr1El = document.getElementById('ship-address1');
     const shipAddr2El = document.getElementById('ship-address2');
     const shipCityEl = document.getElementById('ship-city');
+    const shipStateEl = document.getElementById('ship-state');
     const shipPinEl = document.getElementById('ship-pincode');
     const shipPhoneEl = document.getElementById('ship-phone');
     const shipFaxEl = document.getElementById('ship-fax');
 
     if (shipAttEl) shipAttEl.value = '';
+    if (shipCountryEl) shipCountryEl.value = 'India';
     if (shipAddr1El) shipAddr1El.value = '';
     if (shipAddr2El) shipAddr2El.value = '';
     if (shipCityEl) shipCityEl.value = '';
+    if (shipStateEl) shipStateEl.value = 'Telangana';
     if (shipPinEl) shipPinEl.value = '';
     if (shipPhoneEl) shipPhoneEl.value = '';
     if (shipFaxEl) shipFaxEl.value = '';
@@ -4554,7 +4778,7 @@ function toggleAccordion(cardId) {
     const badge = document.getElementById('cust-email-badge');
     if (!emailVal || !emailVal.trim()) {
       if (badge) badge.style.display = 'none';
-      zohoSelectedClientId = 0;
+      zohoSelectedClientId = null;
       clearZohoCustomerFormFields();
       return;
     }
@@ -4623,30 +4847,88 @@ function toggleAccordion(cardId) {
         }
       }
 
-      // 7. Place of Supply & PAN & Legal Name
-      if (found.legal_name && document.getElementById('cust-legal-name')) {
-        document.getElementById('cust-legal-name').value = found.legal_name;
+      // 7. Customer Language
+      if (found.language && document.getElementById('cust-language')) {
+        document.getElementById('cust-language').value = found.language;
+      }
+
+      // 8. Place of Supply, PAN, Legal Name, Trade Name, Tax Preference, Currency, Payment Terms
+      if (found.place_of_supply && document.getElementById('cust-place-of-supply')) {
+        const posEl = document.getElementById('cust-place-of-supply');
+        for (let opt of posEl.options) {
+          if (opt.value === found.place_of_supply || opt.value.toLowerCase().includes(found.place_of_supply.toLowerCase())) {
+            posEl.value = opt.value;
+            break;
+          }
+        }
       }
       if (found.pan && document.getElementById('cust-pan')) {
         document.getElementById('cust-pan').value = found.pan;
       }
+      if (found.legal_name && document.getElementById('cust-legal-name')) {
+        document.getElementById('cust-legal-name').value = found.legal_name;
+      }
+      if (found.trade_name && document.getElementById('cust-trade-name')) {
+        document.getElementById('cust-trade-name').value = found.trade_name;
+      }
+      if (found.tax_preference) {
+        const prefRadio = document.querySelector(`input[name="tax_preference"][value="${found.tax_preference}"]`);
+        if (prefRadio) prefRadio.checked = true;
+      }
+      if (found.currency && document.getElementById('cust-currency')) {
+        document.getElementById('cust-currency').value = found.currency;
+      }
+      if (found.payment_terms && document.getElementById('cust-payment-terms')) {
+        document.getElementById('cust-payment-terms').value = found.payment_terms;
+      }
 
-      // 8. Billing Address
+      // 9. Document Upload
+      uploadedCustomerDocs = Array.isArray(found.documents) ? [...found.documents] : [];
+      renderUploadedCustomerDocsList();
+
+      // 10. Expandable More Details (Website, Dept, Designation, Social)
+      if (found.website && document.getElementById('cust-website')) {
+        document.getElementById('cust-website').value = found.website;
+      }
+      if (found.department && (document.getElementById('cust-department') || document.getElementById('cust-dept'))) {
+        const deptInput = document.getElementById('cust-department') || document.getElementById('cust-dept');
+        deptInput.value = found.department;
+      }
+      if (found.designation && document.getElementById('cust-designation')) {
+        document.getElementById('cust-designation').value = found.designation;
+      }
+      if (found.social_links) {
+        if (found.social_links.x && document.getElementById('cust-x-twitter')) {
+          document.getElementById('cust-x-twitter').value = found.social_links.x;
+        }
+        if (found.social_links.skype && document.getElementById('cust-skype')) {
+          document.getElementById('cust-skype').value = found.social_links.skype;
+        }
+        if (found.social_links.facebook && document.getElementById('cust-facebook')) {
+          document.getElementById('cust-facebook').value = found.social_links.facebook;
+        }
+      }
+
+      // 11. Billing Address
       const bAddr = found.billing_address || {};
       const attentionEl = document.getElementById('bill-attention');
+      const countryEl = document.getElementById('bill-country');
       const addr1El = document.getElementById('bill-address1');
       const addr2El = document.getElementById('bill-address2');
       const cityEl = document.getElementById('bill-city');
       const pinEl = document.getElementById('bill-pincode');
       const phoneBillEl = document.getElementById('bill-phone');
+      const faxBillEl = document.getElementById('bill-fax');
       const stateEl = document.getElementById('bill-state');
 
       if (attentionEl) attentionEl.value = bAddr.attention || found.name || '';
+      if (countryEl && bAddr.country) countryEl.value = bAddr.country;
       if (addr1El && bAddr.line1) addr1El.value = bAddr.line1;
       if (addr2El && bAddr.line2) addr2El.value = bAddr.line2;
       if (cityEl && bAddr.city) cityEl.value = bAddr.city;
       if (pinEl && bAddr.pin) pinEl.value = bAddr.pin;
       if (phoneBillEl && (bAddr.phone || found.phone_number)) phoneBillEl.value = bAddr.phone || found.phone_number;
+      if (faxBillEl && bAddr.fax) faxBillEl.value = bAddr.fax;
 
       if (stateEl && bAddr.state && stateEl.options && typeof stateEl.options[Symbol.iterator] === 'function') {
         for (let opt of stateEl.options) {
@@ -4659,10 +4941,42 @@ function toggleAccordion(cardId) {
         stateEl.value = bAddr.state;
       }
 
+      // 12. Shipping Address
+      const sAddr = found.shipping_address || {};
+      const shipAttEl = document.getElementById('ship-attention');
+      const shipCountryEl = document.getElementById('ship-country');
+      const shipAddr1El = document.getElementById('ship-address1');
+      const shipAddr2El = document.getElementById('ship-address2');
+      const shipCityEl = document.getElementById('ship-city');
+      const shipPinEl = document.getElementById('ship-pincode');
+      const shipPhoneEl = document.getElementById('ship-phone');
+      const shipFaxEl = document.getElementById('ship-fax');
+      const shipStateEl = document.getElementById('ship-state');
+
+      if (shipAttEl && sAddr.attention) shipAttEl.value = sAddr.attention;
+      if (shipCountryEl && sAddr.country) shipCountryEl.value = sAddr.country;
+      if (shipAddr1El && sAddr.line1) shipAddr1El.value = sAddr.line1;
+      if (shipAddr2El && sAddr.line2) shipAddr2El.value = sAddr.line2;
+      if (shipCityEl && sAddr.city) shipCityEl.value = sAddr.city;
+      if (shipPinEl && sAddr.pin) shipPinEl.value = sAddr.pin;
+      if (shipPhoneEl && (sAddr.phone || found.phone_number)) shipPhoneEl.value = sAddr.phone || found.phone_number;
+      if (shipFaxEl && sAddr.fax) shipFaxEl.value = sAddr.fax;
+
+      if (shipStateEl && sAddr.state && shipStateEl.options && typeof shipStateEl.options[Symbol.iterator] === 'function') {
+        for (let opt of shipStateEl.options) {
+          if (opt && opt.value && opt.value.toLowerCase().includes(sAddr.state.toLowerCase())) {
+            shipStateEl.value = opt.value;
+            break;
+          }
+        }
+      } else if (shipStateEl && sAddr.state) {
+        shipStateEl.value = sAddr.state;
+      }
+
       showToast(`✨ Existing customer found! Details auto-filled for ${found.name}.`);
     } else {
       // New Customer: reset clientId, clear previous lingering fields, show "New Customer" badge!
-      zohoSelectedClientId = 0;
+      zohoSelectedClientId = null;
       clearZohoCustomerFormFields();
       if (badge) {
         badge.innerHTML = `New Customer`;
@@ -4679,17 +4993,37 @@ function toggleAccordion(cardId) {
     return v.includes('registered') || v.includes('special economic zone') || v.includes('deemed export');
   }
 
+  function onGstinInputChange(val) {
+    const clean = (val || '').trim().toUpperCase();
+    const warn = document.getElementById('cust-gstin-warning');
+    if (warn) {
+      warn.style.display = clean.length === 0 ? 'block' : 'none';
+    }
+    // Auto-derive PAN from chars 2 to 12 if user entered 12+ chars of GSTIN
+    if (clean.length >= 12) {
+      const panInput = document.getElementById('cust-pan');
+      if (panInput) {
+        panInput.value = clean.substring(2, 12);
+      }
+    }
+  }
+
   function onGstTreatmentChange(val) {
     const isReg = isGstRegisteredTreatment(val);
     const gstinGroup = document.getElementById('cust-gstin-row-group');
     if (gstinGroup) {
       gstinGroup.style.display = isReg ? 'flex' : 'none';
     }
+    const gstinInput = document.getElementById('cust-gstin-input');
+    const warn = document.getElementById('cust-gstin-warning');
+    if (warn) {
+      warn.style.display = (isReg && (!gstinInput || !gstinInput.value.trim())) ? 'block' : 'none';
+    }
   }
 
   function onZohoCustomerSelectChange(val) {
-    if (!val) {
-      zohoSelectedClientId = 0;
+    if (!val && val !== 0 && val !== '0') {
+      zohoSelectedClientId = null;
       const emailInput = document.getElementById('cust-email');
       if (emailInput) emailInput.value = '';
       const badge = document.getElementById('cust-email-badge');
@@ -4697,7 +5031,7 @@ function toggleAccordion(cardId) {
       clearZohoCustomerFormFields();
       return;
     }
-    const clientId = parseInt(val);
+    const clientId = parseInt(val, 10);
     const client = clientsData.find(c => c.id === clientId);
     if (client) {
       zohoSelectedClientId = client.id;
@@ -4710,8 +5044,8 @@ function toggleAccordion(cardId) {
   }
 
   function renderZohoEditCustomerView(container) {
-    const isExplicit = Boolean(zohoSelectedClientId && clientsData.find(c => c.id === zohoSelectedClientId));
-    const currClient = isExplicit ? clientsData.find(c => c.id === zohoSelectedClientId) : {
+    const isExplicit = (zohoSelectedClientId !== null && zohoSelectedClientId !== undefined && zohoSelectedClientId !== '') && Boolean(clientsData.find(c => c.id === zohoSelectedClientId || c.id === Number(zohoSelectedClientId)));
+    const currClient = isExplicit ? clientsData.find(c => c.id === zohoSelectedClientId || c.id === Number(zohoSelectedClientId)) : {
       id: 0,
       name: '',
       email: '',
@@ -4770,6 +5104,17 @@ function toggleAccordion(cardId) {
     const facebook = social.facebook || '';
     const remarks = currClient.remarks || '';
     const taxPref = currClient.tax_preference || 'Taxable';
+    const language = currClient.language || 'English';
+    const placeOfSupply = currClient.place_of_supply || '[TS] - Telangana';
+    let phoneCode = currClient.phone_code || '+91';
+    let rawPhone = currClient.phone_number || '';
+    if (!currClient.phone_code && rawPhone) {
+      if (rawPhone.startsWith('+91')) { phoneCode = '+91'; rawPhone = rawPhone.replace(/^\+91[\s-]*/, ''); }
+      else if (rawPhone.startsWith('+1')) { phoneCode = '+1'; rawPhone = rawPhone.replace(/^\+1[\s-]*/, ''); }
+      else if (rawPhone.startsWith('+44')) { phoneCode = '+44'; rawPhone = rawPhone.replace(/^\+44[\s-]*/, ''); }
+      else if (rawPhone.startsWith('+971')) { phoneCode = '+971'; rawPhone = rawPhone.replace(/^\+971[\s-]*/, ''); }
+    }
+    uploadedCustomerDocs = Array.isArray(currClient.documents) ? [...currClient.documents] : [];
 
     const bAddr = currClient.billing_address || {
       attention: '',
@@ -4969,10 +5314,10 @@ function toggleAccordion(cardId) {
               <div class="zoho-row-control">
                 <div class="zoho-single-phone-input-row">
                   <select class="modern-input-field modern-select phone-code-select zoho-input-select" id="cust-phone-code" style="width: 80px; flex-shrink: 0;">
-                    <option value="+91" selected>+91</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+971">+971</option>
+                    <option value="+91" ${phoneCode === '+91' ? 'selected' : ''}>+91</option>
+                    <option value="+1" ${phoneCode === '+1' ? 'selected' : ''}>+1</option>
+                    <option value="+44" ${phoneCode === '+44' ? 'selected' : ''}>+44</option>
+                    <option value="+971" ${phoneCode === '+971' ? 'selected' : ''}>+971</option>
                   </select>
                   <div class="zoho-phone-input-inner-wrapper">
                     <input 
@@ -4980,7 +5325,7 @@ function toggleAccordion(cardId) {
                       id="cust-phone" 
                       class="modern-input-field phone-input zoho-input-text ${isDuplicate ? 'has-warning-icon' : ''}" 
                       placeholder="Work Phone" 
-                      value="${escapeHtml(currClient.phone_number || '')}" 
+                      value="${escapeHtml(rawPhone || currClient.phone_number || '')}" 
                       oninput="window.smatApp.onPhoneInputChange(this.value)" 
                     />
                     <!-- Orange Warning Triangle inside input on right -->
@@ -5091,11 +5436,12 @@ function toggleAccordion(cardId) {
               </label>
               <div class="zoho-row-control">
                 <select class="modern-input-field modern-select zoho-input-select" id="cust-language">
-                  <option value="English" selected>English</option>
-                  <option value="Hindi">Hindi</option>
-                  <option value="Telugu">Telugu</option>
-                  <option value="Spanish">Spanish</option>
-                  <option value="German">German</option>
+                  <option value="English" ${language === 'English' ? 'selected' : ''}>English</option>
+                  <option value="Hindi" ${language === 'Hindi' ? 'selected' : ''}>Hindi</option>
+                  <option value="Telugu" ${language === 'Telugu' ? 'selected' : ''}>Telugu</option>
+                  <option value="Tamil" ${language === 'Tamil' ? 'selected' : ''}>Tamil</option>
+                  <option value="Spanish" ${language === 'Spanish' ? 'selected' : ''}>Spanish</option>
+                  <option value="German" ${language === 'German' ? 'selected' : ''}>German</option>
                 </select>
               </div>
             </div>
@@ -5137,12 +5483,12 @@ function toggleAccordion(cardId) {
                   </div>
                   <div class="zoho-row-control">
                     <div class="modern-gstin-action-group zoho-gstin-input-group">
-                      <input type="text" id="cust-gstin-input" class="modern-input-field gstin-input zoho-input-text" value="${escapeHtml(gstin)}" placeholder="e.g. 36AAACS1429B1Z8" />
+                      <input type="text" id="cust-gstin-input" class="modern-input-field gstin-input zoho-input-text" value="${escapeHtml(gstin)}" placeholder="e.g. 36AACCF6679F1ZD" oninput="window.smatApp.onGstinInputChange(this.value)" />
                       <button type="button" class="btn-zoho-taxpayer-fetch btn-get-taxpayer" onclick="window.smatApp.fetchTaxpayerDetails()">
-                        Get Taxpayer details
+                        Get Taxpayer Details
                       </button>
                     </div>
-                    <div class="zoho-mandatory-warning-text" style="margin-top:4px;">
+                    <div id="cust-gstin-warning" class="zoho-mandatory-warning-text" style="margin-top:4px; display:${(!gstin && isGstRegistered) ? 'block' : 'none'};">
                       <span>▲ GST Identification Number is mandatory for GST registered contact.</span>
                     </div>
                   </div>
@@ -5155,15 +5501,20 @@ function toggleAccordion(cardId) {
                   </div>
                   <div class="zoho-row-control">
                     <select class="modern-input-field modern-select zoho-input-select" id="cust-place-of-supply">
-                      <option value="[TS] - Telangana" selected>[TS] - Telangana</option>
-                      <option value="[AP] - Andhra Pradesh">[AP] - Andhra Pradesh</option>
-                      <option value="[MH] - Maharashtra">[MH] - Maharashtra</option>
-                      <option value="[KA] - Karnataka">[KA] - Karnataka</option>
-                      <option value="[DL] - Delhi">[DL] - Delhi</option>
-                      <option value="[TN] - Tamil Nadu">[TN] - Tamil Nadu</option>
-                      <option value="[GJ] - Gujarat">[GJ] - Gujarat</option>
-                      <option value="[WB] - West Bengal">[WB] - West Bengal</option>
-                      <option value="[UP] - Uttar Pradesh">[UP] - Uttar Pradesh</option>
+                      <option value="[TS] - Telangana" ${placeOfSupply.includes('Telangana') ? 'selected' : ''}>[TS] - Telangana</option>
+                      <option value="[AP] - Andhra Pradesh" ${placeOfSupply.includes('Andhra Pradesh') ? 'selected' : ''}>[AP] - Andhra Pradesh</option>
+                      <option value="[MH] - Maharashtra" ${placeOfSupply.includes('Maharashtra') ? 'selected' : ''}>[MH] - Maharashtra</option>
+                      <option value="[KA] - Karnataka" ${placeOfSupply.includes('Karnataka') ? 'selected' : ''}>[KA] - Karnataka</option>
+                      <option value="[DL] - Delhi" ${placeOfSupply.includes('Delhi') ? 'selected' : ''}>[DL] - Delhi</option>
+                      <option value="[TN] - Tamil Nadu" ${placeOfSupply.includes('Tamil Nadu') ? 'selected' : ''}>[TN] - Tamil Nadu</option>
+                      <option value="[GJ] - Gujarat" ${placeOfSupply.includes('Gujarat') ? 'selected' : ''}>[GJ] - Gujarat</option>
+                      <option value="[WB] - West Bengal" ${placeOfSupply.includes('West Bengal') ? 'selected' : ''}>[WB] - West Bengal</option>
+                      <option value="[UP] - Uttar Pradesh" ${placeOfSupply.includes('Uttar Pradesh') ? 'selected' : ''}>[UP] - Uttar Pradesh</option>
+                      <option value="[KL] - Kerala" ${placeOfSupply.includes('Kerala') ? 'selected' : ''}>[KL] - Kerala</option>
+                      <option value="[RJ] - Rajasthan" ${placeOfSupply.includes('Rajasthan') ? 'selected' : ''}>[RJ] - Rajasthan</option>
+                      <option value="[MP] - Madhya Pradesh" ${placeOfSupply.includes('Madhya Pradesh') ? 'selected' : ''}>[MP] - Madhya Pradesh</option>
+                      <option value="[PB] - Punjab" ${placeOfSupply.includes('Punjab') ? 'selected' : ''}>[PB] - Punjab</option>
+                      <option value="[HR] - Haryana" ${placeOfSupply.includes('Haryana') ? 'selected' : ''}>[HR] - Haryana</option>
                     </select>
                   </div>
                 </div>
@@ -5264,7 +5615,14 @@ function toggleAccordion(cardId) {
                       <span style="font-size:10px; margin-left:4px;">▾</span>
                     </button>
                     <div class="upload-helper-subtext">You can upload a maximum of 10 files, 10MB each</div>
-                    <div id="uploaded-docs-list" class="uploaded-docs-list-box"></div>
+                    <div id="uploaded-docs-list" class="uploaded-docs-list-box">
+                      ${(uploadedCustomerDocs || []).map((doc, idx) => `
+                        <span class="uploaded-doc-chip" style="display:inline-flex; align-items:center; gap:6px; background:#F1F5F9; border:1px solid #CBD5E1; padding:3px 8px; border-radius:4px; font-size:12px; margin:2px 4px 2px 0;">
+                          <span>📎 ${escapeHtml(typeof doc === 'string' ? doc : (doc.name || 'Document'))} ${doc.size ? `(${Math.round(doc.size / 1024)} KB)` : ''}</span>
+                          <button type="button" onclick="window.smatApp.removeUploadedDoc(${idx})" style="border:none; background:none; cursor:pointer; color:#94A3B8; font-weight:700;" title="Remove file">✕</button>
+                        </span>
+                      `).join('')}
+                    </div>
                   </div>
                 </div>
 
@@ -5528,7 +5886,3344 @@ function toggleAccordion(cardId) {
     `;
   }
 
-    function renderSubscriptionCreationView(container) {
+    
+  // =========================================================================
+  // 7A. ZOHO BILLING STYLE "CHANGE / NEW SUBSCRIPTION" FULL-PAGE MODULE
+  // Exact 100% Pixel-Perfect Match with User's 4 Reference Screenshots
+  // =========================================================================
+  let zohoSubscriptionClientId = 10; // Defaults to deepak - suryadesigner1234@gmail.com
+
+  const ALL_SUPPLY_STATES = [
+    { code: 'AN', name: 'Andaman and Nicobar Islands' },
+    { code: 'AD', name: 'Andhra Pradesh' },
+    { code: 'AR', name: 'Arunachal Pradesh' },
+    { code: 'AS', name: 'Assam' },
+    { code: 'BR', name: 'Bihar' },
+    { code: 'CH', name: 'Chandigarh' },
+    { code: 'CG', name: 'Chhattisgarh' },
+    { code: 'DN', name: 'Dadra and Nagar Haveli and Daman and Diu' },
+    { code: 'DD', name: 'Daman and Diu' },
+    { code: 'DL', name: 'Delhi' },
+    { code: 'FC', name: 'Foreign Country' },
+    { code: 'GA', name: 'Goa' },
+    { code: 'GJ', name: 'Gujarat' },
+    { code: 'HR', name: 'Haryana' },
+    { code: 'HP', name: 'Himachal Pradesh' },
+    { code: 'JK', name: 'Jammu and Kashmir' },
+    { code: 'JH', name: 'Jharkhand' },
+    { code: 'KA', name: 'Karnataka' },
+    { code: 'KL', name: 'Keralam' },
+    { code: 'LA', name: 'Ladakh' },
+    { code: 'LD', name: 'Lakshadweep' },
+    { code: 'MP', name: 'Madhya Pradesh' },
+    { code: 'MH', name: 'Maharashtra' },
+    { code: 'MN', name: 'Manipur' },
+    { code: 'ML', name: 'Meghalaya' },
+    { code: 'MZ', name: 'Mizoram' },
+    { code: 'NL', name: 'Nagaland' },
+    { code: 'OD', name: 'Odisha' },
+    { code: 'OT', name: 'Other Territory' },
+    { code: 'PY', name: 'Puducherry' },
+    { code: 'PB', name: 'Punjab' },
+    { code: 'RJ', name: 'Rajasthan' },
+    { code: 'SK', name: 'Sikkim' },
+    { code: 'TN', name: 'Tamil Nadu' },
+    { code: 'TS', name: 'Telangana' },
+    { code: 'TR', name: 'Tripura' },
+    { code: 'UP', name: 'Uttar Pradesh' },
+    { code: 'UK', name: 'Uttarakhand' },
+    { code: 'WB', name: 'West Bengal' }
+  ];
+  let zohoSelectedSupplyState = 'TS';
+
+  const ALL_GST_TREATMENTS = [
+    {
+      title: 'Registered Business - Regular',
+      desc: 'Business that is registered under GST'
+    },
+    {
+      title: 'Registered Business - Composition',
+      desc: 'Business that is registered under the Composition Scheme in GST'
+    },
+    {
+      title: 'Unregistered Business',
+      desc: 'Business that has not been registered under GST'
+    },
+    {
+      title: 'Consumer',
+      desc: 'A customer who is a regular consumer'
+    },
+    {
+      title: 'Overseas',
+      desc: 'Persons with whom you do import or export of supplies outside India'
+    },
+    {
+      title: 'Special Economic Zone',
+      desc: 'Business (Unit) that is located in a Special Economic Zone (SEZ) of India or a SEZ Developer'
+    },
+    {
+      title: 'Deemed Export',
+      desc: 'Supply of goods to an Export Oriented Unit or against Advanced Authorization/Export Promotion Capital Goods.'
+    },
+    {
+      title: 'Tax Deductor',
+      desc: 'Departments of the State/Central government, governmental agencies or local authorities'
+    },
+    {
+      title: 'SEZ Developer',
+      desc: 'A person/organisation who owns at least 26% of the equity in creating business units in a Special Economic Zone (SEZ)'
+    },
+    {
+      title: 'Input Service Distributor',
+      desc: 'Input Service Distributor (ISD) is an office that receives tax invoices for services used by the company in different states under the same PAN.'
+    }
+  ];
+  let zohoSelectedGstTreatment = 'Unregistered Business';
+
+  const ALL_ZOHO_ACCOUNTS = [
+    {
+      group: 'Other Current Asset',
+      items: [
+        { name: 'Advance Tax' },
+        { name: 'Employee Advance' },
+        { name: 'Input Tax Credits', isHeader: true },
+        { name: 'Input CGST', isSub: true },
+        { name: 'Input IGST', isSub: true },
+        { name: 'Input SGST', isSub: true },
+        { name: 'Prepaid Expenses' },
+        { name: 'Reverse Charge Tax Input but not due' },
+        { name: 'TDS Receivable' }
+      ]
+    },
+    {
+      group: 'Fixed Asset',
+      items: [
+        { name: 'Furniture and Equipment' }
+      ]
+    },
+    {
+      group: 'Other Current Liability',
+      items: [
+        { name: '[ Payroll-004 ] Deductions Payable' },
+        { name: 'Employee Reimbursements' },
+        { name: 'GST Payable', isHeader: true },
+        { name: 'Output CGST', isSub: true },
+        { name: 'Output IGST', isSub: true },
+        { name: 'Output SGST', isSub: true },
+        { name: '[ Payroll-006 ] Hold Salary Payable' },
+        { name: '[ Payroll-005 ] Net Salary Payable' },
+        { name: 'Opening Balance Adjustments' },
+        { name: '[ Payroll-002 ] Payroll Tax Payable' },
+        { name: '[ Payroll-001 ] Reimbursements Payable' },
+        { name: '[ Payroll-003 ] Statutory Deductions Payable' },
+        { name: 'TDS Payable' },
+        { name: 'Unearned Revenue' }
+      ]
+    },
+    {
+      group: 'Non Current Liability',
+      items: [
+        { name: 'Construction Loans' },
+        { name: 'Mortgages' }
+      ]
+    },
+    {
+      group: 'Equity',
+      items: [
+        { name: 'Capital Stock' },
+        { name: 'Distributions' },
+        { name: 'Dividends Paid' },
+        { name: 'Drawings' },
+        { name: 'Investments' },
+        { name: 'Opening Balance Offset' },
+        { name: 'Owner\'s Equity' }
+      ]
+    },
+    {
+      group: 'Income',
+      items: [
+        { name: 'Discount' },
+        { name: 'General Income' },
+        { name: 'Interest Income' },
+        { name: 'Late Fee Income' },
+        { name: 'Other Charges' },
+        { name: 'Sales' },
+        { name: 'Shipping Charge' }
+      ]
+    },
+    {
+      group: 'Expense',
+      items: [
+        { name: 'Advertising And Marketing' },
+        { name: 'Automobile Expense' },
+        { name: 'Bad Debt' },
+        { name: 'Bank Fees and Charges' },
+        { name: 'Consultant Expense' },
+        { name: 'Contract Assets' },
+        { name: 'Credit Card Charges' },
+        { name: 'Depreciation And Amortisation' },
+        { name: 'Depreciation Expense' },
+        { name: 'Fuel/Mileage Expenses' },
+        { name: 'IT and Internet Expenses' },
+        { name: 'Janitorial Expense' },
+        { name: 'Lodging' },
+        { name: 'Meals and Entertainment' },
+        { name: 'Merchandise' },
+        { name: 'Office Supplies' },
+        { name: 'Other Expenses' },
+        { name: 'Parking' },
+        { name: 'Postage' },
+        { name: 'Printing and Stationery' },
+        { name: 'Purchase Discounts' },
+        { name: 'Raw Materials And Consumables' },
+        { name: 'Rent Expense' },
+        { name: 'Repairs and Maintenance' },
+        { name: 'Salaries and Employee Wages' },
+        { name: 'Telephone Expense' },
+        { name: 'Transportation Expense' },
+        { name: 'Travel Expense' },
+        { name: 'Uncategorized' }
+      ]
+    },
+    {
+      group: 'Cost Of Goods Sold',
+      items: [
+        { name: 'Cost of Goods Sold' },
+        { name: 'Job Costing' },
+        { name: 'Labor' },
+        { name: 'Materials' },
+        { name: 'Subcontractor' }
+      ]
+    }
+  ];
+  let zohoSelectedPlanAccount = '';
+  let zohoDiscountPref = 'no-discount';
+  let selectedZohoCoupon = null;
+  let zohoSelectedPlanTaxLabel = 'GST18 [18%]';
+  let zohoSelectedPlanTaxRate = 18;
+
+  
+  // 10 Official Zoho Subscription Plans (Exact match to User Screenshots 1, 2, 3)
+  const ZOHO_SUBSCRIPTION_PLANS = [
+    {
+      id: 'starter_nm_without_wa',
+      name: 'Starter New Monthly (Without WA)',
+      code: 'MonthlyStarterwithoutwhatsapp',
+      price: 1890,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'pro_nm_with_wa',
+      name: 'Pro New Monthly (With WhatsApp)',
+      code: 'ProNewMonthlyWithWhatsApp',
+      price: 6500,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'pro_nm_without_wa',
+      name: 'Pro New Monthly (without whatsapp)',
+      code: 'ProNewPlanMonthlyWithoutWhatsapp',
+      price: 5500,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'pro_ny_without_wa',
+      name: 'Pro New Yearly (Without WhatsApp)',
+      code: 'ProNewYearlyWithoutWhatsApp',
+      price: 60000,
+      cycle: 'per year',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'pro_ny_with_wa',
+      name: 'Pro New Yearly (With WhatsApp)',
+      code: 'ProNewYearlyWithWhatsApp',
+      price: 72000,
+      cycle: 'per year',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'starter_nm_with_wa',
+      name: 'Starter New Monthly (With WhatsApp)',
+      code: 'StarterNewMonthlyWithWhatsApp',
+      price: 2490,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'starter_ny_without_wa',
+      name: 'Starter New Yearly (Without Whatsapp)',
+      code: 'StarterNewYearlyWithoutWhatsapp',
+      price: 18900,
+      cycle: 'per year',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'starter_ny_with_wa',
+      name: 'Starter New Yearly (With Whatsapp)',
+      code: 'StarterNewYearlyWithWhatsapp',
+      price: 24900,
+      cycle: 'per year',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'test_plan',
+      name: 'test plan',
+      code: 'test',
+      price: 100,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    },
+    {
+      id: 'testapichange',
+      name: 'TESTAPICHANGE',
+      code: 'TESTAPICHANGE',
+      price: 500,
+      cycle: 'per month',
+      sac: '998314',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]'
+    }
+  ];
+  zohoSelectedPlan = null;
+
+  const ALL_ZOHO_PLAN_TAX_GROUPS = [
+    {
+      category: 'Non-Taxable',
+      items: [
+        {
+          id: 'out-of-scope',
+          label: 'Out of Scope',
+          name: 'Out of Scope',
+          rate: 0,
+          subtitle: "Supplies on which you don't charge any GST or include them in the returns."
+        },
+        {
+          id: 'non-gst-supply',
+          label: 'Non-GST Supply',
+          name: 'Non-GST Supply',
+          rate: 0,
+          subtitle: 'Supplies which do not come under GST such as petroleum products and liquor.'
+        }
+      ]
+    },
+    {
+      category: 'Tax Group',
+      items: [
+        { id: 'gst0', label: 'GST0 [0%]', name: 'GST0', rate: 0 },
+        { id: 'gst5', label: 'GST5 [5%]', name: 'GST5', rate: 5 },
+        { id: 'gst12', label: 'GST12 [12%]', name: 'GST12', rate: 12 },
+        { id: 'gst18', label: 'GST18 [18%]', name: 'GST18', rate: 18 },
+        { id: 'gst28', label: 'GST28 [28%]', name: 'GST28', rate: 28 },
+        { id: 'interstate18', label: 'Interstate [18%]', name: 'Interstate', rate: 18 }
+      ]
+    }
+  ];
+
+
+
+  const AVAILABLE_ZOHO_ADDONS = [
+    { name: 'Extra Chats OC NM', price: 600, desc: '1 UNIT : 1000 CHATS ( Excluding WhatsApp )', unit: 'Extra Chats OC NM', sac: '998314' },
+    { name: '+10,000 Conversations Quota', price: 1500, desc: 'Monthly conversational messages booster', unit: '+10,000 Quota', sac: '998314' },
+    { name: '+1 Dedicated WhatsApp WABA Number', price: 2500, desc: 'Official Meta cloud number channel', unit: '+1 WABA No.', sac: '998314' },
+    { name: '+1 Additional Live Agent Seat', price: 800, desc: 'Multi-agent live chat seat', unit: '+1 Agent Seat', sac: '998314' },
+    { name: 'AI Integration Booster', price: 2000, desc: 'Dialogflow & OpenAI Vector Embeddings', unit: 'AI Booster', sac: '998314' },
+    { name: 'Dedicated CSM / Premium SLA', price: 3000, desc: '24/7 dedicated support representative', unit: 'Dedicated CSM', sac: '998314' }
+  ];
+
+  let zohoSubAddons = [
+    {
+      id: 'extra_chats_oc_nm',
+      name: 'Extra Chats OC NM',
+      desc: '1 UNIT : 1000 CHATS ( Excluding WhatsApp )',
+      sac: '998314',
+      qty: 1,
+      unit: 'Extra Chats OC NM',
+      price: 600,
+      discountVal: 0,
+      discountType: 'percent',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]',
+      isEmpty: false
+    }
+  ];
+
+  function openZohoSubscription(clientId) {
+    if (clientId !== undefined && clientId !== null) {
+      zohoSubscriptionClientId = Number(clientId);
+    } else {
+      zohoSubscriptionClientId = 10; // Default to deepak (screenshot 1)
+    }
+    navigateTo('change-subscription');
+  }
+
+  function onZohoSubCustomerSelect(clientId) {
+    zohoSubscriptionClientId = Number(clientId);
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) {
+      renderZohoSubscriptionView(viewport);
+    }
+  }
+
+  function renderZohoSubscriptionView(container) {
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0] || {
+      id: 10,
+      name: 'deepak',
+      email: 'suryadesigner1234@gmail.com',
+      company_name: 'feso',
+      subscription_id: 'SUB-01083',
+      plan_name: 'Starter New Monthly (Without WA)',
+      gst_treatment: 'Unregistered Business',
+      billing_address: { company: 'feso', line1: 'test', line2: 'test', city: 'Hyderabad', pin: '500034', country: 'India' }
+    };
+
+    const bAddress = currClient.billing_address || {
+      company: currClient.company_name || 'feso',
+      line1: 'test',
+      line2: 'test',
+      city: 'Hyderabad',
+      pin: '500034',
+      country: 'India'
+    };
+
+    const sAddress = currClient.shipping_address || {};
+    const hasShipping = sAddress.line1 || sAddress.city;
+
+    // Available plans matching user's separated plans
+    const planOptions = [
+      { label: 'Starter New Monthly (Without WA)', price: 1890, cycle: 'per month', group: 'Monthly Plans' },
+      { label: 'Pro - Monthly (₹6,500)', price: 6500, cycle: 'per month', group: 'Monthly Plans' },
+      { label: 'Broadcast - Monthly (₹1,499)', price: 1499, cycle: 'per month', group: 'Monthly Plans' },
+      { label: 'Standard - Monthly (₹3,500)', price: 3500, cycle: 'per month', group: 'Monthly Plans' },
+      { label: 'AI Enterprise - Monthly (₹8,999)', price: 8999, cycle: 'per month', group: 'Monthly Plans' },
+      { label: 'Starter New Yearly (₹18,900)', price: 18900, cycle: 'per year', group: 'Yearly Plans' },
+      { label: 'Pro - Yearly (₹72,000)', price: 72000, cycle: 'per year', group: 'Yearly Plans' },
+      { label: 'Broadcast - Yearly (₹14,500)', price: 14500, cycle: 'per year', group: 'Yearly Plans' },
+      { label: 'Standard - Yearly (₹35,000)', price: 35000, cycle: 'per year', group: 'Yearly Plans' },
+      { label: 'AI Enterprise - Yearly (₹96,000)', price: 96000, cycle: 'per year', group: 'Yearly Plans' },
+      { label: 'Pro Trial (₹0 / 14 Days)', price: 0, cycle: '14 days evaluation', group: 'Trial' }
+    ];
+
+    // Find currently selected plan in list
+    const currentPlanName = currClient.plan_name || 'Starter New Monthly (Without WA)';
+    const matchedPlan = planOptions.find(p => p.label.toLowerCase().includes(currentPlanName.toLowerCase())) || planOptions[0];
+
+    container.innerHTML = `
+      <div class="zoho-sub-fullpage-wrap" style="background:#FFFFFF; min-height:100vh; padding-bottom:5rem;">
+
+      <!-- ========================================================================= -->
+      <!-- ZOHO CUSTOMER SIDEBAR TAB & SLIDE-OVER DRAWER (EXACT MATCH TO SCREENSHOTS)-->
+      <!-- ========================================================================= -->
+      <!-- Docked Right Tab Button (Screenshot 1) -->
+      <div id="zoho-customer-sidebar-tab" 
+           onclick="window.smatApp.toggleCustomerSidebar()" 
+           title="Click to view Customer Details">
+        <span style="max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          ${escapeHtml(currClient.name)} - ${escapeHtml((currClient.email || '').substring(0, 10))}...
+        </span>
+        <span style="font-size:0.75rem; color:#94A3B8; font-weight:700;">&gt;</span>
+      </div>
+
+      <!-- Backdrop -->
+      <div id="zoho-customer-sidebar-backdrop" 
+           onclick="window.smatApp.closeCustomerSidebar()"></div>
+
+      <!-- Slide-over Drawer (Screenshot 2) -->
+      <div id="zoho-customer-sidebar-drawer">
+        <!-- Header -->
+        <div style="padding:16px 20px; background:#FFFFFF; border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <!-- Avatar [ D ] -->
+              <div style="width:40px; height:40px; background:#F1F5F9; color:#475569; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.15rem; flex-shrink:0;">
+                ${(currClient.name || 'D').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div style="font-size:0.75rem; color:#64748B; font-weight:500;">Customer</div>
+                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                  <span style="font-weight:700; font-size:0.95rem; color:#0F172A; max-width:210px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    ${escapeHtml(currClient.name)} - ${escapeHtml((currClient.email || '').substring(0, 10))}...
+                  </span>
+                  <!-- External Link Icon with Tooltip -->
+                  <div class="zoho-cust-link-wrapper" style="position:relative; display:inline-flex; align-items:center;">
+                    <a href="javascript:void(0)" onclick="window.smatApp.navigateTo('client-details')" style="color:#2563EB; display:inline-flex; align-items:center; text-decoration:none;" title="View in Customers module">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Red Close Button ✕ -->
+            <button type="button" onclick="window.smatApp.closeCustomerSidebar()" style="background:none; border:none; color:#EF4444; font-size:1.2rem; cursor:pointer; line-height:1; padding:4px;" title="Close">✕</button>
+          </div>
+
+          <!-- Document / Company & Email Rows -->
+          <div style="margin-top:14px; display:flex; flex-direction:column; gap:5px; font-size:0.83rem; color:#475569;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>${escapeHtml(bAddress.company || currClient.company_name || 'feso')}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>${escapeHtml(currClient.email || 'suryadesigner1234@gmail.com')}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div style="padding:0 20px; background:#FFFFFF; border-bottom:1px solid #E2E8F0; display:flex; gap:20px;">
+          <div style="padding:10px 0; font-size:0.86rem; font-weight:700; color:#1E293B; border-bottom:2px solid #2563EB; cursor:pointer;">Details</div>
+        </div>
+
+        <!-- Drawer Content Body -->
+        <div style="padding:16px 20px; display:flex; flex-direction:column; gap:14px; overflow-y:auto; flex:1;">
+          <!-- Metric Cards Row -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <!-- Outstanding Receivables -->
+            <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px 10px; text-align:center;">
+              <div style="color:#F59E0B; margin-bottom:4px; display:flex; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#F59E0B"/><line x1="12" y1="9" x2="12" y2="13" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.2" fill="#FFFFFF"/></svg>
+              </div>
+              <div style="font-size:0.72rem; color:#64748B; margin-bottom:4px;">Outstanding Receivables</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#0F172A;">Rs.25,045.24</div>
+            </div>
+
+            <!-- Unused Credits -->
+            <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px 10px; text-align:center;">
+              <div style="color:#10B981; margin-bottom:4px; display:flex; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg>
+              </div>
+              <div style="font-size:0.72rem; color:#64748B; margin-bottom:4px;">Unused Credits</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#0F172A;">Rs.0.00</div>
+            </div>
+          </div>
+
+          <!-- Contact Details Card (Screenshot 2 Match) -->
+          <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:16px 18px;">
+            <div style="font-weight:700; font-size:0.88rem; color:#0F172A; margin-bottom:14px;">Contact Details</div>
+            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.83rem;">
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Customer Type</span><span style="font-weight:600; color:#0F172A;">Business</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Currency</span><span style="font-weight:600; color:#0F172A;">${currClient.currency_type || 'INR'}</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Payment Terms</span><span style="font-weight:600; color:#0F172A;">Due on Receipt</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Portal Status</span><span style="color:#64748B;">Disabled</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">GST Treatment</span><span style="font-weight:600; color:#0F172A;">${currClient.gst_treatment || 'Unregistered Business'}</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Place of Supply</span><span style="font-weight:600; color:#0F172A;">${currClient.place_of_supply || 'Telangana'}</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Tax Preference</span><span style="font-weight:600; color:#0F172A;">Taxable</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Source</span><span style="font-weight:600; color:#0F172A;">API</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">Type of Account</span><span style="font-weight:600; color:#0F172A;">Direct Customer</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:#64748B;">expiry_emails</span><span style="font-weight:600; color:#0F172A;">Yes</span></div>
+            </div>
+          </div>
+
+          <!-- Contact Persons Accordion Card (Exact Match to Screenshot 1 & 2) -->
+          <div id="zoho-drawer-contact-persons-card" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px 16px; transition:all 0.2s ease;">
+            <!-- Header (Toggle) -->
+            <div onclick="window.smatApp.toggleDrawerAccordion('contact-persons')" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:600; font-size:0.86rem; color:#0F172A;">Contact Persons</span>
+                <span style="background:#94A3B8; color:#FFFFFF; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; min-width:18px;">1</span>
+              </div>
+              <span id="zoho-drawer-chevron-contact-persons" style="display:inline-flex; align-items:center; color:#64748B;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </span>
+            </div>
+
+            <!-- Body (Collapsed by Default - expands on click) -->
+            <div id="zoho-drawer-body-contact-persons" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <!-- Avatar with Green Star Badge (Screenshot 1) -->
+                <div style="position:relative; flex-shrink:0;">
+                  <div style="width:34px; height:34px; border-radius:50%; background:#EEF2F6; color:#64748B; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.88rem;">
+                    S
+                  </div>
+                  <!-- Green Circle with White Star Badge -->
+                  <div style="position:absolute; bottom:-3px; right:-3px; width:15px; height:15px; background:#10B981; border:2px solid #FFFFFF; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#FFFFFF; font-size:8px; box-shadow:0 1px 2px rgba(0,0,0,0.1);">
+                    ★
+                  </div>
+                </div>
+
+                <!-- Contact Details Info -->
+                <div style="display:flex; flex-direction:column; gap:4px; font-size:0.82rem; color:#475569;">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span>${escapeHtml(currClient.email || 'suryadesigner1234@gmail.com')}</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <span>${escapeHtml(currClient.phone_number || '+91 9705736759')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Accordion Card (Exact Match to Screenshot 2) -->
+          <div id="zoho-drawer-address-card" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px 16px; transition:all 0.2s ease;">
+            <!-- Header (Toggle) -->
+            <div onclick="window.smatApp.toggleDrawerAccordion('address')" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none;">
+              <span style="font-weight:600; font-size:0.86rem; color:#0F172A;">Address</span>
+              <span id="zoho-drawer-chevron-address" style="display:inline-flex; align-items:center; color:#64748B;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </span>
+            </div>
+
+            <!-- Body (Collapsed by Default - expands on click) -->
+            <div id="zoho-drawer-body-address" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9;">
+              <!-- Billing Address Subheading with Document/Clipboard Icon (Screenshot 2) -->
+              <div style="display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:500; color:#64748B; margin-bottom:10px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Billing Address</span>
+              </div>
+
+              <!-- Billing Address Lines with subtle vertical left line (Screenshot 2) -->
+              <div style="border-left:2px solid #E2E8F0; padding-left:12px; margin-left:2px; font-size:0.82rem; color:#334155; line-height:1.5;">
+                <div style="font-weight:700; color:#0F172A;">${escapeHtml(bAddress.company || currClient.company_name || 'feso')}</div>
+                <div>${escapeHtml(bAddress.line1 || 'test')}</div>
+                <div>${escapeHtml(bAddress.line2 || 'test')}</div>
+                <div>${escapeHtml(bAddress.city || 'Hyderabad')} ${escapeHtml(bAddress.pin || '500034')}</div>
+                <div>${escapeHtml(bAddress.country || 'India')}</div>
+              </div>
+
+              <!-- Shipping Address Subheading (Clean spacing, no dashed divider) -->
+              <div style="font-size:0.82rem; font-weight:500; color:#64748B; margin:16px 0 10px 0;">
+                Shipping Address
+              </div>
+
+              <!-- Shipping Address Lines (Aligned vertical left line + Centered "No Shipping Address" - Screenshot 2) -->
+              ${hasShipping ? `
+                <div style="border-left:2px solid #E2E8F0; padding-left:12px; margin-left:2px; font-size:0.82rem; color:#334155; line-height:1.5;">
+                  <div style="font-weight:700; color:#0F172A;">${escapeHtml(sAddress.company || currClient.company_name || '')}</div>
+                  <div>${escapeHtml(sAddress.line1 || '')}</div>
+                  <div>${escapeHtml(sAddress.line2 || '')}</div>
+                  <div>${escapeHtml(sAddress.city || '')} ${escapeHtml(sAddress.pin || '')}</div>
+                  <div>${escapeHtml(sAddress.country || '')}</div>
+                </div>
+              ` : `
+                <div style="border-left:2px solid #E2E8F0; margin-left:2px; padding:8px 12px; display:flex; justify-content:center; align-items:center; min-height:36px;">
+                  <span style="color:#94A3B8; font-size:0.82rem;">No Shipping Address</span>
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan Removal Warning Confirmation Modal (Exact Match to User Reference Screenshot) -->
+      <div id="zoho-plan-remove-modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15,23,42,0.25); z-index:100000; backdrop-filter:blur(1px);" onclick="window.smatApp.closeRemovePlanModal()">
+        <div id="zoho-plan-remove-modal" class="zoho-plan-remove-modal" onclick="event.stopPropagation()" style="position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#FFFFFF; border-radius:8px; box-shadow:0 14px 40px rgba(0,0,0,0.22); width:90%; max-width:540px; padding:22px 26px; z-index:100001; border:1px solid #E2E8F0;">
+          <div style="display:flex; gap:16px; align-items:flex-start;">
+            <!-- Yellow Warning Triangle Icon (Screenshot Match) -->
+            <div style="flex-shrink:0; margin-top:2px;">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#F59E0B"/>
+                <line x1="12" y1="9" x2="12" y2="13" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="1.2" fill="#FFFFFF"/>
+              </svg>
+            </div>
+
+            <!-- Warning Text (Screenshot Match) -->
+            <div style="font-size:0.92rem; color:#374151; line-height:1.55;">
+              If you remove this plan, any custom changes you've made to the plan price, reporting tags or other such subscription configurations will be discarded.
+            </div>
+          </div>
+
+          <!-- Action Buttons (Screenshot Match) -->
+          <div style="display:flex; gap:10px; margin-top:20px; margin-left:46px;">
+            <button type="button" onclick="event.stopPropagation(); window.smatApp.proceedRemovePlan()" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:7px 20px; font-size:0.86rem; font-weight:500; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:background 0.15s;" onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">Proceed</button>
+            <button type="button" onclick="event.stopPropagation(); window.smatApp.closeRemovePlanModal()" style="background:#FFFFFF; color:#374151; border:1px solid #D1D5DB; border-radius:4px; padding:7px 18px; font-size:0.86rem; font-weight:500; cursor:pointer; transition:background 0.15s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='#FFFFFF'">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+        
+        <!-- Sub-Navigation Bar for Subscriptions (Zoho Reference vs Directory) -->
+        <div style="padding:0.75rem 2.5rem 0 2.5rem; background:#F8FAFC; border-bottom:1px solid #E5E7EB; display:flex; gap:0.5rem; align-items:center;">
+          <button class="btn-table-action btn-action-primary" style="background:#1877F2; border-color:#1877F2; border-radius:6px 6px 0 0; padding:0.55rem 1.25rem; font-weight:600;" onclick="window.smatApp.openZohoSubscription(10)">
+            ⚡ Change / New Subscription
+          </button>
+          <button class="btn-table-action btn-action-secondary" style="background:#FFFFFF; border-radius:6px 6px 0 0; padding:0.55rem 1.25rem; font-weight:500;" onclick="window.smatApp.navigateTo('subscriptions-directory')">
+            📋 Active Client Subscriptions Directory
+          </button>
+        </div>
+
+        <!-- Sticky Top Title Bar (Screenshot 1 & Screenshot 3) -->
+        <div style="padding:1.25rem 2.5rem; border-bottom:1px solid #E5E7EB; background:#FFFFFF; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <h1 style="font-size:1.35rem; font-weight:700; color:#111827; margin:0;">Change Subscription</h1>
+          </div>
+          <div style="font-size:0.8rem; color:#6B7280;">
+            Official SmatBot Billing Engine • Zoho Subscriptions Integration
+          </div>
+        </div>
+
+        <div style="padding:2rem 2.5rem; max-width:1150px;">
+
+          <!-- SECTION 1: CUSTOMER SELECTION & ADDRESS (SCREENSHOT 1) -->
+          <div class="zoho-form-grid" style="display:flex; flex-direction:column; gap:1.75rem;">
+            
+            <!-- 1. Customer Name Row -->
+            <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:flex-start;">
+              <label style="font-size:0.88rem; font-weight:600; color:#DC2626; padding-top:6px;">
+                Customer Name*
+              </label>
+              <div>
+                <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+                  
+                  <!-- Disabled Customer Field (Fixed for Existing Subscription) -->
+                  <div class="zoho-customer-disabled-wrap" style="position:relative; width:440px; cursor:not-allowed;" title="Customer cannot be changed for an existing subscription">
+                    <select id="zoho-sub-client-select" class="zoho-select-dropdown" disabled style="width:100%; font-size:0.86rem; border:1px solid #CBD5E1; background:#F8FAFC; color:#334155; cursor:not-allowed; padding:7px 12px; border-radius:4px;" title="Customer cannot be changed for an existing subscription">
+                      <option value="${currClient.id}" selected>
+                        ${escapeHtml(currClient.name)} - ${escapeHtml(currClient.email)}
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Quick Search Glass Button (Disabled) -->
+                  <button type="button" class="zoho-btn-search" disabled style="background:#94A3B8; border:1px solid #94A3B8; border-radius:4px; padding:0.45rem 0.75rem; color:#FFFFFF; cursor:not-allowed; opacity:0.75;" title="Customer cannot be changed for an existing subscription">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  </button>
+
+                  <!-- Currency Pill (Screenshot 1) -->
+                  <span class="zoho-currency-pill" style="background:#FFFFFF; border:1px solid #CBD5E1; color:#111827; border-radius:4px; padding:3px 9px; font-size:0.8rem; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+                    <span style="display:inline-flex; align-items:center; justify-content:center; width:12px; height:12px; border-radius:50%; border:2px solid #10B981; box-sizing:border-box;"><span style="width:4px; height:4px; background:#10B981; border-radius:50%;"></span></span> ${currClient.currency_type || 'INR'}
+                  </span>
+
+
+                </div>
+
+                <!-- Addresses Cards (Screenshot 1: Billing & Shipping Address with Interactive Popovers) -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; max-width:620px; margin-top:1.25rem;">
+                  <!-- Billing Address Card Container -->
+                  <div class="zoho-addr-card-wrap" style="font-size:0.85rem; color:#374151; line-height:1.45; position:relative;">
+                    <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.4rem;">
+                      <span>BILLING ADDRESS</span>
+                      <span class="zoho-addr-trigger" style="cursor:pointer; display:inline-flex; align-items:center;" title="Edit Billing Address" onclick="event.stopPropagation(); window.smatApp.toggleAddressPopover('billing', event)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </span>
+                    </div>
+                    <div id="zoho-billing-display-addr">
+                      <div style="font-weight:700; color:#111827;">${escapeHtml(bAddress.company || currClient.company_name || 'feso')}</div>
+                      <div>${escapeHtml(bAddress.line1 || 'test')}</div>
+                      <div>${escapeHtml(bAddress.line2 || 'test')}</div>
+                      <div>${escapeHtml(bAddress.city || 'Hyderabad')} ${escapeHtml(bAddress.pin || '500034')}</div>
+                      <div>${escapeHtml(bAddress.country || 'India')}</div>
+                    </div>
+
+                    <!-- Dropdown Popover on Pencil Click (Exact Match to Screenshot 1) -->
+                    <div id="zoho-addr-popover-billing" class="zoho-addr-popover" style="display:none; position:absolute; top:24px; left:0; z-index:1100; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.15); padding:10px; width:290px;">
+                      <!-- Highlighted Address Card with Pencil (Screenshot 1) -->
+                      <div style="background:#EEF2F6; border-radius:6px; padding:12px 14px; position:relative; font-size:0.84rem; color:#374151; line-height:1.45; margin-bottom:10px;">
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.openEditAddressModal('billing')" style="position:absolute; top:10px; right:10px; width:26px; height:26px; border-radius:4px; border:1px solid #D1D5DB; background:#FFFFFF; color:#2563EB; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;" title="Edit address">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        </button>
+                        <div style="font-weight:700; color:#111827;">${escapeHtml(bAddress.company || currClient.company_name || 'feso')}</div>
+                        <div>${escapeHtml(bAddress.line1 || 'test')}</div>
+                        <div>${escapeHtml(bAddress.line2 || 'test')}</div>
+                        <div>${escapeHtml(bAddress.city || 'Hyderabad')}</div>
+                        <div>${escapeHtml(bAddress.country || 'India')} , ${escapeHtml(bAddress.pin || '500034')}</div>
+                      </div>
+                      <!-- Add New Address Button (Screenshot 1) -->
+                      <div style="padding:4px 6px;">
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.openEditAddressModal('billing', true)" style="display:inline-flex; align-items:center; gap:6px; color:#2563EB; font-weight:600; font-size:0.84rem; background:none; border:none; cursor:pointer; padding:0;">
+                          <span style="font-size:1.05rem; line-height:1;">⊕</span> New address
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Shipping Address Card Container -->
+                  <div class="zoho-addr-card-wrap" style="font-size:0.85rem; color:#374151; line-height:1.45; position:relative;">
+                    <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.4rem;">
+                      <span>SHIPPING ADDRESS</span>
+                      <span class="zoho-addr-trigger" style="cursor:pointer; display:inline-flex; align-items:center;" title="Edit Shipping Address" onclick="event.stopPropagation(); window.smatApp.toggleAddressPopover('shipping', event)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </span>
+                    </div>
+                    <div id="zoho-shipping-display-addr">
+                      ${hasShipping ? `
+                        <div style="font-weight:700; color:#111827;">${escapeHtml(sAddress.company || currClient.name)}</div>
+                        <div>${escapeHtml(sAddress.line1 || '')}</div>
+                        <div>${escapeHtml(sAddress.line2 || '')}</div>
+                        <div>${escapeHtml(sAddress.city || '')} ${escapeHtml(sAddress.pin || '')}</div>
+                        <div>${escapeHtml(sAddress.country || 'India')}</div>
+                      ` : `
+                        <a href="javascript:void(0)" class="zoho-addr-trigger" onclick="event.stopPropagation(); window.smatApp.toggleAddressPopover('shipping', event)" style="color:#2563EB; text-decoration:none; font-size:0.84rem; font-weight:500;">New Address</a>
+                      `}
+                    </div>
+
+                    <!-- Dropdown Popover on Pencil Click (Exact Match to Screenshot 2) -->
+                    <div id="zoho-addr-popover-shipping" class="zoho-addr-popover" style="display:none; position:absolute; top:24px; left:0; z-index:1100; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.15); padding:10px; width:290px;">
+                      <!-- Address Card (Screenshot 2: Bordered Card clickable to set address) -->
+                      <div style="background:#FFFFFF; border:1px solid #E5E7EB; border-radius:6px; padding:12px 14px; position:relative; font-size:0.84rem; color:#374151; line-height:1.45; margin-bottom:10px; cursor:pointer;" onclick="window.smatApp.selectShippingAddress('billing')" title="Click to use this address for shipping">
+                        <div style="font-weight:700; color:#111827;">${escapeHtml(bAddress.company || currClient.company_name || 'feso')}</div>
+                        <div>${escapeHtml(bAddress.line1 || 'test')}</div>
+                        <div>${escapeHtml(bAddress.line2 || 'test')}</div>
+                        <div>${escapeHtml(bAddress.city || 'Hyderabad')}</div>
+                        <div>${escapeHtml(bAddress.country || 'India')} , ${escapeHtml(bAddress.pin || '500034')}</div>
+                      </div>
+                      <!-- Add New Address Button (Screenshot 2) -->
+                      <div style="padding:4px 6px;">
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.openEditAddressModal('shipping', true)" style="display:inline-flex; align-items:center; gap:6px; color:#2563EB; font-weight:600; font-size:0.84rem; background:none; border:none; cursor:pointer; padding:0;">
+                          <span style="font-size:1.05rem; line-height:1;">⊕</span> New address
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. E-MAIL TO & Direct Phone Details (Exact Match to Screenshot 2) -->
+            <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:center;">
+              <label style="font-size:0.85rem; font-weight:600; color:#4B5563;">
+                E-MAIL TO
+              </label>
+              <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+                <!-- Dashed New Contact Person Button (Screenshot 2 Match) -->
+                <button type="button" class="zoho-btn-new-contact" onclick="window.smatApp.openAddContactPersonModal()" style="display:inline-flex; align-items:center; gap:6px; color:#1E293B; font-weight:500; font-size:0.84rem; background:#FFFFFF; border:1px dashed #CBD5E1; border-radius:4px; padding:5px 12px; cursor:pointer;">
+                  <span style="color:#2563EB; font-size:0.95rem;">⊕</span> New Contact Person
+                </button>
+
+                <!-- Customer Primary Email Checkbox Card (Screenshot 2 Match) -->
+                <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; color:#111827; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:4px; padding:5px 12px; cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:#2563EB; width:15px; height:15px;" />
+                  <span>${escapeHtml(currClient.email)}</span>
+                </label>
+
+                <!-- Additional Contact Persons Added Dynamically -->
+                ${(currClient.contact_persons || []).map(cp => `
+                  <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; color:#111827; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:4px; padding:5px 12px; cursor:pointer;">
+                    <input type="checkbox" checked style="accent-color:#2563EB; width:15px; height:15px;" />
+                    <span>${escapeHtml(cp.name ? cp.name + ' (' + cp.email + ')' : cp.email)}</span>
+                  </label>
+                `).join('')}
+
+                
+              </div>
+            </div>
+
+            <!-- 3. GST Details Row (Screenshot 1: Billing & Shipping Recipient) -->
+            <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:flex-start;">
+              <div></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; max-width:620px; font-size:0.83rem;">
+                <!-- Billing Recipient GST Details -->
+                <div>
+                  <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; margin-bottom:0.35rem;">
+                    <span>BILLING RECIPIENT GST DETAILS</span>
+                  </div>
+                  <div style="color:#374151; position:relative;" class="zoho-gst-pref-wrap">
+                    GST Treatment: <span id="zoho-gst-treatment-display" style="font-weight:600; color:#111827;">${escapeHtml(currClient.gst_treatment || 'Unregistered Business')}</span>
+                    <span class="zoho-gst-pref-trigger" onclick="event.stopPropagation(); window.smatApp.toggleGstPreferencesPopover(event)" style="cursor:pointer; display:inline-flex; align-items:center; margin-left:4px;" title="Configure Tax Preferences">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </span>
+
+                    <!-- Configure Tax Preferences Popover (Screenshot 1 Match) -->
+                    <div id="zoho-gst-pref-popover" class="zoho-gst-pref-popover" style="display:none; position:absolute; bottom:calc(100% + 10px); left:-10px; z-index:9999; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:8px; box-shadow:0 12px 30px rgba(0,0,0,0.18); width:325px; padding:14px 16px;">
+                      <!-- Bottom-pointing triangle arrow -->
+                      <div style="position:absolute; bottom:-6px; left:85px; width:10px; height:10px; background:#FFFFFF; border-right:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; transform:rotate(45deg);"></div>
+
+                      <!-- Header with Red Close Button -->
+                      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid #E5E7EB; margin-bottom:12px;">
+                        <div style="font-size:0.95rem; font-weight:600; color:#1E293B;">Configure Tax Preferences</div>
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.closeGstPreferencesPopover()" style="border:none; background:none; color:#EF4444; font-size:1.15rem; font-weight:700; cursor:pointer; line-height:1; padding:0 2px;" title="Close">✕</button>
+                      </div>
+
+                      <!-- GST Treatment Searchable Dropdown (Screenshots 1 - 5 Match) -->
+                      <div style="position:relative; margin-bottom:12px;">
+                        <label style="display:block; font-size:0.83rem; font-weight:500; color:#4B5563; margin-bottom:5px;">GST Treatment</label>
+                        <div id="zoho-gst-treatment-trigger" onclick="window.smatApp.toggleGstTreatmentDropdown(event)" style="display:flex; justify-content:space-between; align-items:center; width:100%; border:1.5px solid #3B82F6; border-radius:6px; padding:6px 10px; font-size:0.86rem; color:#1E293B; background:#FFFFFF; cursor:pointer; box-sizing:border-box;">
+                          <span id="zoho-gst-treatment-display-val">${currClient.gst_treatment || 'Unregistered Business'}</span>
+                          <svg id="zoho-gst-treatment-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        <input type="hidden" id="zoho-gst-treatment-input" value="${currClient.gst_treatment || 'Unregistered Business'}" />
+
+                        <!-- Searchable Popover Dropdown (Screenshots 1 - 4 Match) -->
+                        <div id="zoho-gst-treatment-dropdown" class="zoho-gst-treatment-popover" style="display:none; position:absolute; top:calc(100% + 4px); left:0; width:100%; z-index:10000; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 10px 25px rgba(0,0,0,0.18); padding:8px 0; overflow:hidden;">
+                          <!-- Search Box -->
+                          <div style="padding:4px 8px 8px 8px;">
+                            <div style="position:relative; display:flex; align-items:center;">
+                              <span style="position:absolute; left:9px; top:50%; transform:translateY(-50%); display:flex; align-items:center; pointer-events:none; color:#94A3B8;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                              </span>
+                              <input type="text" id="zoho-gst-treatment-search-input" placeholder="Search" oninput="window.smatApp.filterGstTreatments(this.value)" onclick="event.stopPropagation()" style="width:100%; border:1.5px solid #3B82F6; border-radius:4px; padding:6px 10px 6px 28px; font-size:0.84rem; color:#1E293B; outline:none; box-sizing:border-box;" />
+                            </div>
+                          </div>
+
+                          <!-- Scrollable Options List -->
+                          <div id="zoho-gst-treatment-options-list" style="max-height:210px; overflow-y:auto; padding:2px 0;">
+                            ${ALL_GST_TREATMENTS.map(t => {
+                              const isSel = t.title === (currClient.gst_treatment || 'Unregistered Business');
+                              return `
+                                <div class="zoho-treatment-option-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectGstTreatment('${t.title.replace(/'/g, "\\'")}')">
+                                  <div class="treatment-text-col">
+                                    <span class="treatment-title">${t.title}</span>
+                                    <span class="treatment-desc">${t.desc}</span>
+                                  </div>
+                                  ${isSel ? '<span class="zoho-treatment-check">✓</span>' : ''}
+                                </div>
+                              `;
+                            }).join('')}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Make it permanent? Checkbox -->
+                      <div style="margin-bottom:14px;">
+                        <div style="font-size:0.85rem; font-weight:500; color:#1E293B; margin-bottom:6px;">Make it permanent?</div>
+                        <label style="display:flex; align-items:flex-start; gap:8px; font-size:0.8rem; color:#4B5563; cursor:pointer; line-height:1.4;">
+                          <input type="checkbox" id="zoho-gst-permanent-check" style="accent-color:#2563EB; width:15px; height:15px; margin-top:1px; flex-shrink:0;" />
+                          <span>Use these settings for all future transactions of this customer.</span>
+                        </label>
+                      </div>
+
+                      <!-- Actions -->
+                      <div style="display:flex; gap:8px; padding-top:10px; border-top:1px solid #F1F5F9;">
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.saveGstPreferences()" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:6px 16px; font-size:0.84rem; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05);">Update</button>
+                        <button type="button" onclick="event.stopPropagation(); window.smatApp.closeGstPreferencesPopover()" style="background:#FFFFFF; border:1px solid #D1D5DB; color:#374151; border-radius:4px; padding:6px 14px; font-size:0.84rem; font-weight:500; cursor:pointer;">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Shipping Recipient GST Details -->
+                <div style="position:relative;" class="zoho-ship-gst-wrap">
+                  <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; margin-bottom:0.35rem;">
+                    <span>SHIPPING RECIPIENT GST DETAILS</span>
+                    <span class="zoho-ship-gst-trigger" onclick="event.stopPropagation(); window.smatApp.toggleShippingGstPopover(event)" style="cursor:pointer; display:inline-flex; align-items:center;" title="Edit Shipping GST">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </span>
+                  </div>
+                  <div style="color:#4B5563;">GSTIN: <span id="zoho-shipping-gstin-display" style="color:#111827; font-weight:500;">${escapeHtml(currClient.shipping_gstin || '')}</span></div>
+                  <div style="color:#4B5563;">Business Legal Name: <span id="zoho-shipping-legal-name-display" style="color:#111827; font-weight:500;">${escapeHtml(currClient.shipping_legal_name || '')}</span></div>
+
+                  <!-- Shipping Recipient GST Details Popover (Screenshot 1 Match) -->
+                  <div id="zoho-ship-gst-popover" class="zoho-ship-gst-popover" style="display:none; position:absolute; bottom:calc(100% + 10px); left:-10px; z-index:9999; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:8px; box-shadow:0 12px 30px rgba(0,0,0,0.18); width:310px; padding:14px 16px;">
+                    <!-- Bottom-pointing triangle arrow -->
+                    <div style="position:absolute; bottom:-6px; left:160px; width:10px; height:10px; background:#FFFFFF; border-right:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; transform:rotate(45deg);"></div>
+
+                    <!-- Header with Red Close Button -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid #E5E7EB; margin-bottom:12px;">
+                      <div style="font-size:0.95rem; font-weight:600; color:#1E293B;">Shipping Recipient GST Details</div>
+                      <button type="button" onclick="event.stopPropagation(); window.smatApp.closeShippingGstPopover()" style="border:none; background:none; color:#EF4444; font-size:1.15rem; font-weight:700; cursor:pointer; line-height:1; padding:0 2px;" title="Close">✕</button>
+                    </div>
+
+                    <!-- GSTIN and is Unregistered Person? -->
+                    <div style="margin-bottom:12px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="font-size:0.83rem; font-weight:500; color:#4B5563;">GSTIN</label>
+                        <label style="display:inline-flex; align-items:center; gap:5px; font-size:0.8rem; color:#4B5563; cursor:pointer;">
+                          <input type="checkbox" id="zoho-ship-unregistered-check" style="accent-color:#2563EB; width:14px; height:14px;" onchange="window.smatApp.onShippingGstUnregChange(this.checked)" ${currClient.shipping_is_unregistered ? 'checked' : ''} />
+                          <span>is Unregistered Person?</span>
+                        </label>
+                      </div>
+                      <input type="text" id="zoho-ship-gstin-input" value="${escapeHtml(currClient.shipping_gstin || '')}" placeholder="" style="width:100%; border:1px solid #CBD5E1; border-radius:4px; padding:6px 10px; font-size:0.86rem; color:#1E293B; outline:none;" />
+                    </div>
+
+                    <!-- Business Legal Name -->
+                    <div style="margin-bottom:12px;">
+                      <label style="display:block; font-size:0.83rem; font-weight:500; color:#4B5563; margin-bottom:5px;">Business Legal Name</label>
+                      <input type="text" id="zoho-ship-legal-name-input" value="${escapeHtml(currClient.shipping_legal_name || '')}" placeholder="" style="width:100%; border:1px solid #CBD5E1; border-radius:4px; padding:6px 10px; font-size:0.86rem; color:#1E293B; outline:none;" />
+                    </div>
+
+                    <!-- Business Trade Name -->
+                    <div style="margin-bottom:14px;">
+                      <label style="display:block; font-size:0.83rem; font-weight:500; color:#4B5563; margin-bottom:5px;">Business Trade Name</label>
+                      <input type="text" id="zoho-ship-trade-name-input" value="${escapeHtml(currClient.shipping_trade_name || '')}" placeholder="" style="width:100%; border:1px solid #CBD5E1; border-radius:4px; padding:6px 10px; font-size:0.86rem; color:#1E293B; outline:none;" />
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display:flex; gap:8px; padding-top:10px; border-top:1px solid #F1F5F9;">
+                      <button type="button" onclick="event.stopPropagation(); window.smatApp.saveShippingGstPreferences()" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:6px 16px; font-size:0.84rem; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05);">Update</button>
+                      <button type="button" onclick="event.stopPropagation(); window.smatApp.closeShippingGstPopover()" style="background:#FFFFFF; border:1px solid #D1D5DB; color:#374151; border-radius:4px; padding:6px 14px; font-size:0.84rem; font-weight:500; cursor:pointer;">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Place of Supply* (Exact Match to User Reference Screenshots 1 - 5) -->
+            <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:center;">
+              <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">
+                Place of Supply*
+              </label>
+              <div style="position:relative; width:100%; max-width:320px;">
+                <!-- Hidden select for compatibility -->
+                <select id="zoho-sub-supply-state" style="display:none;">
+                  ${ALL_SUPPLY_STATES.map(s => `
+                    <option value="${s.code}" ${s.code === zohoSelectedSupplyState ? 'selected' : ''}>[${s.code}] - ${s.name}</option>
+                  `).join('')}
+                </select>
+
+                <!-- Trigger box displaying currently selected state -->
+                <div id="zoho-supply-state-trigger" class="zoho-supply-trigger" onclick="event.stopPropagation(); window.smatApp.toggleSupplyStateDropdown(event)" style="border:1px solid #CBD5E1; border-radius:4px; padding:7px 12px; font-size:0.86rem; color:#1E293B; background:#FFFFFF; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                  <span id="zoho-supply-state-display">[${zohoSelectedSupplyState}] - ${(ALL_SUPPLY_STATES.find(s => s.code === zohoSelectedSupplyState) || { name: 'Telangana' }).name}</span>
+                  <span style="font-size:0.75rem; color:#6B7280;">⌄</span>
+                </div>
+
+                <!-- Searchable Dropdown Popover (Exact Match to Screenshots 1 - 5) -->
+                <div id="zoho-supply-state-popover" class="zoho-supply-popover" style="display:none; position:absolute; bottom:calc(100% + 4px); top:auto; left:0; width:100%; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 -8px 25px rgba(0,0,0,0.15); padding:8px 0; overflow:hidden;">
+                  <!-- Search input with magnifying glass (Screenshot Match) -->
+                  <div style="padding:4px 10px 8px 10px; border-bottom:1px solid #F1F5F9;">
+                    <div style="position:relative; display:flex; align-items:center;">
+                      <span style="position:absolute; left:10px; color:#9CA3AF; display:inline-flex; align-items:center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                      </span>
+                      <input type="text" id="zoho-supply-search-input" placeholder="Search" oninput="window.smatApp.filterSupplyStates(this.value)" onclick="event.stopPropagation()" style="width:100%; border:1.5px solid #3B82F6; border-radius:4px; padding:6px 10px 6px 30px; font-size:0.84rem; color:#1E293B; outline:none;" />
+                    </div>
+                  </div>
+
+                  <!-- Scrollable Options List -->
+                  <div id="zoho-supply-options-list" style="max-height:220px; overflow-y:auto; padding:4px 0;">
+                    ${ALL_SUPPLY_STATES.map(s => {
+                      const isSel = s.code === zohoSelectedSupplyState;
+                      return `
+                        <div class="zoho-supply-option-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectSupplyState('${s.code}')">
+                          <span>[${s.code}] - ${s.name}</span>
+                          ${isSel ? '<span class="zoho-supply-check">✓</span>' : ''}
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Select Product* (Screenshot 1) -->
+            <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:center;">
+              <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">
+                Select Product*
+              </label>
+              <div style="font-weight:600; color:#111827; font-size:0.9rem;">
+                SmatBot
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SECTION 2: PLAN & ADDONS TABLE (SCREENSHOT 2) -->
+          <div style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+            
+            <!-- Plan Header & Preferences (Exact Match to Screenshots 1 & 2) -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h2 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0;">Plan</h2>
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <!-- Discount preference selector (Exact Match to User Screenshot) -->
+                <div id="zoho-discount-pref-wrapper" style="position:relative; display:inline-block;">
+                  <button type="button" id="zoho-discount-pref-trigger" onclick="event.stopPropagation(); window.smatApp.toggleDiscountPrefDropdown(event)" style="display:inline-flex; align-items:center; gap:6px; border:${(zohoDiscountPref === 'item-level' || zohoDiscountPref === 'transaction-level') ? '1.5px solid #3B82F6' : '1px solid #CBD5E1'}; box-shadow:${(zohoDiscountPref === 'item-level' || zohoDiscountPref === 'transaction-level') ? '0 0 0 2px rgba(59, 130, 246, 0.15)' : '0 1px 2px rgba(0,0,0,0.02)'}; border-radius:6px; padding:5px 10px; background:#FFFFFF; cursor:pointer; font-size:0.82rem; color:#374151; font-weight:500; transition:all 0.15s;">
+                    <span style="color:#64748B; display:inline-flex; align-items:center;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <circle cx="9.5" cy="9.5" r=".5" fill="currentColor"></circle>
+                        <circle cx="14.5" cy="14.5" r=".5" fill="currentColor"></circle>
+                      </svg>
+                    </span>
+                    <span id="zoho-discount-pref-label">${zohoDiscountPref === 'transaction-level' ? 'Transaction-Level' : (zohoDiscountPref === 'item-level' ? 'Item-Level' : 'No Discounts')}</span>
+                    <span id="zoho-discount-pref-chevron" style="font-size:0.7rem; color:#6B7280; transition:transform 0.2s;">▾</span>
+                  </button>
+
+                  <!-- Native select kept for test compatibility & state change -->
+                  <select id="zoho-sub-discount-pref" onchange="window.smatApp.onZohoDiscountPrefChange(this.value)" style="display:none;">
+                    <option value="no-discount" ${zohoDiscountPref === 'no-discount' ? 'selected' : ''}>No Discounts</option>
+                    <option value="item-level" ${zohoDiscountPref === 'item-level' ? 'selected' : ''}>(%) Item-Level Discount</option>
+                    <option value="transaction-level" ${zohoDiscountPref === 'transaction-level' ? 'selected' : ''}>Entity-Level Discount</option>
+                  </select>
+
+                  <!-- Popover Dropdown (Exact Match to User Screenshot) -->
+                  <div id="zoho-discount-pref-popover" class="zoho-discount-popover" style="display:none; position:absolute; top:calc(100% + 4px); left:0; width:210px; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); z-index:99999; padding:8px 6px;">
+                    <!-- Search Input (Search icon + input inside blue outlined rounded box) -->
+                    <div style="padding:0 4px 8px 4px;">
+                      <div style="display:flex; align-items:center; gap:6px; border:1.5px solid #3B82F6; border-radius:6px; padding:5px 8px; background:#FFFFFF; box-shadow:0 0 0 2px rgba(59,130,246,0.15);">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="zoho-discount-pref-search" placeholder="Search" oninput="window.smatApp.filterDiscountPrefOptions(this.value)" style="border:none; outline:none; font-size:0.82rem; width:100%; color:#1E293B; background:transparent; padding:0;" />
+                      </div>
+                    </div>
+
+                    <!-- Category Title -->
+                    <div style="padding:2px 8px 6px 8px; font-size:0.8rem; font-weight:700; color:#475569;">
+                      Discount Preference
+                    </div>
+
+                    <!-- List of Options -->
+                    <div id="zoho-discount-pref-list" style="display:flex; flex-direction:column; gap:2px;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Renewal frequency selector (Disabled as specified in Zoho Reference) -->
+                <select id="zoho-sub-renewal-freq" disabled style="border:1px solid #E2E8F0; border-radius:6px; padding:6px 12px; font-size:0.82rem; color:#64748B; background:#F8FAFC; outline:none; cursor:not-allowed; opacity:0.85; font-weight:500;" title="Renewal frequency is set to Every Renewal">
+                  <option value="every-renewal" selected>Every Renewal</option>
+                  <option value="one-time">One-Time Only</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Plan Table (Screenshot 2) -->
+            <div style="border:1px solid #E5E7EB; border-radius:6px; overflow:visible; position:relative; z-index:30; margin-bottom:2rem; background:#FFFFFF;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                  <tr style="background:#F9FAFB; border-bottom:1px solid #E5E7EB; color:#6B7280; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
+                    <th class="zoho-th-plan-name" style="padding:0.65rem 1rem; text-align:left; width:${zohoDiscountPref === 'item-level' ? '34%' : '40%'};">PLAN NAME</th>
+                    <th class="zoho-th-plan-qty" style="padding:0.65rem 0.75rem; text-align:center; width:${zohoDiscountPref === 'item-level' ? '12%' : '15%'};">QUANTITY</th>
+                    <th class="zoho-th-plan-price" style="padding:0.65rem 0.75rem; text-align:right; width:${zohoDiscountPref === 'item-level' ? '14%' : '15%'};">PRICE</th>
+                    <th class="zoho-col-discount" style="padding:0.65rem 0.75rem; text-align:center; width:14%; display:${zohoDiscountPref === 'item-level' ? 'table-cell' : 'none'};">DISCOUNT</th>
+                    <th class="zoho-th-plan-tax" style="padding:0.65rem 0.75rem; text-align:left; width:${zohoDiscountPref === 'item-level' ? '13%' : '15%'};">TAX</th>
+                    <th class="zoho-th-plan-amount" style="padding:0.65rem 1rem; text-align:right; width:${zohoDiscountPref === 'item-level' ? '13%' : '15%'};">AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="zoho-plan-table-row" style="border-bottom:1px solid #F3F4F6; vertical-align:top;" id="zoho-plan-row">
+                    
+                    <!-- Plan Thumbnail & Name & SAC Badge (Dynamic Searchable Dropdown) -->
+                    <td id="zoho-plan-name-cell" style="padding:1rem;">
+                      ${renderZohoPlanNameCell(zohoSelectedPlan)}
+                    </td>
+
+                    <!-- Quantity -->
+                    <td style="padding:1rem 0.75rem; text-align:center;">
+                      <input type="number" id="zoho-plan-qty" value="1" min="1" style="width:55px; text-align:center; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                    </td>
+
+                    <!-- Price -->
+                    <td style="padding:1rem 0.75rem; text-align:right;">
+                      <input type="number" id="zoho-plan-price" value="${matchedPlan.price}" style="width:85px; text-align:right; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                    </td>
+
+                    <!-- Point 1: Plan Discount (% / ₹) (Screenshots 1 & 2) -->
+                    <td class="zoho-col-discount" style="padding:1rem 0.75rem; text-align:center; display:${zohoDiscountPref === 'item-level' ? 'table-cell' : 'none'};">
+                      <div style="display:inline-flex; align-items:center; gap:2px; border:1px solid #D1D5DB; border-radius:4px; padding:1px 4px; background:#FFFFFF;">
+                        <input type="number" id="zoho-plan-disc-val" value="0" min="0" style="width:45px; border:none; text-align:center; font-size:0.85rem; outline:none;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                        <select id="zoho-plan-disc-type" style="border:none; background:none; font-size:0.8rem; color:#4B5563; outline:none; cursor:pointer;" onchange="window.smatApp.updateZohoSubCalculations()">
+                          <option value="percent">% ⌄</option>
+                          <option value="flat">₹ ⌄</option>
+                        </select>
+                      </div>
+                    </td>
+
+                    <!-- Tax: Custom Searchable Dropdown (Screenshots 2, 3, 4 Match) -->
+                    <td style="padding:1rem 0.75rem; position:relative;">
+                      <div id="zoho-plan-tax-wrapper" style="position:relative; width:100%; min-width:130px;">
+                        <button type="button" id="zoho-plan-tax-trigger" onclick="event.stopPropagation(); window.smatApp.togglePlanTaxDropdown(event)" style="display:flex; align-items:center; justify-content:space-between; width:100%; border:1px solid #CBD5E1; border-radius:4px; padding:5px 8px; background:#FFFFFF; font-size:0.82rem; color:#1E293B; cursor:pointer; text-align:left; transition:all 0.15s; user-select:none;">
+                          <span id="zoho-plan-tax-label" style="font-weight:500;">${zohoSelectedPlanTaxLabel || 'GST18 [18%]'}</span>
+                          <span id="zoho-plan-tax-chevron" style="color:#2563EB; font-size:0.75rem; margin-left:4px; display:inline-flex; align-items:center; transition:transform 0.2s;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                          </span>
+                        </button>
+                        <input type="hidden" id="zoho-plan-tax" value="${zohoSelectedPlanTaxRate !== undefined ? zohoSelectedPlanTaxRate : 18}" />
+
+                        <!-- Searchable Popover Dropdown (Screenshots 3 & 4 Match) -->
+                        <div id="zoho-plan-tax-popover" class="zoho-tax-popover" style="display:none; position:absolute; top:calc(100% + 4px); left:0; width:260px; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.18); overflow:hidden; text-align:left;">
+                          <!-- Search Bar (Screenshot 3 Match) -->
+                          <div style="padding:8px 10px 6px 10px; border-bottom:1px solid #F1F5F9;">
+                            <div style="display:flex; align-items:center; gap:6px; border:1.5px solid #3B82F6; border-radius:5px; padding:4px 8px; background:#FFFFFF;">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                              <input type="text" id="zoho-plan-tax-search" placeholder="Search" oninput="window.smatApp.filterPlanTaxes(this.value)" style="border:none; outline:none; font-size:0.82rem; width:100%; color:#1E293B; background:transparent;" />
+                            </div>
+                          </div>
+
+                          <!-- Categories & Items (Screenshots 3 & 4 Match) -->
+                          <div id="zoho-plan-tax-list" style="max-height:220px; overflow-y:auto; padding:4px 6px;"></div>
+
+                          <!-- Fixed Bottom Action: New Tax (Screenshots 3 & 4 Match) -->
+                          <div style="border-top:1px solid #F1F5F9; padding:8px 12px; background:#FFFFFF;">
+                            <div onclick="event.stopPropagation(); window.smatApp.addNewPlanTax()" style="display:inline-flex; align-items:center; gap:6px; color:#2563EB; font-size:0.82rem; font-weight:600; cursor:pointer; user-select:none;">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                              <span>New Tax</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Live Amount & Row Actions (··· on hover - Screenshot 1, 2, 3 Match) -->
+                    <td style="padding:1rem; text-align:right; white-space:nowrap; position:relative;">
+                      <div style="display:inline-flex; align-items:center; justify-content:flex-end; gap:0.45rem;">
+                        <div style="text-align:right;" id="zoho-plan-row-amount">
+                          <div style="font-weight:700; color:#111827; font-size:0.92rem;">Rs. ${(zohoSelectedPlan ? zohoSelectedPlan.price : matchedPlan.price).toLocaleString('en-IN')}.00</div>
+                          <div style="font-size:0.74rem; color:#6B7280; margin-top:2px;">${zohoSelectedPlan ? zohoSelectedPlan.cycle : matchedPlan.cycle}</div>
+                        </div>
+                        <div id="zoho-plan-actions-wrap" class="zoho-plan-row-actions" style="position:relative;">
+                          <button type="button" id="zoho-plan-more-btn" class="zoho-btn-row-more zoho-more-trigger" onclick="event.stopPropagation(); window.smatApp.togglePlanMoreTooltip(event)" title="More options">···</button>
+
+                          <!-- Dark Tooltip Bubble (Screenshot 3 Match) -->
+                          <div id="zoho-plan-more-tooltip" class="zoho-more-popover" onclick="event.stopPropagation(); window.smatApp.showPlanAdditionalInfo()" style="display:none; position:absolute; right:calc(100% + 10px); top:50%; transform:translateY(-50%); z-index:9999; background:#1E293B; color:#FFFFFF; border-radius:6px; padding:7px 12px; font-size:0.78rem; font-weight:500; white-space:nowrap; box-shadow:0 8px 20px rgba(0,0,0,0.25); cursor:pointer;" title="Click to show additional information">
+                            <!-- Right-pointing triangle arrow -->
+                            <div style="position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:5px solid #1E293B;"></div>
+                            Click here to add additional information for this item.
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Additional Information Row: Select an account (Screenshot 2 Match) -->
+                  <tr id="zoho-plan-additional-info-row" style="background:#FAFBFD; border-bottom:1px solid #E5E7EB;">
+                    <td colspan="6" style="padding:10px 1.5rem 12px 1.5rem; position:relative;">
+                      <div style="position:relative; display:inline-block;">
+                        <!-- Select an account trigger button -->
+                        <div id="zoho-plan-account-trigger" onclick="event.stopPropagation(); window.smatApp.togglePlanAccountDropdown(event)" style="display:inline-flex; align-items:center; gap:6px; border:1px solid #CBD5E1; border-radius:4px; padding:5px 10px; font-size:0.82rem; color:#475569; background:#FFFFFF; cursor:pointer; transition:all 0.15s; user-select:none;">
+                          <span style="color:#64748B; display:inline-flex; align-items:center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748B"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                          </span>
+                          <span id="zoho-plan-account-label">${zohoSelectedPlanAccount || 'Select an account'}</span>
+                          <span id="zoho-plan-account-chevron" style="font-size:0.7rem; color:#6B7280; transition:transform 0.2s;">▾</span>
+                        </div>
+
+                        <!-- Searchable Drop-up Menu (Exact Match to Screenshots 3 - 5 & Subsequent Screenshots) -->
+                        <div id="zoho-plan-account-dropdown" class="zoho-account-dropup-popover" style="display:none; position:absolute; bottom:calc(100% + 6px); left:0; width:250px; max-height:280px; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 -8px 25px rgba(0,0,0,0.18); overflow:hidden;">
+                          <!-- Search Box -->
+                          <div style="padding:6px 8px; border-bottom:1px solid #F1F5F9;">
+                            <div style="position:relative; display:flex; align-items:center;">
+                              <span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); display:flex; align-items:center; pointer-events:none; color:#94A3B8;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                              </span>
+                              <input type="text" id="zoho-plan-account-search" placeholder="Search" oninput="window.smatApp.filterPlanAccounts(this.value)" onclick="event.stopPropagation()" style="width:100%; border:1.5px solid #3B82F6; border-radius:4px; padding:5px 8px 5px 26px; font-size:0.82rem; color:#1E293B; outline:none; box-sizing:border-box;" />
+                            </div>
+                          </div>
+
+                          <!-- Scrollable Accounts List -->
+                          <div id="zoho-plan-account-list" style="max-height:225px; overflow-y:auto; padding:4px 0;">
+                            <!-- Populated dynamically -->
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Addons Header (Screenshot 2) -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h2 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0;">Addons</h2>
+            </div>
+
+            <!-- Addons Table (Screenshot 2) -->
+            <div style="border:1px solid #E5E7EB; border-radius:6px; overflow:visible; position:relative; z-index:20; margin-bottom:0.75rem; background:#FFFFFF;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                  <tr style="background:#F9FAFB; border-bottom:1px solid #E5E7EB; color:#6B7280; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
+                    <th class="zoho-th-addon-name" style="padding:0.65rem 1rem; text-align:left; width:${zohoDiscountPref === 'item-level' ? '34%' : '40%'};">ADDON NAME</th>
+                    <th class="zoho-th-addon-qty" style="padding:0.65rem 0.75rem; text-align:center; width:${zohoDiscountPref === 'item-level' ? '12%' : '15%'};">QUANTITY</th>
+                    <th class="zoho-th-addon-price" style="padding:0.65rem 0.75rem; text-align:right; width:${zohoDiscountPref === 'item-level' ? '14%' : '15%'};">PRICE</th>
+                    <th class="zoho-col-discount" style="padding:0.65rem 0.75rem; text-align:center; width:14%; display:${zohoDiscountPref === 'item-level' ? 'table-cell' : 'none'};">DISCOUNT</th>
+                    <th class="zoho-th-addon-tax" style="padding:0.65rem 0.75rem; text-align:left; width:${zohoDiscountPref === 'item-level' ? '13%' : '15%'};">TAX</th>
+                    <th class="zoho-th-addon-amount" style="padding:0.65rem 1rem; text-align:right; width:${zohoDiscountPref === 'item-level' ? '13%' : '15%'};">AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody id="zoho-addons-tbody">
+                  ${zohoSubAddons.map((addon, idx) => {
+                    const isRowEmpty = addon.isEmpty || !addon.name;
+                    return `
+                    <tr class="zoho-addon-table-row" style="border-bottom:1px solid #F3F4F6; vertical-align:top;" id="zoho-addon-row-${idx}">
+                      <!-- Addon Name / Picker (Screenshot 1: Empty vs Populated) -->
+                      <td style="padding:0.85rem 1rem;">
+                        <div style="display:flex; gap:0.6rem; align-items:flex-start;">
+                          <span style="color:#9CA3AF; cursor:grab; font-size:1.1rem; line-height:1; padding-top: ${isRowEmpty ? '8px' : '4px'};">⠿</span>
+                          <div style="width:38px; height:38px; background:#F9FAFB; border:1px solid #E5E7EB; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#9CA3AF; flex-shrink:0;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          </div>
+                          
+                          ${isRowEmpty ? `
+                            <!-- Empty Row: Blue border box with placeholder "Type or click to select an addon." (Screenshot 1) -->
+                            <div style="flex:1; position:relative;">
+                              <select id="zoho-addon-picker-${idx}" 
+                                      style="width:100%; border:1.5px solid #3B82F6; box-shadow:0 0 0 1px rgba(59, 130, 246, 0.2); border-radius:4px; padding:0.6rem 0.75rem; font-size:0.85rem; color:#4B5563; outline:none; background:#FFFFFF; cursor:pointer;"
+                                      onchange="window.smatApp.onZohoAddonChange(${idx}, this.value)">
+                                <option value="" disabled selected hidden>Type or click to select an addon.</option>
+                                ${AVAILABLE_ZOHO_ADDONS.map(a => `
+                                  <option value="${escapeHtml(a.name)}">${escapeHtml(a.name)} (Rs. ${a.price.toLocaleString('en-IN')})</option>
+                                `).join('')}
+                              </select>
+                            </div>
+                          ` : `
+                            <!-- Populated Row: Selected Addon (Screenshot 1 & Screenshot 2) -->
+                            <div style="flex:1;">
+                              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="font-weight:600; color:#111827; font-size:0.88rem;">${escapeHtml(addon.name)}</span>
+                                <span class="zoho-addon-remove-btn" onclick="event.stopPropagation(); window.smatApp.removeZohoSubAddonRow(${idx})" style="color:#9CA3AF; cursor:pointer; display:inline-flex; align-items:center; transition:color 0.15s;" title="Remove Addon" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#9CA3AF'">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                  </svg>
+                                </span>
+                              </div>
+                              <div style="background:#F9FAFB; border:1px solid #F3F4F6; border-radius:4px; padding:4px 8px; font-size:0.78rem; color:#4B5563; margin-bottom:6px;">
+                                ${escapeHtml(addon.desc)}
+                              </div>
+                              <div class="zoho-sac-badge-wrap" style="position:relative; display:inline-flex; align-items:center; gap:5px;">
+                                <span style="background:#059669; color:#FFFFFF; font-size:0.68rem; font-weight:700; padding:1px 5px; border-radius:3px; letter-spacing:0.3px;">SERVICE</span>
+                                <span style="font-size:0.75rem; color:#2563EB; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" onclick="event.stopPropagation(); window.smatApp.toggleSacPopover('addon', ${idx}, event)" title="Click to edit SAC code">
+                                  SAC: <span id="zoho-addon-sac-text-${idx}">${addon.sac || '998314'}</span>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                </span>
+
+                                <!-- Top-pointed Popover (Exact Match to User Screenshot) -->
+                                <div id="zoho-sac-popover-addon-${idx}" class="zoho-sac-popover" style="display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:9999; background:#FFFFFF; border:1px solid #D1D5DB; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.15); padding:12px 14px; min-width:280px; text-align:left;">
+                                  <div style="position:absolute; top:-6px; left:48px; width:10px; height:10px; background:#FFFFFF; border-left:1px solid #E5E7EB; border-top:1px solid #E5E7EB; transform:rotate(45deg);"></div>
+                                  <div style="font-size:0.84rem; font-weight:600; color:#374151; margin-bottom:8px;">SAC</div>
+                                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                    <select id="zoho-sac-select-addon-${idx}" style="flex:1; border:1.5px solid #3B82F6; border-radius:4px; padding:6px 10px; font-size:0.86rem; color:#111827; outline:none; background:#FFFFFF; cursor:pointer;">
+                                      <option value="998314" ${addon.sac === '998314' || !addon.sac ? 'selected' : ''}>998314</option>
+                                      <option value="998313" ${addon.sac === '998313' ? 'selected' : ''}>998313 - IT Consulting & Support</option>
+                                      <option value="998315" ${addon.sac === '998315' ? 'selected' : ''}>998315 - Hosting & Infrastructure</option>
+                                      <option value="998319" ${addon.sac === '998319' ? 'selected' : ''}>998319 - Other IT Services</option>
+                                      <option value="998311" ${addon.sac === '998311' ? 'selected' : ''}>998311 - Telecommunications</option>
+                                    </select>
+                                    <span style="color:#2563EB; cursor:pointer;" title="Search SAC Code">
+                                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    </span>
+                                  </div>
+                                  <div style="display:flex; align-items:center; gap:8px;">
+                                    <button type="button" onclick="window.smatApp.saveSacCode('addon', ${idx})" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:4px 14px; font-size:0.8rem; font-weight:600; cursor:pointer;">Save</button>
+                                    <button type="button" onclick="window.smatApp.closeSacPopover('addon', ${idx})" style="background:#F3F4F6; color:#374151; border:1px solid #E5E7EB; border-radius:4px; padding:4px 12px; font-size:0.8rem; cursor:pointer;">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          `}
+                        </div>
+                      </td>
+
+                      <!-- Quantity (Screenshot 1: 1.00 for empty, 1 for filled) -->
+                      <td style="padding:1rem 0.75rem; text-align:center;">
+                        <input type="number" id="zoho-addon-qty-${idx}" value="${isRowEmpty ? '1.00' : addon.qty}" step="${isRowEmpty ? '0.01' : '1'}" min="1" style="width:60px; text-align:center; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                        ${!isRowEmpty && addon.unit ? `<div style="font-size:0.72rem; color:#6B7280; margin-top:4px;">${escapeHtml(addon.unit)}</div>` : ''}
+                      </td>
+
+                      <!-- Price (Screenshot 1: 0.00 for empty) -->
+                      <td style="padding:1rem 0.75rem; text-align:right;">
+                        <input type="number" id="zoho-addon-price-${idx}" value="${isRowEmpty ? '0.00' : addon.price}" step="0.01" style="width:75px; text-align:right; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                      </td>
+
+                      <!-- Point 2: Add-on Discount (% / ₹) (Screenshot 1 & 2) -->
+                      <td class="zoho-col-discount" style="padding:1rem 0.75rem; text-align:center; display:${zohoDiscountPref === 'item-level' ? 'table-cell' : 'none'};">
+                        <div style="display:inline-flex; align-items:center; gap:2px; border:1px solid #D1D5DB; border-radius:4px; padding:1px 4px; background:#FFFFFF;">
+                          <input type="number" id="zoho-addon-disc-val-${idx}" value="${addon.discountVal || 0}" min="0" style="width:40px; border:none; text-align:center; font-size:0.85rem; outline:none;" oninput="window.smatApp.updateZohoSubCalculations()" />
+                          <select id="zoho-addon-disc-type-${idx}" style="border:none; background:none; font-size:0.8rem; color:#4B5563; outline:none; cursor:pointer;" onchange="window.smatApp.updateZohoSubCalculations()">
+                            <option value="percent" ${addon.discountType === 'percent' ? 'selected' : ''}>% ⌄</option>
+                            <option value="flat" ${addon.discountType === 'flat' ? 'selected' : ''}>₹ ⌄</option>
+                          </select>
+                        </div>
+                      </td>
+
+                      <!-- Tax: Custom Searchable Dropdown (Screenshots 1 & 2 Match) -->
+                      <td style="padding:1rem 0.75rem; position:relative;">
+                        <div id="zoho-addon-tax-wrapper-${idx}" style="position:relative; width:100%; min-width:130px;">
+                          <button type="button" id="zoho-addon-tax-trigger-${idx}" onclick="event.stopPropagation(); window.smatApp.toggleAddonTaxDropdown(${idx}, event)" style="display:flex; align-items:center; justify-content:space-between; width:100%; border:1px solid #CBD5E1; border-radius:4px; padding:5px 8px; background:#FFFFFF; font-size:0.82rem; color:#1E293B; cursor:pointer; text-align:left; transition:all 0.15s; user-select:none;">
+                            <span id="zoho-addon-tax-label-${idx}" style="font-weight:500;">${addon.taxLabel || (isRowEmpty ? 'Select a Tax' : 'GST18 [18%]')}</span>
+                            <span id="zoho-addon-tax-chevron-${idx}" style="color:#2563EB; font-size:0.75rem; margin-left:4px; display:inline-flex; align-items:center; transition:transform 0.2s;">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </span>
+                          </button>
+                          <input type="hidden" id="zoho-addon-tax-${idx}" value="${addon.taxRate !== undefined ? addon.taxRate : (isRowEmpty ? 0 : 18)}" />
+
+                          <!-- Searchable Popover Dropdown (Screenshots 1 & 2 Match) -->
+                          <div id="zoho-addon-tax-popover-${idx}" class="zoho-tax-popover zoho-addon-tax-popover" style="display:none; position:absolute; top:calc(100% + 4px); left:0; width:260px; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.18); overflow:hidden; text-align:left;">
+                            <!-- Search Bar (Screenshot 2 Match) -->
+                            <div style="padding:8px 10px 6px 10px; border-bottom:1px solid #F1F5F9;">
+                              <div style="display:flex; align-items:center; gap:6px; border:1.5px solid #3B82F6; border-radius:5px; padding:4px 8px; background:#FFFFFF;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="zoho-addon-tax-search-${idx}" placeholder="Search" oninput="window.smatApp.filterAddonTaxes(${idx}, this.value)" style="border:none; outline:none; font-size:0.82rem; width:100%; color:#1E293B; background:transparent;" />
+                              </div>
+                            </div>
+
+                            <!-- Categories & Items (Screenshot 2 Match) -->
+                            <div id="zoho-addon-tax-list-${idx}" style="max-height:220px; overflow-y:auto; padding:4px 6px;"></div>
+
+                            <!-- Fixed Bottom Action: New Tax (Screenshot 2 Match) -->
+                            <div style="border-top:1px solid #F1F5F9; padding:8px 12px; background:#FFFFFF;">
+                              <div onclick="event.stopPropagation(); window.smatApp.addNewAddonTax(${idx})" style="display:inline-flex; align-items:center; gap:6px; color:#2563EB; font-size:0.82rem; font-weight:600; cursor:pointer; user-select:none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                                <span>New Tax</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Live Amount & Far Right Row Actions (··· and ⓧ on hover - Screenshot 4 Match) -->
+                      <td style="padding:1rem; text-align:right; white-space:nowrap; position:relative;">
+                        <div style="display:inline-flex; align-items:center; justify-content:flex-end; gap:0.45rem;">
+                          <div id="zoho-addon-amount-${idx}" style="font-weight:700; color:#111827; font-size:0.9rem;">
+                            Rs. ${isRowEmpty ? '0.00' : (addon.price * addon.qty).toLocaleString('en-IN') + '.00'}
+                          </div>
+                          <div id="zoho-addon-actions-wrap-${idx}" class="zoho-addon-row-actions" style="position:relative;">
+                            <button type="button" id="zoho-addon-more-btn-${idx}" class="zoho-btn-row-more zoho-more-trigger" onclick="event.stopPropagation(); window.smatApp.toggleAddonMoreMenu(${idx}, event)" title="More options">···</button>
+                            <button type="button" class="zoho-btn-row-delete" onclick="window.smatApp.removeZohoSubAddonRow(${idx})" title="Delete row">✕</button>
+
+                            <!-- Addon More Options Dropdown Menu (Screenshot 4 Match) -->
+                            <div id="zoho-addon-more-menu-${idx}" class="zoho-more-popover zoho-addon-menu-dropdown" style="display:none; position:absolute; top:calc(100% + 6px); right:0; z-index:9999; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:6px; box-shadow:0 10px 25px rgba(0,0,0,0.15); width:210px; overflow:hidden; text-align:left; font-size:0.83rem;">
+                              <div style="background:#2563EB; color:#FFFFFF; padding:9px 14px; font-weight:500; cursor:pointer;" onclick="window.smatApp.closeAllMorePopovers()">
+                                Show Additional Information
+                              </div>
+                              <div style="padding:9px 14px; color:#374151; cursor:pointer; border-top:1px solid #F3F4F6;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='#FFFFFF'" onclick="window.smatApp.addZohoSubAddonRow(); window.smatApp.closeAllMorePopovers();">
+                                Insert New Row
+                              </div>
+                              <div style="padding:9px 14px; color:#374151; cursor:pointer; border-top:1px solid #F3F4F6;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='#FFFFFF'" onclick="window.smatApp.closeAllMorePopovers()">
+                                Insert New Header
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Add New Row Button (Screenshot 3) -->
+            <div style="margin-bottom:2rem;">
+              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.addZohoSubAddonRow()" style="font-size:0.84rem; display:inline-flex; align-items:center; gap:6px; color:#2563EB;">
+                <span>⊕ Add New Row</span>
+                <span style="font-size:0.75rem;">⌄</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- SECTION 2.5: COUPON TABLE (EXACT MATCH TO USER REFERENCE SCREENSHOT 1) -->
+          <div style="margin-top:2rem; margin-bottom:2rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+            <h2 style="font-size:1.1rem; font-weight:700; color:#111827; margin:0 0 0.75rem 0;">Coupon</h2>
+            <div style="display:flex; align-items:center; gap:12px; max-width:850px;">
+              <div style="flex:1; border:1px solid #E5E7EB; border-radius:6px; overflow:visible; background:#FFFFFF; position:relative;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                  <thead>
+                    <tr style="background:#F9FAFB; border-bottom:1px solid #E5E7EB; color:#6B7280; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
+                      <th style="padding:0.65rem 1rem; text-align:left; width:45%; border-right:1px solid #E5E7EB;">COUPON</th>
+                      <th style="padding:0.65rem 1rem; text-align:left; width:33%; border-right:1px solid #E5E7EB;">COUPON CODE</th>
+                      <th style="padding:0.65rem 1rem; text-align:left; width:22%;">VALUE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="vertical-align:middle; background:#FFFFFF;">
+                      <!-- COUPON Searchable Dropdown / Input (Exact Match to User Screenshots) -->
+                      <td style="padding:0.5rem 0.75rem; border-right:1px solid #E5E7EB; position:relative;">
+                        <div id="zoho-coupon-search-wrapper" style="position:relative; width:100%;">
+                          <button type="button" 
+                                  id="zoho-coupon-trigger-btn"
+                                  onclick="event.stopPropagation(); window.smatApp.toggleZohoCouponDropdown(event)"
+                                  style="display:flex; align-items:center; justify-content:space-between; width:100%; border:1px solid #D1D5DB; border-radius:4px; padding:6px 10px; background:#FFFFFF; font-size:0.83rem; cursor:pointer; text-align:left; transition:border-color 0.15s, box-shadow 0.15s;">
+                            <span id="zoho-coupon-selected-label" style="font-weight:${selectedZohoCoupon ? '600' : '400'}; color:${selectedZohoCoupon ? '#1E293B' : '#94A3B8'};">
+                              ${selectedZohoCoupon ? escapeHtml(selectedZohoCoupon.name) : 'Enter at least 3 characters to search'}
+                            </span>
+                            <span id="zoho-coupon-chevron" style="color:#2563EB; font-size:0.75rem; margin-left:6px; display:inline-flex; align-items:center; transition:transform 0.2s;">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </span>
+                          </button>
+
+                          <!-- Coupon Search Popover / Dropdown (Screenshot Match with Search Header) -->
+                          <div id="zoho-coupon-popover" class="zoho-coupon-popover" style="display:none; position:absolute; top:calc(100% + 4px); left:0; width:100%; min-width:320px; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.18); overflow:hidden; text-align:left;">
+                            <!-- Search Header (Exact Match to Screenshot) -->
+                            <div style="padding:8px 10px 6px 10px; border-bottom:1px solid #F1F5F9;">
+                              <div style="display:flex; align-items:center; gap:6px; border:1.5px solid #3B82F6; border-radius:5px; padding:4px 8px; background:#FFFFFF;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="zoho-coupon-search-filter" placeholder="Search" oninput="window.smatApp.filterZohoCoupons(this.value)" style="border:none; outline:none; font-size:0.82rem; width:100%; color:#1E293B; background:transparent;" />
+                              </div>
+                            </div>
+
+                            <!-- Scrollable Coupon Items List -->
+                            <div id="zoho-coupon-results-list" style="max-height:220px; overflow-y:auto; padding:4px 6px;"></div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- COUPON CODE -->
+                      <td style="padding:0.5rem 1rem; border-right:1px solid #E5E7EB;">
+                        <input type="text" id="zoho-coupon-code-disp" readonly placeholder="" value="${selectedZohoCoupon ? escapeHtml(selectedZohoCoupon.code) : ''}" style="width:100%; border:none; outline:none; background:transparent; font-size:0.83rem; color:#1F2937;" />
+                      </td>
+
+                      <!-- VALUE -->
+                      <td style="padding:0.5rem 1rem;">
+                        <input type="text" id="zoho-coupon-value-disp" readonly placeholder="" value="${selectedZohoCoupon ? escapeHtml(selectedZohoCoupon.discount_value) : ''}" style="width:100%; border:none; outline:none; background:transparent; font-size:0.83rem; color:#1F2937;" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Red ✕ Clear / Delete Button (Screenshot 1 Match) -->
+              <span id="zoho-coupon-clear-btn" 
+                    onclick="window.smatApp.clearZohoCoupon()" 
+                    title="Remove Coupon" 
+                    style="color:#EF4444; font-size:1.1rem; font-weight:700; cursor:pointer; user-select:none; padding:4px 6px; transition:transform 0.15s; display:inline-flex; align-items:center; justify-content:center;"
+                    onmouseover="this.style.transform='scale(1.15)'"
+                    onmouseout="this.style.transform='scale(1)'">
+                ✕
+              </span>
+            </div>
+          </div>
+
+          <!-- SECTION 3: SUBSCRIPTION TERM (EXACT USER SPECIFICATION) -->
+          <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+            <h2 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0 0 1.25rem 0;">Subscription Term</h2>
+            
+            <div style="display:flex; flex-direction:column; gap:1.25rem; max-width:650px;">
+              <!-- Subscription Number* -->
+              <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:center;">
+                <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">Subscription Number*</label>
+                <input type="text" id="zoho-sub-num" class="zoho-input-text" value="${escapeHtml(currClient.subscription_id || 'SUB-01083')}" style="width:100%; border:1px solid #D1D5DB; border-radius:4px; padding:0.45rem 0.75rem;" />
+              </div>
+
+              <!-- Salesperson -->
+              <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:center;">
+                <label style="font-size:0.85rem; font-weight:600; color:#4B5563;">Salesperson</label>
+                <select id="zoho-sub-sales" class="zoho-select-dropdown" style="width:100%;">
+                  <option value="">Select a salesperson</option>
+                  <option value="Rahul Sharma" ${currClient.sales_person === 'Rahul Sharma' ? 'selected' : ''}>Rahul Sharma</option>
+                  <option value="Sukanya Nagireddy" ${currClient.sales_person === 'Sukanya Nagireddy' ? 'selected' : ''}>Sukanya Nagireddy</option>
+                  <option value="Kiran Kumar" ${currClient.sales_person === 'Kiran Kumar' ? 'selected' : ''}>Kiran Kumar</option>
+                  <option value="Pooja Reddy" ${currClient.sales_person === 'Pooja Reddy' ? 'selected' : ''}>Pooja Reddy</option>
+                  <option value="Amit Patel" ${currClient.sales_person === 'Amit Patel' ? 'selected' : ''}>Amit Patel</option>
+                  <option value="Sameer Khan" ${currClient.sales_person === 'Sameer Khan' ? 'selected' : ''}>Sameer Khan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 5: POINT 3 LIVE FINAL BILLING SUMMARY CARD -->
+          <div style="margin-top:2.5rem; background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:1.25rem 1.5rem; max-width:650px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <span style="font-size:0.92rem; font-weight:700; color:#1E40AF;">🧾 3. Live Final Billing Summary</span>
+              <span style="font-size:0.75rem; color:#2563EB; background:#DBEAFE; padding:3px 8px; border-radius:4px; font-weight:600;">SAC: 998314 • GST 18%</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.86rem; color:#374151;">
+              <div style="display:flex; justify-content:space-between;">
+                <span>Plan Price:</span>
+                <span id="zoho-sum-plan-price" style="font-weight:600;">Rs. ${matchedPlan.price.toLocaleString('en-IN')}.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Add-on Boosters Subtotal:</span>
+                <span id="zoho-sum-addons-price" style="font-weight:600;">+ Rs. 600.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:#DC2626;">
+                <span>Discounts Deducted (Plan & Add-on):</span>
+                <span id="zoho-sum-disc-price" style="font-weight:600;">- Rs. 0.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding-top:0.4rem; border-top:1px dashed #BFDBFE;">
+                <span>Taxable Amount (Net Base):</span>
+                <span id="zoho-sum-taxable-price" style="font-weight:600;">Rs. 2,490.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:#4B5563;">
+                <span>GST (18% Software Services):</span>
+                <span id="zoho-sum-tax-price" style="font-weight:600;">+ Rs. 448.20</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.6rem; margin-top:0.25rem; border-top:2px solid #93C5FD; font-size:1.02rem; font-weight:800; color:#1E3A8A;">
+                <span>Customer Final Payable Amount:</span>
+                <span id="zoho-sum-final-price" style="color:#1D4ED8; font-size:1.15rem;">Rs. 2,938.20</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 6: BOTTOM STICKY ACTION BAR (SCREENSHOT 4) -->
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+            <button type="button" class="zoho-btn-continue" onclick="window.smatApp.saveZohoSubscription()" style="background:#1877F2; border:1px solid #1877F2; color:#FFFFFF; padding:0.6rem 2rem; border-radius:4px; font-weight:600; font-size:0.9rem; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+              Continue
+            </button>
+            <button type="button" class="zoho-btn-cancel" onclick="window.smatApp.navigateTo('subscriptions')" style="background:#FFFFFF; border:1px solid #D1D5DB; color:#374151; padding:0.6rem 1.5rem; border-radius:4px; font-weight:500; font-size:0.9rem; cursor:pointer;">
+              Cancel
+            </button>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    updateZohoSubCalculations();
+  }
+
+
+
+  function renderPlanAccountOptions(filterText) {
+    const container = document.getElementById('zoho-plan-account-list');
+    if (!container) return;
+    const query = (filterText || '').toLowerCase().trim();
+    let html = '';
+
+    ALL_ZOHO_ACCOUNTS.forEach(grp => {
+      const matchingItems = grp.items.filter(it => {
+        if (!query) return true;
+        return it.name.toLowerCase().includes(query) || grp.group.toLowerCase().includes(query);
+      });
+
+      if (matchingItems.length > 0) {
+        html += `<div class="zoho-account-group-header">${escapeHtml(grp.group)}</div>`;
+        matchingItems.forEach(it => {
+          if (it.isHeader) {
+            html += `<div class="zoho-account-option-item header-only">${escapeHtml(it.name)}</div>`;
+          } else if (it.isSub) {
+            const isSel = it.name === zohoSelectedPlanAccount;
+            html += `
+              <div class="zoho-account-option-item sub-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectPlanAccount('${it.name.replace(/'/g, "\\'")}')">
+                <span class="sub-bullet">•</span> ${escapeHtml(it.name)}
+              </div>
+            `;
+          } else {
+            const isSel = it.name === zohoSelectedPlanAccount;
+            html += `
+              <div class="zoho-account-option-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectPlanAccount('${it.name.replace(/'/g, "\\'")}')">
+                ${escapeHtml(it.name)}
+              </div>
+            `;
+          }
+        });
+      }
+    });
+
+    if (!html) {
+      html = '<div style="padding:12px; text-align:center; color:#94A3B8; font-size:0.8rem;">No matching accounts found</div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  function showPlanAdditionalInfo() {
+    const tooltip = document.getElementById('zoho-plan-more-tooltip');
+    if (tooltip) tooltip.style.display = 'none';
+    const row = document.getElementById('zoho-plan-additional-info-row');
+    if (row) {
+      row.style.display = 'table-row';
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function togglePlanAccountDropdown(evt) {
+    if (evt) evt.stopPropagation();
+    const dropdown = document.getElementById('zoho-plan-account-dropdown');
+    const trigger = document.getElementById('zoho-plan-account-trigger');
+    const chevron = document.getElementById('zoho-plan-account-chevron');
+    if (!dropdown) return;
+    const isCurrentlyOpen = dropdown.style.display === 'block';
+
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    closeSupplyStateDropdown();
+
+    if (!isCurrentlyOpen) {
+      dropdown.style.display = 'block';
+      if (trigger) trigger.style.border = '1.5px solid #3B82F6';
+      if (chevron) chevron.innerText = '▲';
+      renderPlanAccountOptions();
+      setTimeout(() => {
+        const inp = document.getElementById('zoho-plan-account-search');
+        if (inp) {
+          inp.value = '';
+          inp.focus();
+        }
+      }, 50);
+    } else {
+      closePlanAccountDropdown();
+    }
+  }
+
+  function closePlanAccountDropdown() {
+    const dropdown = document.getElementById('zoho-plan-account-dropdown');
+    const trigger = document.getElementById('zoho-plan-account-trigger');
+    const chevron = document.getElementById('zoho-plan-account-chevron');
+    if (dropdown) dropdown.style.display = 'none';
+    if (trigger) trigger.style.border = '1px solid #CBD5E1';
+    if (chevron) chevron.innerText = '▾';
+  }
+
+  function selectPlanAccount(name) {
+    zohoSelectedPlanAccount = name;
+    const label = document.getElementById('zoho-plan-account-label');
+    if (label) {
+      label.innerText = name;
+      label.style.fontWeight = '600';
+      label.style.color = '#1E293B';
+    }
+    closePlanAccountDropdown();
+  }
+
+  function filterPlanAccounts(query) {
+    renderPlanAccountOptions(query);
+  }
+
+  
+  function renderZohoPlanNameCell(plan) {
+    if (plan) {
+      // Screenshot 2: Plan is selected
+      return `
+        <div style="display:flex; gap:0.75rem;">
+          <div style="width:38px; height:38px; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94A3B8; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+              <span id="zoho-plan-name-display" style="font-weight:600; color:#0F172A; font-size:0.88rem;">${escapeHtml(plan.name)}</span>
+              <span class="zoho-plan-clear-btn" onclick="event.stopPropagation(); window.smatApp.clearZohoPlan()" style="color:#94A3B8; cursor:pointer; display:inline-flex; align-items:center; transition:color 0.15s;" title="Remove Plan" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#94A3B8'">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+              </span>
+            </div>
+            <input type="hidden" id="zoho-plan-select" value="${escapeHtml(plan.id)}" />
+
+            <!-- Plan Description Input (Screenshot 2) -->
+            <input type="text" id="zoho-plan-desc" placeholder="Add description to your plan" style="width:100%; border:1px solid #E2E8F0; background:#FFFFFF; padding:4px 8px; font-size:0.8rem; color:#4B5563; border-radius:4px; margin-top:4px; outline:none; transition:border-color 0.15s;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#E2E8F0'" />
+
+            <!-- SAC Code Badge & Popover (User Screenshot Match) -->
+            <div class="zoho-sac-badge-wrap" style="position:relative; display:inline-flex; align-items:center; gap:5px; margin-top:6px;">
+              <span style="background:#059669; color:#FFFFFF; font-size:0.68rem; font-weight:700; padding:1px 5px; border-radius:3px; letter-spacing:0.3px;">SERVICE</span>
+              <span style="font-size:0.75rem; color:#2563EB; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" onclick="event.stopPropagation(); window.smatApp.toggleSacPopover('plan', 0, event)" title="Click to edit SAC code">
+                SAC: <span id="zoho-plan-sac-text">${plan.sac || '998314'}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              </span>
+
+              <!-- Top-pointed Popover -->
+              <div id="zoho-sac-popover-plan" class="zoho-sac-popover" style="display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:9999; background:#FFFFFF; border:1px solid #D1D5DB; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.15); padding:12px 14px; min-width:280px; text-align:left;">
+                <div style="position:absolute; top:-6px; left:48px; width:10px; height:10px; background:#FFFFFF; border-left:1px solid #E5E7EB; border-top:1px solid #E5E7EB; transform:rotate(45deg);"></div>
+                <div style="font-size:0.84rem; font-weight:600; color:#374151; margin-bottom:8px;">SAC</div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                  <select id="zoho-sac-select-plan" style="flex:1; border:1.5px solid #3B82F6; border-radius:4px; padding:6px 10px; font-size:0.86rem; color:#111827; outline:none; background:#FFFFFF; cursor:pointer;">
+                    <option value="998314" selected>998314</option>
+                    <option value="998313">998313 - IT Consulting & Support</option>
+                    <option value="998315">998315 - Hosting & Infrastructure</option>
+                    <option value="998319">998319 - Other IT Services</option>
+                    <option value="998311">998311 - Telecommunications</option>
+                  </select>
+                  <span style="color:#2563EB; cursor:pointer;" title="Search SAC Code">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  </span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button type="button" onclick="window.smatApp.saveSacCode('plan', 0)" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:4px 14px; font-size:0.8rem; font-weight:600; cursor:pointer;">Save</button>
+                  <button type="button" onclick="window.smatApp.closeSacPopover('plan', 0)" style="background:#F3F4F6; color:#374151; border:1px solid #E5E7EB; border-radius:4px; padding:4px 12px; font-size:0.8rem; cursor:pointer;">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Screenshot 1 & 3: Empty state / Dropdown open
+      return `
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:38px; height:38px; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94A3B8; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <div id="zoho-plan-picker-wrapper" style="position:relative; flex:1;">
+            <input type="text" id="zoho-plan-search-input" placeholder="Type or click to select a plan." onclick="event.stopPropagation(); window.smatApp.openPlanDropdown(event)" oninput="window.smatApp.filterPlanDropdown(this.value)" autocomplete="off" style="width:100%; border:1.5px solid #3B82F6; border-radius:4px; padding:7px 12px; font-size:0.85rem; color:#1E293B; outline:none; background:#FFFFFF; cursor:text; box-shadow:0 0 0 2px rgba(59,130,246,0.15);" />
+            <input type="hidden" id="zoho-plan-select" value="" />
+
+            <!-- Searchable Dropdown Popover (Exact Match to User Screenshots 1, 2, 3) -->
+            <div id="zoho-plan-dropdown-popover" class="zoho-plan-dropdown-popover" style="display:block; position:absolute; top:calc(100% + 4px); left:0; width:100%; min-width:340px; z-index:99999; background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,0.18); overflow:hidden;">
+              <div id="zoho-plan-dropdown-list" style="max-height:240px; overflow-y:auto;">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function renderPlanDropdownItems(query = '') {
+    const listEl = document.getElementById('zoho-plan-dropdown-list');
+    if (!listEl) return;
+    const q = (query || '').toLowerCase().trim();
+    const filtered = ZOHO_SUBSCRIPTION_PLANS.filter(p => {
+      if (!q) return true;
+      return p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+    });
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div style="padding:14px; text-align:center; color:#94A3B8; font-size:0.82rem;">No matching plans found</div>';
+      return;
+    }
+
+    listEl.innerHTML = filtered.map((plan, idx) => `
+      <div class="zoho-plan-option-item ${idx === 0 ? 'active' : ''}" onclick="event.stopPropagation(); window.smatApp.selectZohoPlan('${plan.id}')" style="padding:10px 14px; cursor:pointer; border-bottom:1px solid #F1F5F9; transition:all 0.12s ease;">
+        <div class="zoho-plan-opt-name" style="font-weight:600; font-size:0.86rem; color:#1E293B;">${escapeHtml(plan.name)}</div>
+        <div class="zoho-plan-opt-code" style="font-size:0.76rem; color:#64748B; margin-top:2px;">Code: ${escapeHtml(plan.code)}</div>
+      </div>
+    `).join('');
+  }
+
+  function openPlanDropdown(event) {
+    if (event) event.stopPropagation();
+    closeAllMorePopovers();
+    closePlanTaxDropdown();
+    closeDiscountPrefDropdown();
+    const popover = document.getElementById('zoho-plan-dropdown-popover');
+    const input = document.getElementById('zoho-plan-search-input');
+    if (popover) {
+      popover.style.display = 'block';
+      renderPlanDropdownItems(input ? input.value : '');
+    }
+    if (input) {
+      input.style.borderColor = '#3B82F6';
+      input.style.boxShadow = '0 0 0 2px rgba(59,130,246,0.15)';
+    }
+  }
+
+  function closePlanDropdown() {
+    const popover = document.getElementById('zoho-plan-dropdown-popover');
+    if (popover) popover.style.display = 'none';
+    const input = document.getElementById('zoho-plan-search-input');
+    if (input) {
+      input.style.borderColor = '#CBD5E1';
+      input.style.boxShadow = 'none';
+    }
+  }
+
+  function filterPlanDropdown(query) {
+    const popover = document.getElementById('zoho-plan-dropdown-popover');
+    if (popover) popover.style.display = 'block';
+    renderPlanDropdownItems(query);
+  }
+
+  function selectZohoPlan(planId) {
+    const plan = ZOHO_SUBSCRIPTION_PLANS.find(p => p.id === planId);
+    if (!plan) return;
+    zohoSelectedPlan = plan;
+
+    // 1. Re-render name cell into Screenshot 2 layout
+    const nameCell = document.getElementById('zoho-plan-name-cell');
+    if (nameCell) {
+      nameCell.innerHTML = renderZohoPlanNameCell(plan);
+    }
+
+    // 2. Set Price input
+    const priceInput = document.getElementById('zoho-plan-price');
+    if (priceInput) priceInput.value = plan.price;
+
+    // 3. Set Quantity input
+    const qtyInput = document.getElementById('zoho-plan-qty');
+    if (qtyInput) qtyInput.value = 1;
+
+    // 4. Set Tax if not customized
+    const taxLabel = document.getElementById('zoho-plan-tax-label');
+    const taxHidden = document.getElementById('zoho-plan-tax');
+    if (taxLabel && taxHidden) {
+      taxLabel.innerText = plan.taxLabel;
+      taxHidden.value = plan.taxRate;
+      zohoSelectedPlanTaxRate = plan.taxRate;
+      zohoSelectedPlanTaxLabel = plan.taxLabel;
+    }
+
+    // 5. Set Row Amount display
+    const amountEl = document.getElementById('zoho-plan-row-amount');
+    if (amountEl) {
+      amountEl.innerHTML = `
+        <div style="font-weight:700; color:#111827; font-size:0.92rem;">Rs. ${plan.price.toLocaleString('en-IN')}.00</div>
+        <div style="font-size:0.74rem; color:#6B7280; margin-top:2px;">${plan.cycle}</div>
+      `;
+    }
+
+    closePlanDropdown();
+    updateZohoSubCalculations();
+  }
+
+  function clearZohoPlan() {
+    zohoSelectedPlan = null;
+
+    // 1. Re-render name cell into Screenshot 1 & 3 layout
+    const nameCell = document.getElementById('zoho-plan-name-cell');
+    if (nameCell) {
+      nameCell.innerHTML = renderZohoPlanNameCell(null);
+    }
+
+    // 2. Reset Price input to 0.00
+    const priceInput = document.getElementById('zoho-plan-price');
+    if (priceInput) priceInput.value = '0.00';
+
+    // 3. Reset Tax to Select a Tax
+    const taxLabel = document.getElementById('zoho-plan-tax-label');
+    const taxHidden = document.getElementById('zoho-plan-tax');
+    if (taxLabel && taxHidden) {
+      taxLabel.innerText = 'Select a Tax';
+      taxHidden.value = '0';
+      zohoSelectedPlanTaxRate = 0;
+      zohoSelectedPlanTaxLabel = 'Select a Tax';
+    }
+
+    // 4. Reset Row Amount display to Rs. 0.00
+    const amountEl = document.getElementById('zoho-plan-row-amount');
+    if (amountEl) {
+      amountEl.innerHTML = `
+        <div style="font-weight:700; color:#111827; font-size:0.92rem;">Rs. 0.00</div>
+        <div style="font-size:0.74rem; color:#6B7280; margin-top:2px;">per month</div>
+      `;
+    }
+
+    updateZohoSubCalculations();
+    renderPlanDropdownItems('');
+    const input = document.getElementById('zoho-plan-search-input');
+    if (input) {
+      input.focus();
+    }
+  }
+
+  function showRemovePlanModal() {
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    closeSupplyStateDropdown();
+    const backdrop = document.getElementById('zoho-plan-remove-modal-backdrop');
+    if (backdrop) backdrop.style.display = 'block';
+  }
+
+  function closeRemovePlanModal() {
+    const backdrop = document.getElementById('zoho-plan-remove-modal-backdrop');
+    if (backdrop) backdrop.style.display = 'none';
+  }
+
+  function renderPlanTaxOptions(query = '') {
+    const container = document.getElementById('zoho-plan-tax-list');
+    if (!container) return;
+    const q = (query || '').toLowerCase().trim();
+    let html = '';
+
+    ALL_ZOHO_PLAN_TAX_GROUPS.forEach(group => {
+      const matchingItems = group.items.filter(item => {
+        if (!q) return true;
+        return item.label.toLowerCase().includes(q) ||
+          (item.subtitle && item.subtitle.toLowerCase().includes(q));
+      });
+
+      if (matchingItems.length > 0) {
+        html += `<div style="font-size:0.75rem; font-weight:700; color:#475569; padding:6px 8px 3px 8px; user-select:none;">${escapeHtml(group.category)}</div>`;
+        matchingItems.forEach(item => {
+          const isSelected = (item.label === zohoSelectedPlanTaxLabel);
+          html += `
+            <div class="zoho-tax-item ${isSelected ? 'selected' : ''}" 
+                 onclick="event.stopPropagation(); window.smatApp.selectPlanTax('${escapeHtml(item.label)}', ${item.rate})"
+                 style="display:flex; align-items:flex-start; justify-content:space-between; gap:6px; padding:6px 8px; margin-bottom:2px; border-radius:4px; cursor:pointer;">
+              <div style="flex:1;">
+                <div style="font-size:0.83rem; font-weight:${isSelected ? '600' : '500'}; line-height:1.2;">${escapeHtml(item.label)}</div>
+                ${item.subtitle ? `<div class="zoho-tax-sub" style="font-size:0.72rem; color:#64748B; line-height:1.3; margin-top:2px;">${escapeHtml(item.subtitle)}</div>` : ''}
+              </div>
+              ${isSelected ? `
+                <div class="zoho-tax-check" style="flex-shrink:0; margin-left:8px; margin-top:2px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      }
+    });
+
+    if (!html) {
+      html = `<div style="padding:12px 8px; text-align:center; color:#94A3B8; font-size:0.8rem;">No matching tax found</div>`;
+    }
+
+    container.innerHTML = html;
+  }
+
+  function togglePlanTaxDropdown(evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById('zoho-plan-tax-popover');
+    const trigger = document.getElementById('zoho-plan-tax-trigger');
+    const chevron = document.getElementById('zoho-plan-tax-chevron');
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    closeSupplyStateDropdown();
+    closePlanAccountDropdown();
+
+    if (!isCurrentlyOpen) {
+      pop.style.display = 'block';
+      if (trigger) {
+        trigger.style.borderColor = '#3B82F6';
+        trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+      }
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      renderPlanTaxOptions();
+      setTimeout(() => {
+        const inp = document.getElementById('zoho-plan-tax-search');
+        if (inp) {
+          inp.value = '';
+          inp.focus();
+        }
+      }, 50);
+    } else {
+      closePlanTaxDropdown();
+    }
+  }
+
+  function closePlanTaxDropdown() {
+    const pop = document.getElementById('zoho-plan-tax-popover');
+    const trigger = document.getElementById('zoho-plan-tax-trigger');
+    const chevron = document.getElementById('zoho-plan-tax-chevron');
+    if (pop) pop.style.display = 'none';
+    if (trigger) {
+      trigger.style.borderColor = '#CBD5E1';
+      trigger.style.boxShadow = 'none';
+    }
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+
+  function selectPlanTax(label, rate) {
+    zohoSelectedPlanTaxLabel = label;
+    zohoSelectedPlanTaxRate = rate;
+    const labelEl = document.getElementById('zoho-plan-tax-label');
+    const hiddenInput = document.getElementById('zoho-plan-tax');
+    if (labelEl) labelEl.innerText = label;
+    if (hiddenInput) hiddenInput.value = rate;
+    closePlanTaxDropdown();
+    updateZohoSubCalculations();
+  }
+
+  function filterPlanTaxes(query) {
+    renderPlanTaxOptions(query);
+  }
+
+  function addNewPlanTax() {
+    const name = prompt('Enter new tax name (e.g. GST6):', 'GST6');
+    if (!name) return;
+    const rateStr = prompt('Enter tax rate percentage (e.g. 6):', '6');
+    if (rateStr === null) return;
+    const rate = parseFloat(rateStr) || 0;
+    const label = `${name.trim()} [${rate}%]`;
+    const taxGroup = ALL_ZOHO_PLAN_TAX_GROUPS.find(g => g.category === 'Tax Group');
+    if (taxGroup) {
+      taxGroup.items.push({ id: `custom_${Date.now()}`, label, name: name.trim(), rate });
+    }
+    selectPlanTax(label, rate);
+  }
+
+  
+  // =========================================================================
+  // ZOHO DISCOUNT PREFERENCE SEARCHABLE DROPDOWN (EXACT USER SCREENSHOT MATCH)
+  // =========================================================================
+  const ZOHO_DISCOUNT_PREF_OPTIONS = [
+    { id: 'no-discount', label: 'No Discounts' },
+    { id: 'item-level', label: 'Item-Level' },
+    { id: 'transaction-level', label: 'Transaction-Level' }
+  ];
+
+  function renderDiscountPrefOptions(filterText = '') {
+    const listEl = document.getElementById('zoho-discount-pref-list');
+    if (!listEl) return;
+    const term = (filterText || '').toLowerCase().trim();
+    const filtered = ZOHO_DISCOUNT_PREF_OPTIONS.filter(o => o.label.toLowerCase().includes(term));
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div style="padding:8px 12px; font-size:0.8rem; color:#94A3B8; text-align:center;">No matches found</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.map(opt => {
+      const isSelected = zohoDiscountPref === opt.id;
+      return `
+        <div class="zoho-discount-option-item ${isSelected ? 'selected' : ''}" 
+             onclick="window.smatApp.selectDiscountPref('${opt.id}')"
+             style="${isSelected ? 'background:#2563EB; color:#FFFFFF; font-weight:500;' : ''}">
+          <span>${escapeHtml(opt.label)}</span>
+          ${isSelected ? '<span class="zoho-discount-check" style="font-size:0.85rem; font-weight:700;">✓</span>' : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  
+  // =========================================================================
+  // ZOHO CUSTOMER RIGHT SIDEBAR TAB & DRAWER TOGGLE (SCREENSHOTS 1 & 2)
+  // =========================================================================
+  
+  function toggleDrawerAccordion(section) {
+    const body = document.getElementById(`zoho-drawer-body-${section}`);
+    const chevron = document.getElementById(`zoho-drawer-chevron-${section}`);
+    if (!body) return;
+    const isHidden = body.style.display === 'none' || (!body.style.display && window.getComputedStyle(body).display === 'none');
+    body.style.display = isHidden ? 'block' : 'none';
+    if (chevron) {
+      chevron.innerHTML = isHidden 
+        ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>'
+        : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+    }
+  }
+
+  function openCustomerSidebar() {
+    const drawer = document.getElementById('zoho-customer-sidebar-drawer');
+    const backdrop = document.getElementById('zoho-customer-sidebar-backdrop');
+    if (drawer) drawer.classList.add('open');
+    if (backdrop) backdrop.classList.add('open');
+  }
+
+  function closeCustomerSidebar() {
+    const drawer = document.getElementById('zoho-customer-sidebar-drawer');
+    const backdrop = document.getElementById('zoho-customer-sidebar-backdrop');
+    if (drawer) drawer.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('open');
+  }
+
+  function toggleCustomerSidebar() {
+    const drawer = document.getElementById('zoho-customer-sidebar-drawer');
+    if (drawer && drawer.classList.contains('open')) {
+      closeCustomerSidebar();
+    } else {
+      openCustomerSidebar();
+    }
+  }
+
+  function toggleDiscountPrefDropdown(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const pop = document.getElementById('zoho-discount-pref-popover');
+    if (!pop) return;
+    const isVisible = pop.style.display === 'block';
+    if (isVisible) {
+      closeDiscountPrefDropdown();
+    } else {
+      closeAllMorePopovers();
+      closeGstPreferencesPopover();
+      closeShippingGstPopover();
+      closeSupplyStateDropdown();
+      closePlanAccountDropdown();
+      closePlanTaxDropdown();
+      closeAllAddonTaxDropdowns();
+      closeZohoCouponDropdown();
+
+      pop.style.display = 'block';
+      const trigger = document.getElementById('zoho-discount-pref-trigger');
+      if (trigger) {
+        trigger.style.borderColor = '#3B82F6';
+        trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+      }
+      const chevron = document.getElementById('zoho-discount-pref-chevron');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      
+      const searchInput = document.getElementById('zoho-discount-pref-search');
+      if (searchInput) {
+        searchInput.value = '';
+        setTimeout(() => searchInput.focus(), 50);
+      }
+      renderDiscountPrefOptions();
+    }
+  }
+
+  function closeDiscountPrefDropdown() {
+    const pop = document.getElementById('zoho-discount-pref-popover');
+    if (!pop) return;
+    pop.style.display = 'none';
+    const trigger = document.getElementById('zoho-discount-pref-trigger');
+    if (trigger) {
+      if (zohoDiscountPref === 'item-level' || zohoDiscountPref === 'transaction-level') {
+        trigger.style.borderColor = '#3B82F6';
+        trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+      } else {
+        trigger.style.borderColor = '#CBD5E1';
+        trigger.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)';
+      }
+    }
+    const chevron = document.getElementById('zoho-discount-pref-chevron');
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+
+  function selectDiscountPref(val) {
+    zohoDiscountPref = val;
+    const opt = ZOHO_DISCOUNT_PREF_OPTIONS.find(o => o.id === val);
+    const labelEl = document.getElementById('zoho-discount-pref-label');
+    if (labelEl && opt) {
+      labelEl.textContent = opt.label;
+    }
+    const sel = document.getElementById('zoho-sub-discount-pref');
+    if (sel) sel.value = val;
+    closeDiscountPrefDropdown();
+    onZohoDiscountPrefChange(val);
+  }
+
+  function filterDiscountPrefOptions(val) {
+    renderDiscountPrefOptions(val);
+  }
+
+  function onZohoDiscountPrefChange(pref) {
+    zohoDiscountPref = pref;
+    const isItemLevel = pref === 'item-level';
+    document.querySelectorAll('.zoho-col-discount').forEach(el => {
+      el.style.display = isItemLevel ? 'table-cell' : 'none';
+    });
+    document.querySelectorAll('.zoho-th-plan-name').forEach(el => el.style.width = isItemLevel ? '34%' : '40%');
+    document.querySelectorAll('.zoho-th-plan-qty').forEach(el => el.style.width = isItemLevel ? '12%' : '15%');
+    document.querySelectorAll('.zoho-th-plan-price').forEach(el => el.style.width = isItemLevel ? '14%' : '15%');
+    document.querySelectorAll('.zoho-th-plan-tax').forEach(el => el.style.width = isItemLevel ? '13%' : '15%');
+    document.querySelectorAll('.zoho-th-plan-amount').forEach(el => el.style.width = isItemLevel ? '13%' : '15%');
+    document.querySelectorAll('.zoho-th-addon-name').forEach(el => el.style.width = isItemLevel ? '34%' : '40%');
+    document.querySelectorAll('.zoho-th-addon-qty').forEach(el => el.style.width = isItemLevel ? '12%' : '15%');
+    document.querySelectorAll('.zoho-th-addon-price').forEach(el => el.style.width = isItemLevel ? '14%' : '15%');
+    document.querySelectorAll('.zoho-th-addon-tax').forEach(el => el.style.width = isItemLevel ? '13%' : '15%');
+    document.querySelectorAll('.zoho-th-addon-amount').forEach(el => el.style.width = isItemLevel ? '13%' : '15%');
+
+    // Trigger button active blue border matching Screenshots 2 & 3
+    const trigger = document.getElementById('zoho-discount-pref-trigger');
+    if (trigger) {
+      if (isItemLevel || pref === 'transaction-level') {
+        trigger.style.borderColor = '#3B82F6';
+        trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+      } else {
+        trigger.style.borderColor = '#CBD5E1';
+        trigger.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)';
+      }
+    }
+
+    updateZohoSubCalculations();
+  }
+
+  function openZohoCouponDropdown() {
+    const pop = document.getElementById('zoho-coupon-popover');
+    const trigger = document.getElementById('zoho-coupon-trigger-btn');
+    const chevron = document.getElementById('zoho-coupon-chevron');
+    if (!pop) return;
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    closeSupplyStateDropdown();
+    closePlanAccountDropdown();
+    closePlanTaxDropdown();
+    closeAllAddonTaxDropdowns();
+    pop.style.display = 'block';
+    if (trigger) {
+      trigger.style.borderColor = '#3B82F6';
+      trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+    }
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+    renderZohoCouponResults();
+    setTimeout(() => {
+      const searchInp = document.getElementById('zoho-coupon-search-filter');
+      if (searchInp) {
+        searchInp.value = '';
+        searchInp.focus();
+      }
+    }, 50);
+  }
+
+  function toggleZohoCouponDropdown(evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById('zoho-coupon-popover');
+    if (!pop) return;
+    if (pop.style.display === 'block') {
+      closeZohoCouponDropdown();
+    } else {
+      openZohoCouponDropdown();
+    }
+  }
+
+  function closeZohoCouponDropdown() {
+    const pop = document.getElementById('zoho-coupon-popover');
+    const trigger = document.getElementById('zoho-coupon-trigger-btn');
+    const chevron = document.getElementById('zoho-coupon-chevron');
+    if (pop) pop.style.display = 'none';
+    if (trigger) {
+      trigger.style.borderColor = '#D1D5DB';
+      trigger.style.boxShadow = 'none';
+    }
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+
+  function filterZohoCoupons(query) {
+    renderZohoCouponResults(query);
+  }
+
+  function renderZohoCouponResults(query = '') {
+    const container = document.getElementById('zoho-coupon-results-list');
+    if (!container) return;
+    const q = (query || '').toLowerCase().trim();
+
+    const availableCoupons = (typeof couponsData !== 'undefined' ? couponsData : []).filter(c => {
+      if (!q) return true;
+      const nameMatch = (c.name || '').toLowerCase().includes(q);
+      const codeMatch = (c.code || '').toLowerCase().includes(q);
+      const valMatch = (c.discount_value || '').toLowerCase().includes(q);
+      return nameMatch || codeMatch || valMatch;
+    });
+
+    if (availableCoupons.length === 0) {
+      container.innerHTML = `<div style="padding:12px 10px; font-size:0.8rem; color:#94A3B8; text-align:center;">No coupons found</div>`;
+      return;
+    }
+
+    container.innerHTML = availableCoupons.map(c => {
+      const isSel = selectedZohoCoupon && (selectedZohoCoupon.id === c.id || selectedZohoCoupon.code === c.code);
+      const valClean = c.discount_value ? c.discount_value.replace(/[|]/g, '') : '';
+      const displayLabel = `${c.name}/${c.code}${valClean ? ` [${valClean}]` : ''}`;
+
+      return `
+        <div class="zoho-coupon-option ${isSel ? 'selected' : ''}" 
+             onclick="event.stopPropagation(); window.smatApp.selectZohoCoupon(${c.id})"
+             style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 10px; margin-bottom:2px; border-radius:4px; cursor:pointer; font-size:0.83rem; transition:background 0.15s, color 0.15s;">
+          <span style="font-weight:${isSel ? '600' : '500'}; line-height:1.2;">${escapeHtml(displayLabel)}</span>
+          ${isSel ? `
+            <span class="zoho-coupon-check" style="flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectZohoCoupon(couponId) {
+    const found = (typeof couponsData !== 'undefined' ? couponsData : []).find(c => c.id === couponId || c.id === Number(couponId));
+    if (!found) return;
+    selectedZohoCoupon = found;
+    const labelSpan = document.getElementById('zoho-coupon-selected-label');
+    const codeDisp = document.getElementById('zoho-coupon-code-disp');
+    const valDisp = document.getElementById('zoho-coupon-value-disp');
+    if (labelSpan) {
+      labelSpan.innerText = found.name;
+      labelSpan.style.color = '#1E293B';
+      labelSpan.style.fontWeight = '600';
+    }
+    if (codeDisp) codeDisp.value = found.code;
+    if (valDisp) valDisp.value = found.discount_value;
+    closeZohoCouponDropdown();
+    updateZohoSubCalculations();
+  }
+
+  function clearZohoCoupon() {
+    selectedZohoCoupon = null;
+    const labelSpan = document.getElementById('zoho-coupon-selected-label');
+    const codeDisp = document.getElementById('zoho-coupon-code-disp');
+    const valDisp = document.getElementById('zoho-coupon-value-disp');
+    if (labelSpan) {
+      labelSpan.innerText = 'Enter at least 3 characters to search';
+      labelSpan.style.color = '#94A3B8';
+      labelSpan.style.fontWeight = '400';
+    }
+    if (codeDisp) codeDisp.value = '';
+    if (valDisp) valDisp.value = '';
+    closeZohoCouponDropdown();
+    updateZohoSubCalculations();
+  }
+
+  function proceedRemovePlan() {
+    const descInp = document.getElementById('zoho-plan-desc');
+    if (descInp) descInp.value = '';
+    const qtyInp = document.getElementById('zoho-plan-qty');
+    if (qtyInp) qtyInp.value = 1;
+    const discInp = document.getElementById('zoho-plan-disc-val');
+    if (discInp) discInp.value = 0;
+    
+    // Recalculate billing
+    updateZohoSubCalculations();
+    closeRemovePlanModal();
+    if (typeof showToast === 'function') {
+      showToast('Plan custom configurations have been reset.');
+    }
+  }
+
+  function onZohoPlanChange(val) {
+    if (!val) return;
+    const parts = val.split('|');
+    const price = parseFloat(parts[1]) || 0;
+    const priceInput = document.getElementById('zoho-plan-price');
+    if (priceInput) priceInput.value = price;
+    updateZohoSubCalculations();
+  }
+
+  function renderAddonTaxOptions(idx, query = '') {
+    const container = document.getElementById(`zoho-addon-tax-list-${idx}`);
+    if (!container) return;
+    const q = (query || '').toLowerCase().trim();
+    let html = '';
+    const currentAddon = zohoSubAddons[idx] || {};
+    const selectedLabel = currentAddon.taxLabel || 'GST18 [18%]';
+
+    ALL_ZOHO_PLAN_TAX_GROUPS.forEach(group => {
+      const matchingItems = group.items.filter(item => {
+        if (!q) return true;
+        return item.label.toLowerCase().includes(q) ||
+          (item.subtitle && item.subtitle.toLowerCase().includes(q));
+      });
+
+      if (matchingItems.length > 0) {
+        html += `<div style="font-size:0.75rem; font-weight:700; color:#475569; padding:6px 8px 3px 8px; user-select:none;">${escapeHtml(group.category)}</div>`;
+        matchingItems.forEach(item => {
+          const isSelected = (item.label === selectedLabel);
+          html += `
+            <div class="zoho-tax-item ${isSelected ? 'selected' : ''}" 
+                 onclick="event.stopPropagation(); window.smatApp.selectAddonTax(${idx}, '${escapeHtml(item.label)}', ${item.rate})"
+                 style="display:flex; align-items:flex-start; justify-content:space-between; gap:6px; padding:6px 8px; margin-bottom:2px; border-radius:4px; cursor:pointer;">
+              <div style="flex:1;">
+                <div style="font-size:0.83rem; font-weight:${isSelected ? '600' : '500'}; line-height:1.2;">${escapeHtml(item.label)}</div>
+                ${item.subtitle ? `<div class="zoho-tax-sub" style="font-size:0.72rem; color:#64748B; line-height:1.3; margin-top:2px;">${escapeHtml(item.subtitle)}</div>` : ''}
+              </div>
+              ${isSelected ? `
+                <div class="zoho-tax-check" style="flex-shrink:0; margin-left:8px; margin-top:2px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      }
+    });
+
+    if (!html) {
+      html = `<div style="padding:12px 8px; text-align:center; color:#94A3B8; font-size:0.8rem;">No matching tax found</div>`;
+    }
+
+    container.innerHTML = html;
+  }
+
+  function toggleAddonTaxDropdown(idx, evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById(`zoho-addon-tax-popover-${idx}`);
+    const trigger = document.getElementById(`zoho-addon-tax-trigger-${idx}`);
+    const chevron = document.getElementById(`zoho-addon-tax-chevron-${idx}`);
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    closeSupplyStateDropdown();
+    closePlanAccountDropdown();
+    closePlanTaxDropdown();
+    closeAllAddonTaxDropdowns();
+
+    if (!isCurrentlyOpen) {
+      pop.style.display = 'block';
+      if (trigger) {
+        trigger.style.borderColor = '#3B82F6';
+        trigger.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.15)';
+      }
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      renderAddonTaxOptions(idx);
+      setTimeout(() => {
+        const inp = document.getElementById(`zoho-addon-tax-search-${idx}`);
+        if (inp) {
+          inp.value = '';
+          inp.focus();
+        }
+      }, 50);
+    } else {
+      closeAddonTaxDropdown(idx);
+    }
+  }
+
+  function closeAddonTaxDropdown(idx) {
+    const pop = document.getElementById(`zoho-addon-tax-popover-${idx}`);
+    const trigger = document.getElementById(`zoho-addon-tax-trigger-${idx}`);
+    const chevron = document.getElementById(`zoho-addon-tax-chevron-${idx}`);
+    if (pop) pop.style.display = 'none';
+    if (trigger) {
+      trigger.style.borderColor = '#CBD5E1';
+      trigger.style.boxShadow = 'none';
+    }
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+
+  function closeAllAddonTaxDropdowns() {
+    document.querySelectorAll('.zoho-addon-tax-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('[id^="zoho-addon-tax-trigger-"]').forEach(t => {
+      t.style.borderColor = '#CBD5E1';
+      t.style.boxShadow = 'none';
+    });
+    document.querySelectorAll('[id^="zoho-addon-tax-chevron-"]').forEach(c => {
+      c.style.transform = 'rotate(0deg)';
+    });
+  }
+
+  function selectAddonTax(idx, label, rate) {
+    if (zohoSubAddons[idx]) {
+      zohoSubAddons[idx].taxLabel = label;
+      zohoSubAddons[idx].taxRate = rate;
+    }
+    const labelEl = document.getElementById(`zoho-addon-tax-label-${idx}`);
+    const hiddenInput = document.getElementById(`zoho-addon-tax-${idx}`);
+    if (labelEl) labelEl.innerText = label;
+    if (hiddenInput) hiddenInput.value = rate;
+    closeAddonTaxDropdown(idx);
+    updateZohoSubCalculations();
+  }
+
+  function filterAddonTaxes(idx, query) {
+    renderAddonTaxOptions(idx, query);
+  }
+
+  function addNewAddonTax(idx) {
+    const name = prompt('Enter new tax name (e.g. GST6):', 'GST6');
+    if (!name) return;
+    const rateStr = prompt('Enter tax rate percentage (e.g. 6):', '6');
+    if (rateStr === null) return;
+    const rate = parseFloat(rateStr) || 0;
+    const label = `${name.trim()} [${rate}%]`;
+    const taxGroup = ALL_ZOHO_PLAN_TAX_GROUPS.find(g => g.category === 'Tax Group');
+    if (taxGroup) {
+      taxGroup.items.push({ id: `custom_${Date.now()}`, label, name: name.trim(), rate });
+    }
+    selectAddonTax(idx, label, rate);
+  }
+
+  function onZohoAddonChange(idx, val) {
+    if (!val || !zohoSubAddons[idx]) return;
+    const found = AVAILABLE_ZOHO_ADDONS.find(a => a.name === val) || {
+      name: val,
+      price: 0,
+      desc: '',
+      unit: val
+    };
+    zohoSubAddons[idx].name = found.name;
+    zohoSubAddons[idx].price = found.price;
+    zohoSubAddons[idx].desc = found.desc;
+    zohoSubAddons[idx].unit = found.unit;
+    zohoSubAddons[idx].taxRate = 18;
+    zohoSubAddons[idx].isEmpty = false;
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+    updateZohoSubCalculations();
+  }
+
+  function openAddContactPersonModal() {
+    const modal = document.getElementById('modal-container');
+    if (!modal) return;
+
+    modal.innerHTML = `
+      <div class="modal-overlay open" style="z-index:9999;">
+        <div class="modal-box-card" style="max-width:850px; width:92%; padding:0; border-radius:8px; overflow:hidden; background:#FFFFFF; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);">
+          <!-- Modal Header (Screenshot 1 Match) -->
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid #E5E7EB;">
+            <h2 style="font-size:1.18rem; font-weight:600; color:#111827; margin:0;">Add Contact Person</h2>
+            <button type="button" onclick="window.smatApp.closeModal()" style="width:26px; height:26px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; font-weight:700;">✕</button>
+          </div>
+
+          <!-- Modal Body Grid: Form Left, Profile Image Right (Screenshot 1 Match) -->
+          <div style="display:grid; grid-template-columns:1fr 240px; gap:2.5rem; padding:1.75rem;">
+            <!-- Left Form Fields -->
+            <div style="display:flex; flex-direction:column; gap:1.15rem;">
+              <!-- 1. Name -->
+              <div style="display:grid; grid-template-columns:130px 1fr; gap:1rem; align-items:center;">
+                <label style="font-size:0.86rem; color:#4B5563;">Name</label>
+                <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:0.6rem;">
+                  <select id="cp-salutation" class="filter-search-box" style="padding:0.45rem 0.6rem; font-size:0.84rem; cursor:pointer;">
+                    <option value="" disabled selected hidden>Salutation ⌄</option>
+                    <option value="Mr.">Mr.</option>
+                    <option value="Mrs.">Mrs.</option>
+                    <option value="Ms.">Ms.</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Dr.">Dr.</option>
+                  </select>
+                  <input type="text" id="cp-first-name" class="filter-search-box" placeholder="First Name" style="padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                  <input type="text" id="cp-last-name" class="filter-search-box" placeholder="Last Name" style="padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                </div>
+              </div>
+
+              <!-- 2. Email Address -->
+              <div style="display:grid; grid-template-columns:130px 1fr; gap:1rem; align-items:center;">
+                <label style="font-size:0.86rem; color:#4B5563;">Email Address</label>
+                <input type="email" id="cp-email" class="filter-search-box" placeholder="" style="width:100%; padding:0.45rem 0.6rem; font-size:0.84rem;" />
+              </div>
+
+              <!-- 3. Phone -->
+              <div style="display:grid; grid-template-columns:130px 1fr; gap:1rem; align-items:flex-start;">
+                <label style="font-size:0.86rem; color:#4B5563; padding-top:6px;">Phone</label>
+                <div style="display:flex; flex-direction:column; gap:0.65rem;">
+                  <!-- Work Phone -->
+                  <div style="display:flex; gap:0.5rem;">
+                    <select id="cp-work-cc" class="filter-search-box" style="width:85px; padding:0.45rem 0.5rem; font-size:0.84rem; cursor:pointer;">
+                      <option value="+91" selected>+91 ⌄</option>
+                      <option value="+1">+1</option>
+                      <option value="+44">+44</option>
+                      <option value="+971">+971</option>
+                    </select>
+                    <input type="text" id="cp-work-phone" class="filter-search-box" placeholder="Work Phone" style="flex:1; padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                  </div>
+                  <!-- Mobile -->
+                  <div style="display:flex; gap:0.5rem;">
+                    <select id="cp-mobile-cc" class="filter-search-box" style="width:85px; padding:0.45rem 0.5rem; font-size:0.84rem; cursor:pointer;">
+                      <option value="+91" selected>+91 ⌄</option>
+                      <option value="+1">+1</option>
+                      <option value="+44">+44</option>
+                      <option value="+971">+971</option>
+                    </select>
+                    <input type="text" id="cp-mobile" class="filter-search-box" placeholder="Mobile" style="flex:1; padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Skype Name/Number -->
+              <div style="display:grid; grid-template-columns:130px 1fr; gap:1rem; align-items:center;">
+                <label style="font-size:0.86rem; color:#4B5563;">Skype Name/Number</label>
+                <div style="display:flex; align-items:center; border:1px solid #D1D5DB; border-radius:4px; overflow:hidden;">
+                  <span style="background:#F9FAFB; border-right:1px solid #E5E7EB; padding:0.45rem 0.75rem; display:inline-flex; align-items:center; color:#0284C7; font-weight:700;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 2c-5.523 0-10 4.477-10 10 0 1.258.232 2.464.655 3.576C2.247 16.732 2 18.006 2 19.333c0 1.473.573 2.857 1.615 3.899A5.474 5.474 0 0 0 7.514 24.85c1.112.423 2.318.655 3.576.655 5.523 0 10-4.477 10-10 0-1.258-.232-2.464-.655-3.576.409-1.156.655-2.43.655-3.757 0-1.473-.573-2.857-1.615-3.899A5.474 5.474 0 0 0 15.897 2.65C14.785 2.227 13.579 2 12.001 2z"/></svg>
+                  </span>
+                  <input type="text" id="cp-skype" placeholder="Skype Name/Number" style="flex:1; border:none; outline:none; padding:0.45rem 0.6rem; font-size:0.84rem; color:#111827;" />
+                </div>
+              </div>
+
+              <!-- 5. Other Details -->
+              <div style="display:grid; grid-template-columns:130px 1fr; gap:1rem; align-items:center;">
+                <label style="font-size:0.86rem; color:#4B5563;">Other Details</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+                  <input type="text" id="cp-designation" class="filter-search-box" placeholder="Designation" style="padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                  <input type="text" id="cp-department" class="filter-search-box" placeholder="Department" style="padding:0.45rem 0.6rem; font-size:0.84rem;" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Profile Image Upload Card (Screenshot 1 Match) -->
+            <div style="border:1.5px dashed #CBD5E1; border-radius:6px; padding:2rem 1.25rem; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#FAFAFA;">
+              <div style="width:38px; height:38px; border-radius:50%; background:#2563EB; color:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.85rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+              </div>
+              <div style="font-size:0.88rem; font-weight:700; color:#1E293B; margin-bottom:0.35rem;">Drag & Drop Profile Image</div>
+              <div style="font-size:0.73rem; color:#64748B; margin-bottom:2px;">Supported Files: jpg, jpeg, png, gif, bmp</div>
+              <div style="font-size:0.73rem; color:#64748B; margin-bottom:1rem;">Maximum File Size: 5MB</div>
+              <label style="color:#2563EB; font-size:0.84rem; font-weight:600; cursor:pointer;">
+                Upload File
+                <input type="file" style="display:none;" accept="image/*" onchange="alert('Image chosen: ' + this.files[0]?.name)" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Modal Footer (Screenshot 1 Match) -->
+          <div style="display:flex; align-items:center; gap:0.75rem; padding:1.15rem 1.75rem; border-top:1px solid #E5E7EB; background:#FFFFFF;">
+            <button type="button" onclick="window.smatApp.saveContactPerson()" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:4px; padding:0.5rem 1.5rem; font-size:0.86rem; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05);">Save</button>
+            <button type="button" onclick="window.smatApp.closeModal()" style="background:#F3F4F6; color:#374151; border:1px solid #E5E7EB; border-radius:4px; padding:0.5rem 1.25rem; font-size:0.86rem; cursor:pointer;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveContactPerson() {
+    const salutation = document.getElementById('cp-salutation')?.value || '';
+    const firstName = document.getElementById('cp-first-name')?.value?.trim() || '';
+    const lastName = document.getElementById('cp-last-name')?.value?.trim() || '';
+    const email = document.getElementById('cp-email')?.value?.trim() || '';
+    const workCc = document.getElementById('cp-work-cc')?.value || '+91';
+    const workPhone = document.getElementById('cp-work-phone')?.value?.trim() || '';
+    const mobileCc = document.getElementById('cp-mobile-cc')?.value || '+91';
+    const mobile = document.getElementById('cp-mobile')?.value?.trim() || '';
+    const skype = document.getElementById('cp-skype')?.value?.trim() || '';
+    const designation = document.getElementById('cp-designation')?.value?.trim() || '';
+    const department = document.getElementById('cp-department')?.value?.trim() || '';
+
+    if (!firstName && !email) {
+      alert('Please enter at least First Name or Email Address.');
+      return;
+    }
+
+    const fullName = [salutation, firstName, lastName].filter(Boolean).join(' ');
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    if (currClient) {
+      currClient.contact_persons = currClient.contact_persons || [];
+      currClient.contact_persons.push({
+        name: fullName || firstName || 'Contact Person',
+        email: email || currClient.email,
+        phone: mobile ? `${mobileCc}-${mobile}` : (workPhone ? `${workCc}-${workPhone}` : ''),
+        designation,
+        department,
+        skype
+      });
+    }
+
+    closeModal();
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+  }
+
+  function toggleAddressPopover(type, evt) {
+    if (evt) evt.stopPropagation();
+    const popId = type === 'billing' ? 'zoho-addr-popover-billing' : 'zoho-addr-popover-shipping';
+    const pop = document.getElementById(popId);
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+    document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+    if (!isCurrentlyOpen) {
+      pop.style.display = 'block';
+    }
+  }
+
+  function closeAddressPopovers() {
+    document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+  }
+
+  function selectShippingAddress(source) {
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    if (currClient && source === 'billing') {
+      currClient.shipping_address = { ...(currClient.billing_address || { company: 'feso', line1: 'test', line2: 'test', city: 'Hyderabad', pin: '500034', country: 'India' }) };
+    }
+    closeAddressPopovers();
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+  }
+
+  function openEditAddressModal(type, isNew = false) {
+    closeAddressPopovers();
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    const addr = isNew ? {} : (type === 'billing' ? (currClient.billing_address || {}) : (currClient.shipping_address || currClient.billing_address || {}));
+    
+    const modal = document.getElementById('modal-container');
+    if (!modal) return;
+    modal.innerHTML = `
+      <div class="modal-overlay open" style="z-index:9999;">
+        <div class="modal-box-card" style="max-width:480px; padding:1.5rem; border-top:4px solid #2563EB;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div style="font-size:1.1rem; font-weight:700; color:#111827;">
+              ${isNew ? '⊕ Add New ' : '✎ Edit '} ${type === 'billing' ? 'Billing' : 'Shipping'} Address
+            </div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div>
+              <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">Company / Legal Name</label>
+              <input type="text" id="addr-modal-company" class="filter-search-box" value="${escapeHtml(addr.company || currClient.company_name || 'feso')}" style="width:100%; margin-top:3px;" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">Address Line 1</label>
+              <input type="text" id="addr-modal-line1" class="filter-search-box" value="${escapeHtml(addr.line1 || 'test')}" style="width:100%; margin-top:3px;" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">Address Line 2</label>
+              <input type="text" id="addr-modal-line2" class="filter-search-box" value="${escapeHtml(addr.line2 || 'test')}" style="width:100%; margin-top:3px;" />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">City</label>
+                <input type="text" id="addr-modal-city" class="filter-search-box" value="${escapeHtml(addr.city || 'Hyderabad')}" style="width:100%; margin-top:3px;" />
+              </div>
+              <div>
+                <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">Postal / PIN Code</label>
+                <input type="text" id="addr-modal-pin" class="filter-search-box" value="${escapeHtml(addr.pin || '500034')}" style="width:100%; margin-top:3px;" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; font-weight:600; color:#4B5563;">Country</label>
+              <input type="text" id="addr-modal-country" class="filter-search-box" value="${escapeHtml(addr.country || 'India')}" style="width:100%; margin-top:3px;" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.25rem;">
+            <button type="button" class="btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
+            <button type="button" class="btn-action-primary" style="background:#2563EB;" onclick="window.smatApp.saveAddressModalData('${type}')">Save Address</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveAddressModalData(type) {
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    const company = document.getElementById('addr-modal-company')?.value || '';
+    const line1 = document.getElementById('addr-modal-line1')?.value || '';
+    const line2 = document.getElementById('addr-modal-line2')?.value || '';
+    const city = document.getElementById('addr-modal-city')?.value || '';
+    const pin = document.getElementById('addr-modal-pin')?.value || '';
+    const country = document.getElementById('addr-modal-country')?.value || 'India';
+
+    const newObj = { company, line1, line2, city, pin, country };
+    if (type === 'billing') {
+      currClient.billing_address = newObj;
+    } else {
+      currClient.shipping_address = newObj;
+    }
+
+    closeModal();
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+  }
+
+  function toggleSacPopover(type, idx, evt) {
+    if (evt) evt.stopPropagation();
+    const popId = type === 'plan' ? 'zoho-sac-popover-plan' : `zoho-sac-popover-addon-${idx}`;
+    const pop = document.getElementById(popId);
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+    document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+    if (!isCurrentlyOpen) {
+      pop.style.display = 'block';
+    }
+  }
+
+  function closeSacPopover(type, idx) {
+    const popId = type === 'plan' ? 'zoho-sac-popover-plan' : `zoho-sac-popover-addon-${idx}`;
+    const pop = document.getElementById(popId);
+    if (pop) pop.style.display = 'none';
+  }
+
+  function saveSacCode(type, idx) {
+    if (type === 'plan') {
+      const sel = document.getElementById('zoho-sac-select-plan');
+      if (sel) {
+        const val = sel.value;
+        const txt = document.getElementById('zoho-plan-sac-text');
+        if (txt) txt.innerText = val;
+      }
+      closeSacPopover('plan');
+    } else {
+      const sel = document.getElementById(`zoho-sac-select-addon-${idx}`);
+      if (sel && zohoSubAddons[idx]) {
+        const val = sel.value;
+        zohoSubAddons[idx].sac = val;
+        const txt = document.getElementById(`zoho-addon-sac-text-${idx}`);
+        if (txt) txt.innerText = val;
+      }
+      closeSacPopover('addon', idx);
+    }
+  }
+
+
+
+
+  function renderGstTreatmentOptions(list) {
+    const container = document.getElementById('zoho-gst-treatment-options-list');
+    if (!container) return;
+    const treatments = list || ALL_GST_TREATMENTS;
+    const currentVal = zohoSelectedGstTreatment || 'Unregistered Business';
+    container.innerHTML = treatments.map(t => {
+      const isSel = t.title === currentVal;
+      return `
+        <div class="zoho-treatment-option-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectGstTreatment('${t.title.replace(/'/g, "\\'")}')">
+          <div class="treatment-text-col">
+            <span class="treatment-title">${t.title}</span>
+            <span class="treatment-desc">${t.desc}</span>
+          </div>
+          ${isSel ? '<span class="zoho-treatment-check">✓</span>' : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleGstTreatmentDropdown(evt) {
+    if (evt) evt.stopPropagation();
+    const dropdown = document.getElementById('zoho-gst-treatment-dropdown');
+    const chevron = document.getElementById('zoho-gst-treatment-chevron');
+    if (!dropdown) return;
+    const isCurrentlyOpen = dropdown.style.display === 'block';
+
+    if (!isCurrentlyOpen) {
+      dropdown.style.display = 'block';
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      renderGstTreatmentOptions();
+      setTimeout(() => {
+        const inp = document.getElementById('zoho-gst-treatment-search-input');
+        if (inp) {
+          inp.value = '';
+          inp.focus();
+        }
+      }, 50);
+    } else {
+      closeGstTreatmentDropdown();
+    }
+  }
+
+  function closeGstTreatmentDropdown() {
+    const dropdown = document.getElementById('zoho-gst-treatment-dropdown');
+    const chevron = document.getElementById('zoho-gst-treatment-chevron');
+    if (dropdown) dropdown.style.display = 'none';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+
+  function selectGstTreatment(title) {
+    zohoSelectedGstTreatment = title;
+    const disp = document.getElementById('zoho-gst-treatment-display-val');
+    if (disp) {
+      disp.innerText = title;
+    }
+    const hiddenInp = document.getElementById('zoho-gst-treatment-input');
+    if (hiddenInp) {
+      hiddenInp.value = title;
+    }
+    closeGstTreatmentDropdown();
+  }
+
+  function filterGstTreatments(query) {
+    const q = (query || '').toLowerCase().trim();
+    if (!q) {
+      renderGstTreatmentOptions();
+      return;
+    }
+    const filtered = ALL_GST_TREATMENTS.filter(t =>
+      t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q)
+    );
+    renderGstTreatmentOptions(filtered);
+  }
+
+  function toggleGstPreferencesPopover(evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById('zoho-gst-pref-popover');
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+    closeAllMorePopovers();
+    closeGstTreatmentDropdown();
+    document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+    if (!isCurrentlyOpen) {
+      const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+      if (currClient && currClient.gst_treatment) {
+        zohoSelectedGstTreatment = currClient.gst_treatment;
+        const disp = document.getElementById('zoho-gst-treatment-display-val');
+        if (disp) disp.innerText = currClient.gst_treatment;
+        const hiddenInp = document.getElementById('zoho-gst-treatment-input');
+        if (hiddenInp) hiddenInp.value = currClient.gst_treatment;
+      }
+      pop.style.display = 'block';
+    } else {
+      pop.style.display = 'none';
+    }
+  }
+
+  function closeGstPreferencesPopover() {
+    const pop = document.getElementById('zoho-gst-pref-popover');
+    if (pop) pop.style.display = 'none';
+    closeGstTreatmentDropdown();
+  }
+
+  function saveGstPreferences() {
+    const input = document.getElementById('zoho-gst-treatment-input');
+    const val = input ? input.value : 'Unregistered Business';
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    if (currClient) {
+      currClient.gst_treatment = val;
+    }
+    const displaySpan = document.getElementById('zoho-gst-treatment-display');
+    if (displaySpan) {
+      displaySpan.innerText = val;
+    }
+    closeGstPreferencesPopover();
+  }
+
+
+  function toggleShippingGstPopover(evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById('zoho-ship-gst-popover');
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+    if (!isCurrentlyOpen) {
+      const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+      const gstinInput = document.getElementById('zoho-ship-gstin-input');
+      const legalInput = document.getElementById('zoho-ship-legal-name-input');
+      const tradeInput = document.getElementById('zoho-ship-trade-name-input');
+      const unregCheck = document.getElementById('zoho-ship-unregistered-check');
+      if (currClient) {
+        if (gstinInput) gstinInput.value = currClient.shipping_gstin || '';
+        if (legalInput) legalInput.value = currClient.shipping_legal_name || '';
+        if (tradeInput) tradeInput.value = currClient.shipping_trade_name || '';
+        if (unregCheck) {
+          unregCheck.checked = !!currClient.shipping_is_unregistered;
+          onShippingGstUnregChange(unregCheck.checked);
+        }
+      }
+      pop.style.display = 'block';
+    } else {
+      pop.style.display = 'none';
+    }
+  }
+
+  function closeShippingGstPopover() {
+    const pop = document.getElementById('zoho-ship-gst-popover');
+    if (pop) pop.style.display = 'none';
+  }
+
+  function onShippingGstUnregChange(isUnreg) {
+    const gstinInput = document.getElementById('zoho-ship-gstin-input');
+    if (gstinInput) {
+      if (isUnreg) {
+        gstinInput.disabled = true;
+        gstinInput.style.background = '#F9FAFB';
+        gstinInput.value = '';
+      } else {
+        gstinInput.disabled = false;
+        gstinInput.style.background = '#FFFFFF';
+      }
+    }
+  }
+
+  function saveShippingGstPreferences() {
+    const isUnreg = document.getElementById('zoho-ship-unregistered-check')?.checked;
+    const gstin = isUnreg ? '' : (document.getElementById('zoho-ship-gstin-input')?.value || '');
+    const legalName = document.getElementById('zoho-ship-legal-name-input')?.value || '';
+    const tradeName = document.getElementById('zoho-ship-trade-name-input')?.value || '';
+
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    if (currClient) {
+      currClient.shipping_is_unregistered = isUnreg;
+      currClient.shipping_gstin = gstin;
+      currClient.shipping_legal_name = legalName;
+      currClient.shipping_trade_name = tradeName;
+    }
+
+    const gstinDisp = document.getElementById('zoho-shipping-gstin-display');
+    if (gstinDisp) gstinDisp.innerText = gstin;
+    const legalDisp = document.getElementById('zoho-shipping-legal-name-display');
+    if (legalDisp) legalDisp.innerText = legalName;
+
+    closeShippingGstPopover();
+  }
+
+
+  function renderSupplyStateOptions(list) {
+    const container = document.getElementById('zoho-supply-options-list');
+    if (!container) return;
+    const states = list || ALL_SUPPLY_STATES;
+    container.innerHTML = states.map(s => {
+      const isSel = s.code === zohoSelectedSupplyState;
+      return `
+        <div class="zoho-supply-option-item ${isSel ? 'selected' : ''}" onclick="event.stopPropagation(); window.smatApp.selectSupplyState('${s.code}')">
+          <span>[${s.code}] - ${s.name}</span>
+          ${isSel ? '<span class="zoho-supply-check">✓</span>' : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleSupplyStateDropdown(evt) {
+    if (evt) evt.stopPropagation();
+    const pop = document.getElementById('zoho-supply-state-popover');
+    if (!pop) return;
+    const isCurrentlyOpen = pop.style.display === 'block';
+    closeAllMorePopovers();
+    closeGstPreferencesPopover();
+    closeShippingGstPopover();
+    document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+
+    if (!isCurrentlyOpen) {
+      pop.style.display = 'block';
+      renderSupplyStateOptions();
+      setTimeout(() => {
+        const inp = document.getElementById('zoho-supply-search-input');
+        if (inp) {
+          inp.value = '';
+          inp.focus();
+        }
+      }, 50);
+    } else {
+      pop.style.display = 'none';
+    }
+  }
+
+  function closeSupplyStateDropdown() {
+    const pop = document.getElementById('zoho-supply-state-popover');
+    if (pop) pop.style.display = 'none';
+  }
+
+  function selectSupplyState(code) {
+    zohoSelectedSupplyState = code;
+    const found = ALL_SUPPLY_STATES.find(s => s.code === code);
+    const disp = document.getElementById('zoho-supply-state-display');
+    if (disp && found) {
+      disp.innerText = `[${found.code}] - ${found.name}`;
+    }
+    const hiddenSelect = document.getElementById('zoho-sub-supply-state');
+    if (hiddenSelect) {
+      hiddenSelect.value = code;
+    }
+    closeSupplyStateDropdown();
+  }
+
+  function filterSupplyStates(query) {
+    const q = (query || '').toLowerCase().trim();
+    if (!q) {
+      renderSupplyStateOptions(ALL_SUPPLY_STATES);
+      return;
+    }
+    const filtered = ALL_SUPPLY_STATES.filter(s =>
+      s.code.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+    );
+    renderSupplyStateOptions(filtered);
+  }
+
+  function closeAllMorePopovers() {
+    document.querySelectorAll('.zoho-more-popover').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.zoho-btn-row-more').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.zoho-plan-row-actions').forEach(w => w.classList.remove('open'));
+    document.querySelectorAll('.zoho-addon-row-actions').forEach(w => w.classList.remove('open'));
+  }
+
+  function togglePlanMoreTooltip(evt) {
+    if (evt) evt.stopPropagation();
+    const tooltip = document.getElementById('zoho-plan-more-tooltip');
+    const btn = document.getElementById('zoho-plan-more-btn');
+    const wrap = document.getElementById('zoho-plan-actions-wrap');
+    if (!tooltip) return;
+    const isCurrentlyOpen = tooltip.style.display === 'block';
+    closeAllMorePopovers();
+    if (!isCurrentlyOpen) {
+      tooltip.style.display = 'block';
+      if (btn) btn.classList.add('active');
+      if (wrap) wrap.classList.add('open');
+    }
+  }
+
+  function toggleAddonMoreMenu(idx, evt) {
+    if (evt) evt.stopPropagation();
+    const menu = document.getElementById(`zoho-addon-more-menu-${idx}`);
+    const btn = document.getElementById(`zoho-addon-more-btn-${idx}`);
+    const wrap = document.getElementById(`zoho-addon-actions-wrap-${idx}`);
+    if (!menu) return;
+    const isCurrentlyOpen = menu.style.display === 'block';
+    closeAllMorePopovers();
+    if (!isCurrentlyOpen) {
+      menu.style.display = 'block';
+      if (btn) btn.classList.add('active');
+      if (wrap) wrap.classList.add('open');
+    }
+  }
+
+  if (typeof document !== 'undefined') {
+    const handleOutsideClick = (e) => {
+      // Close Plan & Addon three dots popovers/tooltips on outside tap
+      if (!e.target.closest('.zoho-more-popover') && !e.target.closest('.zoho-more-trigger')) {
+        closeAllMorePopovers();
+      }
+      if (!e || !e.target || typeof e.target.closest === 'function') return;
+
+      // 1. SAC popover close on outside click
+      if (!e.target.closest('.zoho-sac-popover') && !e.target.closest('.zoho-sac-badge-wrap')) {
+        document.querySelectorAll('.zoho-sac-popover').forEach(p => p.style.display = 'none');
+      }
+
+      // 2. Address popover close on tap anywhere outside
+      if (!e.target.closest('.zoho-addr-popover') && !e.target.closest('.zoho-addr-trigger')) {
+        document.querySelectorAll('.zoho-addr-popover').forEach(p => p.style.display = 'none');
+      }
+
+      // 3. GST Preferences popover close on tap anywhere outside
+      if (!e.target.closest('.zoho-gst-pref-popover') && !e.target.closest('.zoho-gst-pref-trigger')) {
+        closeGstPreferencesPopover();
+      }
+
+      // 4. Shipping GST Popover close on tap anywhere outside
+      if (!e.target.closest('.zoho-ship-gst-popover') && !e.target.closest('.zoho-ship-gst-trigger')) {
+        closeShippingGstPopover();
+      }
+
+      // 5. Place of Supply popover close on tap anywhere outside
+      if (!e.target.closest('.zoho-supply-popover') && !e.target.closest('.zoho-supply-trigger')) {
+        closeSupplyStateDropdown();
+      }
+
+      // 6. Plan Tax popover close on tap anywhere outside
+      if (!e.target.closest('#zoho-plan-tax-popover') && !e.target.closest('#zoho-plan-tax-trigger')) {
+        closePlanTaxDropdown();
+      }
+
+      // 7. Addon Tax popover close on tap anywhere outside
+      if (!e.target.closest('.zoho-addon-tax-popover') && !e.target.closest('[id^="zoho-addon-tax-trigger-"]')) {
+        closeAllAddonTaxDropdowns();
+      }
+
+      // 8. Coupon popover close on tap anywhere outside
+      if (!e.target.closest('#zoho-coupon-search-wrapper')) {
+        closeZohoCouponDropdown();
+      }
+
+      // 9. Discount Preference popover close on tap anywhere outside
+      if (!e.target.closest('#zoho-discount-pref-popover') && !e.target.closest('#zoho-discount-pref-trigger')) {
+        closeDiscountPrefDropdown();
+      }
+    };
+
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+  }
+
+  function addZohoSubAddonRow() {
+    // Screenshot 1: Creates an empty new row with "Type or click to select an addon."
+    zohoSubAddons.push({
+      id: `addon_${Date.now()}`,
+      name: '',
+      desc: '',
+      sac: '998314',
+      qty: 1,
+      unit: '',
+      price: 0,
+      discountVal: 0,
+      discountType: 'percent',
+      taxRate: 18,
+      taxLabel: 'GST18 [18%]',
+      isEmpty: true
+    });
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+    // Focus the new row picker
+    setTimeout(() => {
+      const picker = document.getElementById(`zoho-addon-picker-${zohoSubAddons.length - 1}`);
+      if (picker) picker.focus();
+    }, 50);
+  }
+
+  function removeZohoSubAddonRow(idx) {
+    if (zohoSubAddons.length <= 1) {
+      // If single item, reset it to empty
+      zohoSubAddons[0] = {
+        id: `addon_${Date.now()}`,
+        name: '',
+        desc: '',
+        sac: '998314',
+        qty: 1,
+        unit: '',
+        price: 0,
+        discountVal: 0,
+        discountType: 'percent',
+        taxRate: 0,
+        isEmpty: true
+      };
+    } else {
+      zohoSubAddons.splice(idx, 1);
+    }
+    const viewport = document.getElementById('route-viewport');
+    if (viewport) renderZohoSubscriptionView(viewport);
+    updateZohoSubCalculations();
+  }
+
+  function updateZohoSubCalculations() {
+    // 1. Plan Calculation
+    const planPrice = parseFloat(document.getElementById('zoho-plan-price')?.value) || 0;
+    const planQty = parseInt(document.getElementById('zoho-plan-qty')?.value, 10) || 1;
+    const planBase = planPrice * planQty;
+
+    const planDiscVal = parseFloat(document.getElementById('zoho-plan-disc-val')?.value) || 0;
+    const planDiscType = document.getElementById('zoho-plan-disc-type')?.value || 'percent';
+    let planDiscountAmt = 0;
+    if (planDiscType === 'percent') {
+      planDiscountAmt = (planBase * Math.min(100, Math.max(0, planDiscVal))) / 100;
+    } else {
+      planDiscountAmt = Math.min(planBase, Math.max(0, planDiscVal));
+    }
+
+    const planNet = Math.max(0, planBase - planDiscountAmt);
+    const planAmountEl = document.getElementById('zoho-plan-row-amount');
+    if (planAmountEl) {
+      planAmountEl.innerText = `Rs. ${planNet.toLocaleString('en-IN')}.00`;
+    }
+
+    // 2. Addons Calculation
+    let totalAddonsBase = 0;
+    let totalAddonsDiscount = 0;
+
+    zohoSubAddons.forEach((addon, idx) => {
+      const aQty = parseInt(document.getElementById(`zoho-addon-qty-${idx}`)?.value, 10) || 1;
+      const aPrice = parseFloat(document.getElementById(`zoho-addon-price-${idx}`)?.value) || 0;
+      const aBase = aQty * aPrice;
+
+      const aDiscVal = parseFloat(document.getElementById(`zoho-addon-disc-val-${idx}`)?.value) || 0;
+      const aDiscType = document.getElementById(`zoho-addon-disc-type-${idx}`)?.value || 'percent';
+      let aDiscAmt = 0;
+      if (aDiscType === 'percent') {
+        aDiscAmt = (aBase * Math.min(100, Math.max(0, aDiscVal))) / 100;
+      } else {
+        aDiscAmt = Math.min(aBase, Math.max(0, aDiscVal));
+      }
+
+      totalAddonsBase += aBase;
+      totalAddonsDiscount += aDiscAmt;
+
+      const aRowAmtEl = document.getElementById(`zoho-addon-amount-${idx}`);
+      if (aRowAmtEl) {
+        aRowAmtEl.innerText = `Rs. ${Math.max(0, aBase - aDiscAmt).toLocaleString('en-IN')}.00`;
+      }
+    });
+
+    // 3. Combined Final Billing & Selected Tax Rate & Coupon
+    let couponDiscountAmt = 0;
+    if (selectedZohoCoupon && selectedZohoCoupon.discount_value) {
+      const valStr = selectedZohoCoupon.discount_value;
+      if (valStr.includes('%')) {
+        const pct = parseFloat(valStr.replace(/[^0-9.]/g, '')) || 0;
+        couponDiscountAmt = ((planBase + totalAddonsBase) * pct) / 100;
+      } else {
+        couponDiscountAmt = parseFloat(valStr.replace(/[^0-9.]/g, '')) || 0;
+      }
+    }
+    const totalDiscounts = ((zohoDiscountPref === 'item-level') ? (planDiscountAmt + totalAddonsDiscount) : 0) + couponDiscountAmt;
+    const taxableBase = Math.max(0, (planBase + totalAddonsBase) - totalDiscounts);
+    const planTaxVal = parseFloat(document.getElementById('zoho-plan-tax')?.value);
+    const taxRate = !isNaN(planTaxVal) ? (planTaxVal / 100) : 0.18;
+    const taxAmt = Math.round(taxableBase * taxRate * 100) / 100;
+    const finalTotal = taxableBase + taxAmt;
+
+    // Update Summary Elements
+    const sPlan = document.getElementById('zoho-sum-plan-price');
+    if (sPlan) sPlan.innerText = `Rs. ${planBase.toLocaleString('en-IN')}.00`;
+
+    const sAddons = document.getElementById('zoho-sum-addons-price');
+    if (sAddons) sAddons.innerText = `+ Rs. ${totalAddonsBase.toLocaleString('en-IN')}.00`;
+
+    const sDisc = document.getElementById('zoho-sum-disc-price');
+    if (sDisc) sDisc.innerText = `- Rs. ${totalDiscounts.toLocaleString('en-IN')}.00`;
+
+    const sTaxable = document.getElementById('zoho-sum-taxable-price');
+    if (sTaxable) sTaxable.innerText = `Rs. ${taxableBase.toLocaleString('en-IN')}.00`;
+
+    const sTax = document.getElementById('zoho-sum-tax-price');
+    if (sTax) sTax.innerText = `+ Rs. ${taxAmt.toLocaleString('en-IN')}.00`;
+
+    const sFinal = document.getElementById('zoho-sum-final-price');
+    if (sFinal) sFinal.innerText = `Rs. ${finalTotal.toLocaleString('en-IN')}.00`;
+  }
+
+  function saveZohoSubscription() {
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0];
+    if (!currClient) {
+      alert('Please select a valid customer.');
+      return;
+    }
+
+    const planVal = document.getElementById('zoho-plan-select')?.value || 'Starter New Monthly (Without WA)|1890';
+    const planName = planVal.split('|')[0].replace(/\(.*\)/g, '').trim();
+    const subNum = document.getElementById('zoho-sub-num')?.value || 'SUB-01083';
+    const salesPerson = document.getElementById('zoho-sub-sales')?.value || currClient.sales_person || 'Rahul Sharma';
+    const gstNum = document.getElementById('zoho-sub-gst')?.value || currClient.gst_number || '';
+    const finalPriceText = document.getElementById('zoho-sum-final-price')?.innerText || 'Rs. 2,938.20';
+    const finalPrice = parseFloat(finalPriceText.replace(/[^0-9.]/g, '')) || 2938.2;
+
+    // Update client record
+    currClient.plan_name = planName;
+    currClient.subscription_id = subNum;
+    currClient.sales_person = salesPerson;
+    currClient.gst_number = gstNum;
+    currClient.subscription_status = 'Active';
+    currClient.inr_amount = Math.round(finalPrice);
+    currClient.subscription_amount_display = `₹ ${Math.round(finalPrice).toLocaleString('en-IN')}.00`;
+    currClient.final_billing = {
+      plan_name: planName,
+      subscription_id: subNum,
+      sales_person: salesPerson,
+      final_payable: finalPrice,
+      payment_mode: 'Offline',
+      payment_terms: document.getElementById('zoho-sub-terms')?.value || 'Due on Receipt',
+      customer_notes: document.getElementById('zoho-sub-notes')?.value || '',
+      updated_at: new Date().toISOString()
+    };
+
+    alert(`✓ Subscription ${subNum} for ${currClient.name} successfully updated!`);
+    navigateTo('subscriptions');
+  }
+
+
+  function renderSubscriptionCreationView(container) {
     renderZohoEditCustomerView(container);
   }
 
@@ -5572,6 +9267,16 @@ function toggleAccordion(cardId) {
     const expiredCount = clientsData.filter(c => c.subscription_status === 'Expired').length;
 
     container.innerHTML = `
+      <!-- Sub-Navigation Bar for Subscriptions (Zoho Reference vs Directory) -->
+      <div style="padding:0.75rem 2rem 0 2rem; background:#F8FAFC; border-bottom:1px solid #E5E7EB; display:flex; gap:0.5rem; align-items:center; margin-bottom:1.5rem;">
+        <button class="btn-table-action btn-action-secondary" style="background:#FFFFFF; border-radius:6px 6px 0 0; padding:0.55rem 1.25rem; font-weight:500;" onclick="window.smatApp.openZohoSubscription(10)">
+          ⚡ Change / New Subscription
+        </button>
+        <button class="btn-table-action btn-action-primary" style="background:#1877F2; border-color:#1877F2; border-radius:6px 6px 0 0; padding:0.55rem 1.25rem; font-weight:600;" onclick="window.smatApp.navigateTo('subscriptions-directory')">
+          📋 Active Client Subscriptions Directory
+        </button>
+      </div>
+
       <!-- Top Metrics Overview -->
       <div class="overview-metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
         <div class="metric-summary-card">
@@ -5625,8 +9330,8 @@ function toggleAccordion(cardId) {
           <p style="font-size:0.85rem; color:#64748B; margin-top:4px;">View live client license tiers, renewal cycles, and upgrade plans.</p>
         </div>
         <div style="display:flex; gap:0.5rem;">
-          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.navigateTo('subscription')">
-            ⚡ + Add Subscription
+          <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openZohoSubscription(10)" style="background:#1877F2; border-color:#1877F2;">
+            ⚡ + Add Subscription (Zoho Reference)
           </button>
         </div>
       </div>
@@ -5712,10 +9417,15 @@ function toggleAccordion(cardId) {
                     ${c.subscription_status}
                   </span>
                 </td>
-                <td style="text-align: center;">
-                  <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openPlanModal(${c.id})" title="Upgrade or Change Plan">
-                    ⚡ Upgrade
-                  </button>
+                <td style="text-align: center; white-space: nowrap;">
+                  <div style="display:inline-flex; gap:0.4rem; justify-content:center;">
+                    <button class="btn-table-action btn-action-primary" onclick="window.smatApp.openZohoSubscription(${c.id})" title="Change Subscription">
+                      ⚡ Change Subscription
+                    </button>
+                    <button class="btn-table-action btn-action-secondary" onclick="window.smatApp.openZohoEditCustomer(${c.id})" title="Edit Customer & Billing Details">
+                      ✏️ Edit Billing
+                    </button>
+                  </div>
                 </td>
               </tr>
             `).join('')}
@@ -5780,107 +9490,156 @@ function toggleAccordion(cardId) {
 
   function getPlanRank(planName) {
     if (!planName) return 1;
-    const clean = planName.replace(' (WA)', '').trim();
+    const clean = planName.replace(' (WA)', '').replace('_Monthly', '').replace('_Yearly', '').trim();
     return PLAN_TIER_META[clean]?.rank ?? (clean.includes('Enterprise') ? 3 : clean.includes('Pro') ? 2 : clean.includes('Custom') ? 4 : 1);
   }
 
   function getPlanMeta(planName) {
-    if (!planName) return PLAN_TIER_META['Pro NY'];
-    const clean = planName.replace(' (WA)', '').trim();
-    return PLAN_TIER_META[clean] || PLAN_TIER_META['Pro NY'];
+    if (!planName) return PLAN_TIER_META['Pro NY'] || PLAN_TIER_META['Pro'];
+    const clean = planName.replace(' (WA)', '').replace('_Monthly', '').replace('_Yearly', '').trim();
+    return PLAN_TIER_META[clean] || PLAN_TIER_META['Pro NY'] || PLAN_TIER_META['Pro'];
   }
 
-  function openPlanModal(clientId, defaultPlan) {
+  function openAddSubscriptionModal() {
+    openPlanModal(null, null, true);
+  }
+
+  function openPlanModal(clientId, defaultPlan, isAddSubscription = false) {
+    const isNewInitial = isAddSubscription && !clientId;
     const client = clientsData.find(c => c.id === clientId) || clientsData[0];
-    const initialPlan = defaultPlan || client.plan_name || 'Pro NY';
+    const initialRawPlan = defaultPlan || (client ? client.plan_name : 'Pro') || 'Pro';
+    const cleanInitialPlan = initialRawPlan.replace(' (WA)', '').replace('_Monthly', '').replace('_Yearly', '').trim();
+    const isClientYearly = client && (client.billing_cycle === 'Yearly' || (typeof client.days_left === 'number' && client.days_left > 100));
+    
+    // Initial selection key: either Monthly or Yearly
+    let selectedKey = 'Pro_Monthly';
+    if (cleanInitialPlan.toLowerCase().includes('trial') || cleanInitialPlan.toLowerCase().includes('free')) {
+      selectedKey = 'Pro Trial';
+    } else if (cleanInitialPlan === 'Broadcast') {
+      selectedKey = isClientYearly ? 'Broadcast_Yearly' : 'Broadcast_Monthly';
+    } else if (cleanInitialPlan === 'Standard' || cleanInitialPlan.includes('Starter')) {
+      selectedKey = isClientYearly ? 'Standard_Yearly' : 'Standard_Monthly';
+    } else if (cleanInitialPlan === 'AI' || cleanInitialPlan.includes('Enterprise')) {
+      selectedKey = isClientYearly ? 'AI_Yearly' : 'AI_Monthly';
+    } else {
+      selectedKey = isClientYearly ? 'Pro_Yearly' : 'Pro_Monthly';
+    }
+
     const modal = $('#modal-container');
 
     modal.innerHTML = `
       <div class="modal-overlay open">
-        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:620px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:640px; max-height:90vh; overflow-y:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.15rem;">
             <div>
-              <div style="font-size:1.18rem; font-weight:800; color:#1E293B;">⚡ Client Subscription Management</div>
-              <div style="font-size:0.8rem; color:#64748B;">Manage flexible durations, add-on expiry sync, and tier transitions</div>
+              <div style="font-size:1.18rem; font-weight:800; color:#1E293B;">
+                ${isAddSubscription ? '⚡ Add New Subscription' : '⚡ Client Subscription Management'}
+              </div>
+              <div style="font-size:0.8rem; color:#64748B;">
+                ${isAddSubscription ? 'Assign a plan tier, billing duration, discounts, and generate final billing' : 'Manage flexible durations, add-on expiry sync, discounts, and tier transitions'}
+              </div>
             </div>
             <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
           </div>
 
           <form id="plan-activation-form">
+            <!-- 1. Target Client Selection -->
             <div style="margin-bottom:1rem;">
-              <label class="filter-item-label">Target Client Account</label>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                <label class="filter-item-label" style="margin:0;">Target Client Account</label>
+                <a href="javascript:void(0)" onclick="window.smatApp.closeModal(); window.smatApp.openZohoEditCustomer(0);" style="font-size:0.75rem; color:#1877F2; text-decoration:none; font-weight:600;">Full GST / Address Setup ›</a>
+              </div>
               <select id="plan-target-client" class="custom-dropdown-trigger" style="width:100%;">
-                ${clientsData.map(c => `<option value="${c.id}" ${c.id === client.id ? 'selected' : ''}>${c.name} (Current: ${c.plan_name})</option>`).join('')}
+                <option value="NEW_CLIENT" ${isNewInitial ? 'selected' : ''}>➕ + Add New Client / Customer...</option>
+                ${clientsData.map(c => `<option value="${c.id}" ${(!isNewInitial && c.id === (client ? client.id : null)) ? 'selected' : ''}>${c.name} (Current: ${c.plan_name})</option>`).join('')}
               </select>
             </div>
 
-            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <!-- New Client Quick Details Card (shows when NEW_CLIENT is selected) -->
+            <div id="new-client-fields-box" style="display: ${isNewInitial ? 'block' : 'none'}; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem; margin-bottom:1rem;">
+              <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.5rem;">New Client Information</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.5rem;">
+                <div>
+                  <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Company / Client Name*</label>
+                  <input type="text" id="new-client-name" class="filter-search-box" placeholder="e.g. Acme Technologies" style="width:100%;" />
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Official Email Address*</label>
+                  <input type="email" id="new-client-email" class="filter-search-box" placeholder="e.g. billing@acme.com" style="width:100%;" />
+                </div>
+              </div>
               <div>
-                <label class="filter-item-label">Select Plan Tier</label>
+                <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Phone Number (Optional)</label>
+                <input type="tel" id="new-client-phone" class="filter-search-box" placeholder="+91 9876543210" style="width:100%;" />
+              </div>
+            </div>
+
+            <!-- 2. Plan Selection & Duration (Monthly & Yearly Separated Clearly) -->
+            <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:1rem; margin-bottom:1rem;">
+              <div>
+                <label class="filter-item-label">Select Plan Tier (Monthly / Yearly)</label>
                 <select id="plan-tier-select" class="custom-dropdown-trigger" style="width:100%;">
-                  <option value="Pro" ${initialPlan === 'Pro' || initialPlan.includes('Pro NY') ? 'selected' : ''}>Pro (₹6,500/mo | ₹72,000/yr)</option>
-                  <option value="Broadcast" ${initialPlan === 'Broadcast' ? 'selected' : ''}>Broadcast (₹1,499/mo | ₹14,500/yr)</option>
-                  <option value="Standard" ${initialPlan === 'Standard' || initialPlan.includes('Starter') ? 'selected' : ''}>Standard (₹3,500/mo | ₹35,000/yr)</option>
-                  <option value="AI" ${initialPlan === 'AI' || initialPlan.includes('Enterprise') ? 'selected' : ''}>AI (₹8,999/mo | ₹96,000/yr)</option>
-                  <option value="Pro Trial" ${initialPlan.includes('Trial') || initialPlan.includes('Free') ? 'selected' : ''}>Pro Trial (₹0)</option>
+                  <optgroup label="── 📅 MONTHLY PLANS ──">
+                    <option value="Pro_Monthly" ${selectedKey === 'Pro_Monthly' ? 'selected' : ''}>Pro - Monthly (₹6,500 / month)</option>
+                    <option value="Broadcast_Monthly" ${selectedKey === 'Broadcast_Monthly' ? 'selected' : ''}>Broadcast - Monthly (₹1,499 / month)</option>
+                    <option value="Standard_Monthly" ${selectedKey === 'Standard_Monthly' ? 'selected' : ''}>Standard - Monthly (₹3,500 / month)</option>
+                    <option value="AI_Monthly" ${selectedKey === 'AI_Monthly' ? 'selected' : ''}>AI Enterprise - Monthly (₹8,999 / month)</option>
+                  </optgroup>
+                  <optgroup label="── ⭐ YEARLY PLANS (SAVE UP TO 20%) ──">
+                    <option value="Pro_Yearly" ${selectedKey === 'Pro_Yearly' ? 'selected' : ''}>Pro - Yearly (₹72,000 / year)</option>
+                    <option value="Broadcast_Yearly" ${selectedKey === 'Broadcast_Yearly' ? 'selected' : ''}>Broadcast - Yearly (₹14,500 / year)</option>
+                    <option value="Standard_Yearly" ${selectedKey === 'Standard_Yearly' ? 'selected' : ''}>Standard - Yearly (₹35,000 / year)</option>
+                    <option value="AI_Yearly" ${selectedKey === 'AI_Yearly' ? 'selected' : ''}>AI Enterprise - Yearly (₹96,000 / year)</option>
+                  </optgroup>
+                  <optgroup label="── EVALUATION / TRIAL ──">
+                    <option value="Pro Trial" ${selectedKey === 'Pro Trial' ? 'selected' : ''}>Pro Trial (₹0 / 14 Days Evaluation)</option>
+                  </optgroup>
                 </select>
               </div>
               <div>
-                <!-- Point 2: Flexible Subscription Durations -->
                 <label class="filter-item-label">Subscription Duration</label>
                 <select id="plan-duration-select" class="custom-dropdown-trigger" style="width:100%;">
-                  <option value="1">1 Month (Monthly)</option>
+                  <option value="1" ${!isClientYearly ? 'selected' : ''}>1 Month (Monthly)</option>
                   <option value="2">Custom 2 Months</option>
                   <option value="4">Custom 4 Months</option>
                   <option value="6">Custom 6 Months</option>
                   <option value="9">Custom 9 Months</option>
-                  <option value="12" selected>Yearly (12 Mos - Save 20%)</option>
+                  <option value="12" ${isClientYearly ? 'selected' : ''}>Yearly (12 Mos - Save 20%)</option>
                 </select>
               </div>
             </div>
 
-            <!-- Dynamic Calculation Display -->
-            <div id="plan-price-calc-box" style="background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#1E40AF;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span><strong>Subscription Duration & Cost:</strong></span>
-                <span id="calc-formula-display" style="font-weight:700;">₹ 11,999 × 10 = ₹ 1,19,990.00 (Yearly)</span>
-              </div>
-              <div style="font-size:0.75rem; color:#3B82F6; margin-top:3px;">
-                💡 Custom durations (2, 4, 6, 9 months) are calculated dynamically from base monthly rate.
-              </div>
-            </div>
-
-            <!-- Add-on Purchases & Expiry Synchronization -->
+            <!-- 3. Add-on Boosters -->
             <div style="margin-bottom:1rem;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
                 <label class="filter-item-label" style="margin:0;">Add-on Boosters</label>
-                <span style="font-size:0.75rem; color:#64748B; font-weight:600;">Auto-Synchronized Expiry</span>
+                <span style="font-size:0.75rem; color:#64748B; font-weight:600;">SAC: 998314</span>
               </div>
               
               <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.84rem; color:#334155;">
-                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.55rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
                   <div>
                     <span style="font-weight:600;">+10,000 Conversations Quota</span>
                     <div style="font-size:0.75rem; color:#64748B;">₹1,500 / month • Auto-pay Recurring</div>
                   </div>
                   <div style="display:flex; align-items:center; gap:0.5rem;">
                     <span class="addon-expiry-pill capped" id="addon-preview-expiry">Expires with Plan</span>
-                    <input type="checkbox" id="addon-chats" checked />
+                    <input type="checkbox" id="addon-chats" />
                   </div>
                 </label>
 
-                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.55rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
                   <div>
                     <span style="font-weight:600;">+1 Dedicated WhatsApp WABA Number</span>
                     <div style="font-size:0.75rem; color:#64748B;">₹2,500 / month • Auto-pay Recurring</div>
                   </div>
                   <div style="display:flex; align-items:center; gap:0.5rem;">
                     <span class="addon-expiry-pill capped">Expires with Plan</span>
-                    <input type="checkbox" id="addon-waba" checked />
+                    <input type="checkbox" id="addon-waba" />
                   </div>
                 </label>
 
-                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
+                <label style="display:flex; justify-content:space-between; align-items:center; padding:0.55rem 0.8rem; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; cursor:pointer;">
                   <div>
                     <span style="font-weight:600;">+1 Additional Live Agent Seat</span>
                     <div style="font-size:0.75rem; color:#64748B;">₹800 • One-Time Booster</div>
@@ -5891,25 +9650,92 @@ function toggleAccordion(cardId) {
                   </div>
                 </label>
               </div>
+            </div>
 
-              <div style="font-size:0.75rem; color:#64748B; margin-top:4px; line-height:1.4;">
-                🛡️ <strong>Add-on Validity:</strong> Add-ons last up to 30 days, but are automatically synchronized with the main subscription renewal date.
+            <!-- 4. Point 1 & Point 2: Plan Discount & Add-on Discount Section -->
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.85rem; margin-bottom:1rem;">
+              <div style="font-size:0.82rem; font-weight:700; color:#334155; margin-bottom:0.6rem; display:flex; justify-content:space-between; align-items:center;">
+                <span>🏷️ Plan & Add-on Discounts</span>
+                <span style="font-size:0.72rem; color:#64748B; font-weight:500;">Percentage (%) or Fixed (₹)</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.6rem;">
+                <div>
+                  <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:3px;">1. Plan Discount</label>
+                  <div style="display:flex; gap:0.35rem;">
+                    <select id="plan-discount-type" class="custom-dropdown-trigger" style="width:90px; padding:0.35rem 0.4rem; font-size:0.78rem;">
+                      <option value="none">None</option>
+                      <option value="percent">Percent (%)</option>
+                      <option value="flat">Flat (₹)</option>
+                    </select>
+                    <input type="number" id="plan-discount-value" class="filter-search-box" placeholder="0" min="0" value="0" style="width:100%; font-size:0.82rem;" />
+                  </div>
+                </div>
+
+                <div>
+                  <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:3px;">2. Add-on Discount</label>
+                  <div style="display:flex; gap:0.35rem;">
+                    <select id="addon-discount-type" class="custom-dropdown-trigger" style="width:90px; padding:0.35rem 0.4rem; font-size:0.78rem;">
+                      <option value="none">None</option>
+                      <option value="percent">Percent (%)</option>
+                      <option value="flat">Flat (₹)</option>
+                    </select>
+                    <input type="number" id="addon-discount-value" class="filter-search-box" placeholder="0" min="0" value="0" style="width:100%; font-size:0.82rem;" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Coupon Code -->
+              <div>
+                <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:3px;">Voucher / Coupon Code</label>
+                <div style="display:flex; gap:0.4rem;">
+                  <input type="text" id="voucher-code-input" class="filter-search-box" placeholder="e.g. SMAT50 or 30PERCENTADD" style="width:100%; font-size:0.82rem;" />
+                  <button type="button" class="btn-filter-reset" id="btn-apply-coupon" style="white-space:nowrap; padding:0.35rem 0.8rem; font-size:0.8rem;">Apply</button>
+                </div>
+                <div id="coupon-status-msg" style="font-size:0.73rem; color:#10B981; font-weight:600; margin-top:3px; display:none;"></div>
               </div>
             </div>
 
-            <!-- Coupon Code -->
-            <div style="margin-bottom:1.25rem;">
-              <label class="filter-item-label">Voucher / Coupon Code</label>
-              <div style="display:flex; gap:0.5rem;">
-                <input type="text" id="voucher-code-input" class="filter-search-box" placeholder="e.g. SMAT50 or WELCOME2026" value="SMAT50" />
-                <button type="button" class="btn-filter-reset" onclick="window.smatApp.showToast('Coupon SMAT50 Applied! 50% discount reflected.')">Apply</button>
+            <!-- 5. Point 3: Live Final Billing Breakdown (Plan + Add-on - Discounts + Taxes = Final Payable) -->
+            <div id="plan-billing-breakdown-card" style="background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1.15rem; font-size:0.84rem;">
+              <div style="font-weight:700; color:#1E40AF; font-size:0.88rem; margin-bottom:0.55rem; display:flex; justify-content:space-between; align-items:center;">
+                <span>🧾 3. Final Billing & Tax Summary</span>
+                <span style="font-size:0.72rem; color:#2563EB; background:#DBEAFE; padding:2px 7px; border-radius:4px; font-weight:600;">SAC: 998314 • GST 18%</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:0.35rem; color:#334155;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span id="summary-plan-title">Plan Rate:</span>
+                  <span id="summary-plan-price" style="font-weight:600;">₹ 6,500.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span>Add-on Boosters Subtotal:</span>
+                  <span id="summary-addons-price" style="font-weight:600;">+ ₹ 0.00</span>
+                </div>
+                <div id="summary-discount-row" style="display:flex; justify-content:space-between; color:#DC2626;">
+                  <span id="summary-discount-label">Applicable Discounts Deducted:</span>
+                  <span id="summary-discount-price" style="font-weight:600;">- ₹ 0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding-top:0.35rem; border-top:1px dashed #BFDBFE;">
+                  <span>Taxable Amount (Net Base):</span>
+                  <span id="summary-taxable-price" style="font-weight:600;">₹ 6,500.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; color:#475569;">
+                  <span>GST (18% Software Services):</span>
+                  <span id="summary-tax-price" style="font-weight:600;">+ ₹ 1,170.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.45rem; margin-top:0.15rem; border-top:2px solid #93C5FD; font-size:0.95rem; font-weight:800; color:#1E3A8A;">
+                  <span>Customer Final Payable Amount:</span>
+                  <span id="summary-final-total" style="color:#1D4ED8; font-size:1.05rem;">₹ 7,670.00</span>
+                </div>
               </div>
             </div>
 
+            <!-- Footer Actions -->
             <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.75rem; border-top:1px solid #E2E8F0;">
               <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()">Cancel</button>
               <button type="submit" id="plan-submit-btn" class="btn-table-action btn-action-primary">
-                ⚡ Update Subscription
+                ${isAddSubscription ? '⚡ Activate Subscription' : '⚡ Update Subscription'}
               </button>
             </div>
           </form>
@@ -5917,37 +9743,106 @@ function toggleAccordion(cardId) {
       </div>
     `;
 
-    // Dynamic price calculation updater
+    // Helper to extract clean plan tier from selection value
+    function getCleanPlanName(val) {
+      if (!val) return 'Pro';
+      return val.replace('_Monthly', '').replace('_Yearly', '').trim();
+    }
+
+    let appliedCouponDiscount = 0;
+    let appliedCouponName = '';
+
+    // Dynamic price calculation updater (Points 1, 2, 3)
     function updateCalcDisplay() {
-      const targetId = parseInt($('#plan-target-client')?.value || client.id);
-      const targetC = clientsData.find(c => c.id === targetId) || client;
-      const selectedPlan = $('#plan-tier-select')?.value || 'Pro NY';
-      const durationMonths = parseInt($('#plan-duration-select')?.value || '12', 10);
+      const targetVal = $('#plan-target-client')?.value;
+      const isNew = targetVal === 'NEW_CLIENT';
+      const newBox = $('#new-client-fields-box');
+      if (newBox) newBox.style.display = isNew ? 'block' : 'none';
+
+      const targetId = isNew ? 0 : parseInt(targetVal || (client ? client.id : 0), 10);
+      const targetC = isNew ? { currency_type: 'INR', plan_name: 'None' } : (clientsData.find(c => c.id === targetId) || client || { currency_type: 'INR', plan_name: 'None' });
+      
+      const rawPlan = $('#plan-tier-select')?.value || 'Pro_Monthly';
+      const selectedPlan = getCleanPlanName(rawPlan);
+      const durationMonths = parseInt($('#plan-duration-select')?.value || '1', 10);
       const meta = getPlanMeta(selectedPlan);
 
       const baseMonthly = targetC.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
       const currencySymbol = targetC.currency_type === 'USD' ? '$ ' : '₹ ';
 
-      let total = 0;
-      let formulaText = '';
+      // 1. Base Plan Rate
+      let basePlanPrice = 0;
       if (durationMonths === 12) {
-        total = meta.yearlyINR ? (targetC.currency_type === 'USD' ? meta.yearlyUSD : meta.yearlyINR) : baseMonthly * 10;
-        formulaText = `${currencySymbol}${total.toLocaleString()} billed yearly (Save ${meta.yearlySavingsPercent || 15}%) • Quotas credited UPFRONT`;
+        basePlanPrice = meta.yearlyINR ? (targetC.currency_type === 'USD' ? meta.yearlyUSD : meta.yearlyINR) : baseMonthly * 10;
       } else {
-        total = baseMonthly * durationMonths;
-        formulaText = `${currencySymbol}${baseMonthly.toLocaleString()} × ${durationMonths} Months = ${currencySymbol}${total.toLocaleString()}`;
+        basePlanPrice = baseMonthly * durationMonths;
       }
 
-      const calcEl = $('#calc-formula-display');
-      if (calcEl) calcEl.innerText = formulaText;
+      // 2. Add-on Boosters Subtotal
+      let addonsSubtotal = 0;
+      if ($('#addon-chats')?.checked) addonsSubtotal += 1500;
+      if ($('#addon-waba')?.checked) addonsSubtotal += 2500;
+      if ($('#addon-agent')?.checked) addonsSubtotal += 800;
+
+      // 3. Point 1: Plan Discount
+      const planDiscType = $('#plan-discount-type')?.value || 'none';
+      const planDiscVal = parseFloat($('#plan-discount-value')?.value) || 0;
+      let planDiscountAmt = 0;
+      if (planDiscType === 'percent') {
+        planDiscountAmt = (basePlanPrice * Math.min(100, Math.max(0, planDiscVal))) / 100;
+      } else if (planDiscType === 'flat') {
+        planDiscountAmt = Math.min(basePlanPrice, Math.max(0, planDiscVal));
+      }
+
+      // 4. Point 2: Add-on Discount
+      const addonDiscType = $('#addon-discount-type')?.value || 'none';
+      const addonDiscVal = parseFloat($('#addon-discount-value')?.value) || 0;
+      let addonDiscountAmt = 0;
+      if (addonDiscType === 'percent') {
+        addonDiscountAmt = (addonsSubtotal * Math.min(100, Math.max(0, addonDiscVal))) / 100;
+      } else if (addonDiscType === 'flat') {
+        addonDiscountAmt = Math.min(addonsSubtotal, Math.max(0, addonDiscVal));
+      }
+
+      // Combined Discounts
+      const totalDiscount = Math.min(basePlanPrice + addonsSubtotal, planDiscountAmt + addonDiscountAmt + appliedCouponDiscount);
+
+      // 5. Point 3: Taxable Amount & GST 18%
+      const taxableAmount = Math.max(0, (basePlanPrice + addonsSubtotal) - totalDiscount);
+      const isTrial = selectedPlan.toLowerCase().includes('trial') || baseMonthly === 0;
+      const taxRate = isTrial ? 0 : 0.18;
+      const taxAmount = Math.round(taxableAmount * taxRate * 100) / 100;
+      const finalPayable = taxableAmount + taxAmount;
+
+      // Update Summary Elements
+      const planTitleEl = $('#summary-plan-title');
+      if (planTitleEl) planTitleEl.innerText = `Plan Rate (${selectedPlan} - ${durationMonths === 12 ? 'Yearly' : (durationMonths > 1 ? durationMonths + ' Mos' : 'Monthly')}):`;
+
+      const planPriceEl = $('#summary-plan-price');
+      if (planPriceEl) planPriceEl.innerText = `${currencySymbol}${basePlanPrice.toLocaleString('en-IN')}.00`;
+
+      const addonsPriceEl = $('#summary-addons-price');
+      if (addonsPriceEl) addonsPriceEl.innerText = `+ ${currencySymbol}${addonsSubtotal.toLocaleString('en-IN')}.00`;
+
+      const discPriceEl = $('#summary-discount-price');
+      if (discPriceEl) discPriceEl.innerText = `- ${currencySymbol}${totalDiscount.toLocaleString('en-IN')}.00`;
+
+      const taxablePriceEl = $('#summary-taxable-price');
+      if (taxablePriceEl) taxablePriceEl.innerText = `${currencySymbol}${taxableAmount.toLocaleString('en-IN')}.00`;
+
+      const taxPriceEl = $('#summary-tax-price');
+      if (taxPriceEl) taxPriceEl.innerText = `+ ${currencySymbol}${taxAmount.toLocaleString('en-IN')}.00`;
+
+      const finalTotalEl = $('#summary-final-total');
+      if (finalTotalEl) finalTotalEl.innerText = `${currencySymbol}${finalPayable.toLocaleString('en-IN')}.00`;
 
       // Downgrade detection
-      const currentRank = getPlanRank(targetC.plan_name);
+      const currentRank = isNew ? 0 : getPlanRank(targetC.plan_name);
       const targetRank = meta.rank;
       const submitBtn = $('#plan-submit-btn');
 
       if (submitBtn) {
-        if (targetRank < currentRank) {
+        if (!isNew && targetRank < currentRank) {
           submitBtn.className = 'btn-table-action btn-action-warning';
           submitBtn.style.background = '#EA580C';
           submitBtn.style.borderColor = '#EA580C';
@@ -5958,46 +9853,211 @@ function toggleAccordion(cardId) {
           submitBtn.style.background = '#1877F2';
           submitBtn.style.borderColor = '#1877F2';
           submitBtn.style.color = '#FFFFFF';
-          submitBtn.innerHTML = '⚡ Update Subscription';
+          submitBtn.innerHTML = isAddSubscription || isNew ? '⚡ Activate Subscription' : '⚡ Update Subscription';
         }
       }
+
+      return {
+        basePlanPrice,
+        addonsSubtotal,
+        totalDiscount,
+        taxableAmount,
+        taxAmount,
+        finalPayable,
+        currencySymbol
+      };
     }
 
-    $('#plan-tier-select')?.addEventListener('change', updateCalcDisplay);
-    $('#plan-duration-select')?.addEventListener('change', updateCalcDisplay);
-    $('#plan-target-client')?.addEventListener('change', updateCalcDisplay);
+    // Auto-sync between plan select and duration select
+    $('#plan-tier-select')?.addEventListener('change', (e) => {
+      const val = e.target.value;
+      const durationSelect = $('#plan-duration-select');
+      if (durationSelect) {
+        if (val.endsWith('_Yearly')) {
+          durationSelect.value = '12';
+        } else if (val.endsWith('_Monthly') && durationSelect.value === '12') {
+          durationSelect.value = '1';
+        }
+      }
+      updateCalcDisplay();
+    });
+
+    $('#plan-duration-select')?.addEventListener('change', (e) => {
+      const dur = e.target.value;
+      const planSelect = $('#plan-tier-select');
+      if (planSelect) {
+        const cur = planSelect.value;
+        const tier = getCleanPlanName(cur);
+        if (dur === '12' && cur.endsWith('_Monthly')) {
+          const yearlyVal = tier + '_Yearly';
+          if (planSelect.querySelector(`option[value="${yearlyVal}"]`)) {
+            planSelect.value = yearlyVal;
+          }
+        } else if (dur !== '12' && cur.endsWith('_Yearly')) {
+          const monthlyVal = tier + '_Monthly';
+          if (planSelect.querySelector(`option[value="${monthlyVal}"]`)) {
+            planSelect.value = monthlyVal;
+          }
+        }
+      }
+      updateCalcDisplay();
+    });
+
+    // Discount & Add-on event listeners
+    ['#plan-discount-type', '#plan-discount-value', '#addon-discount-type', '#addon-discount-value', '#addon-chats', '#addon-waba', '#addon-agent', '#plan-target-client'].forEach(sel => {
+      const el = $(sel);
+      if (el) {
+        el.addEventListener('input', updateCalcDisplay);
+        el.addEventListener('change', updateCalcDisplay);
+      }
+    });
+
+    // Coupon Apply Button
+    $('#btn-apply-coupon')?.addEventListener('click', () => {
+      const code = ($('#voucher-code-input')?.value || '').trim().toUpperCase();
+      const statusEl = $('#coupon-status-msg');
+      const calcNow = updateCalcDisplay();
+
+      if (!code) {
+        appliedCouponDiscount = 0;
+        appliedCouponName = '';
+        if (statusEl) statusEl.style.display = 'none';
+        updateCalcDisplay();
+        return;
+      }
+
+      if (code === 'SMAT50') {
+        appliedCouponDiscount = Math.round((calcNow.basePlanPrice * 50) / 100);
+        appliedCouponName = 'SMAT50';
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Coupon SMAT50 Applied! 50% discount on plan (-${calcNow.currencySymbol}${appliedCouponDiscount.toLocaleString('en-IN')})`;
+        }
+        showToast('Coupon SMAT50 Applied! 50% discount reflected.');
+      } else if (code === '30PERCENTADD') {
+        appliedCouponDiscount = Math.round((calcNow.addonsSubtotal * 30) / 100);
+        appliedCouponName = '30PERCENTADD';
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Coupon 30PERCENTADD Applied! 30% discount on addons (-${calcNow.currencySymbol}${appliedCouponDiscount.toLocaleString('en-IN')})`;
+        }
+        showToast('Coupon 30PERCENTADD Applied! Discount reflected on add-ons.');
+      } else {
+        appliedCouponDiscount = 500;
+        appliedCouponName = code;
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Promo code ${code} Applied! (-${calcNow.currencySymbol}500.00)`;
+        }
+        showToast(`Coupon ${code} Applied! Discount reflected.`);
+      }
+      updateCalcDisplay();
+    });
+
     updateCalcDisplay();
 
     // Form submit
     $('#plan-activation-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const targetId = parseInt($('#plan-target-client').value);
-      const selectedPlan = $('#plan-tier-select').value;
+      const targetVal = $('#plan-target-client').value;
+      const rawPlan = $('#plan-tier-select').value;
+      const selectedPlan = getCleanPlanName(rawPlan);
       const durationMonths = parseInt($('#plan-duration-select').value, 10);
-      const targetClient = clientsData.find(c => c.id === targetId) || client;
+      const meta = getPlanMeta(selectedPlan);
 
-      const currentRank = getPlanRank(targetClient.plan_name);
-      const targetRank = getPlanMeta(selectedPlan).rank;
+      const calcResult = updateCalcDisplay();
+      const finalAmountDisplay = `${calcResult.currencySymbol}${calcResult.finalPayable.toLocaleString('en-IN')}.00`;
 
       const selectedAddons = [];
       if ($('#addon-chats')?.checked) selectedAddons.push({ name: '+10,000 Conversations Quota', priceINR: 1500, type: 'recurring' });
       if ($('#addon-waba')?.checked) selectedAddons.push({ name: '+1 Dedicated WhatsApp WABA Number', priceINR: 2500, type: 'recurring' });
       if ($('#addon-agent')?.checked) selectedAddons.push({ name: '+1 Additional Live Agent Seat', priceINR: 800, type: 'one_time' });
 
-      // Point 8: If Downgrade, trigger Admin Downgrade Impact Assessment modal!
+      if (targetVal === 'NEW_CLIENT') {
+        const newName = $('#new-client-name')?.value.trim() || '';
+        const newEmail = $('#new-client-email')?.value.trim() || '';
+        const newPhone = $('#new-client-phone')?.value.trim() || '';
+
+        if (!newName && !newEmail) {
+          showToast('⚠️ Please enter client company/name or email.');
+          return;
+        }
+
+        const isYearly = durationMonths === 12;
+        const newId = clientsData.length ? Math.max(...clientsData.map(c => c.id || 0)) + 1 : 101;
+        const now = new Date();
+        const endDate = new Date(now.getTime() + durationMonths * 30 * 24 * 60 * 60 * 1000);
+
+        const newClient = {
+          id: newId,
+          s_no: clientsData.length + 1,
+          name: newName || (newEmail ? newEmail.split('@')[0] : 'New Client'),
+          email: newEmail,
+          phone_number: newPhone || '+91 9705736759',
+          company_name: newName || 'Enterprise Account',
+          plan_name: selectedPlan,
+          plan_type: meta.monthlyINR > 0 ? 'Paid_plan' : 'Trial_plan',
+          billing_cycle: isYearly ? 'Yearly' : (durationMonths > 1 ? `Custom (${durationMonths} Mos)` : 'Monthly'),
+          subscription_status: 'Active',
+          days_left: durationMonths * 30,
+          bots_limit: meta.bots || 5,
+          chats_limit: meta.chats || '50,000',
+          end_date: `${String(endDate.getDate()).padStart(2, '0')}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${endDate.getFullYear()}`,
+          subscription_amount_display: finalAmountDisplay,
+          final_billing: {
+            base_plan_price: calcResult.basePlanPrice,
+            addons_subtotal: calcResult.addonsSubtotal,
+            discount_deducted: calcResult.totalDiscount,
+            taxable_amount: calcResult.taxableAmount,
+            tax_gst18: calcResult.taxAmount,
+            final_payable: calcResult.finalPayable,
+            sac_code: '998314'
+          },
+          subscription_id: `SUB-${10000 + newId}`,
+          zoho_customer_id: 'ZC-' + (900000 + newId),
+          currency_type: 'INR'
+        };
+
+        newClient.active_addons = selectedAddons.map(addon => {
+          const std30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+          const effectiveExpiry = endDate < std30 ? endDate : std30;
+          return {
+            id: `addon_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+            name: addon.name,
+            type: addon.type,
+            expiryDate: `${String(effectiveExpiry.getDate()).padStart(2, '0')}-${String(effectiveExpiry.getMonth() + 1).padStart(2, '0')}-${effectiveExpiry.getFullYear()}`,
+            cappedBySubscription: endDate < std30
+          };
+        });
+
+        clientsData.unshift(newClient);
+        localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+        showToast(`🎉 New subscription successfully created for ${newClient.name} (${selectedPlan} - ${finalAmountDisplay})!`);
+        closeModal();
+        if (currentRoute === 'subscriptions') renderClientSubscriptionsView($('#route-viewport'));
+        return;
+      }
+
+      const targetId = parseInt(targetVal, 10);
+      const targetClient = clientsData.find(c => c.id === targetId) || client;
+      const currentRank = getPlanRank(targetClient.plan_name);
+      const targetRank = meta.rank;
+
       if (targetRank < currentRank) {
         closeModal();
         openDowngradeImpactModal(targetId, selectedPlan, durationMonths, selectedAddons);
         return;
       }
 
-      // Upgrade / Renewal direct activation
-      applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons);
+      applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons, calcResult);
     });
   }
 
   // Helper: Apply Subscription Update
-  function applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons) {
+  function applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons, calcResult = null) {
     const meta = getPlanMeta(selectedPlan);
     const isYearly = durationMonths === 12;
     const baseMonthly = targetClient.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
@@ -6015,7 +10075,1070 @@ function toggleAccordion(cardId) {
     const now = new Date();
     const endDate = new Date(now.getTime() + durationMonths * 30 * 24 * 60 * 60 * 1000);
     targetClient.end_date = `${String(endDate.getDate()).padStart(2, '0')}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${endDate.getFullYear()}`;
-    targetClient.subscription_amount_display = targetClient.currency_type === 'USD' ? `$ ${totalAmount.toFixed(2)}` : `₹ ${totalAmount.toLocaleString('en-IN')}.00`;
+    
+    if (calcResult && calcResult.finalPayable !== undefined) {
+      targetClient.subscription_amount_display = `${calcResult.currencySymbol}${calcResult.finalPayable.toLocaleString('en-IN')}.00`;
+      targetClient.final_billing = {
+        base_plan_price: calcResult.basePlanPrice,
+        addons_subtotal: calcResult.addonsSubtotal,
+        discount_deducted: calcResult.totalDiscount,
+        taxable_amount: calcResult.taxableAmount,
+        tax_gst18: calcResult.taxAmount,
+        final_payable: calcResult.finalPayable,
+        sac_code: '998314'
+      };
+    } else {
+      targetClient.subscription_amount_display = targetClient.currency_type === 'USD' ? `$ ${totalAmount.toFixed(2)}` : `₹ ${totalAmount.toLocaleString('en-IN')}.00`;
+    }
+
+    // Process add-ons with Point 3 Expiry Priority
+    targetClient.active_addons = selectedAddons.map(addon => {
+      const std30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const effectiveExpiry = endDate < std30 ? endDate : std30;
+      return {
+        id: `addon_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        name: addon.name,
+        type: addon.type,
+        expiryDate: `${String(effectiveExpiry.getDate()).padStart(2, '0')}-${String(effectiveExpiry.getMonth() + 1).padStart(2, '0')}-${effectiveExpiry.getFullYear()}`,
+        cappedBySubscription: endDate < std30
+      };
+    });
+
+    showToast(`Subscription successfully updated for ${targetClient.name} (${durationMonths} Mos)!`);
+    closeModal();
+    if (currentRoute === 'subscriptions') renderClientSubscriptionsView($('#route-viewport'));
+    else if (currentRoute === 'renewals') renderRenewalsView($('#route-viewport'));
+    else if (currentRoute === 'client-details') renderClientDetailsView($('#route-viewport'));
+    else if (currentRoute === 'client-details-profile') renderClientDetailsProfileView($('#route-viewport'));
+  }
+
+  // =========================================================================
+  // POINT 8: ADMIN PANEL – DOWNGRADE IMPACT ASSESSMENT MODAL
+  // =========================================================================
+  function openDowngradeImpactModal(clientId, targetPlanName, durationMonths, selectedAddons) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const currentMeta = getPlanMeta(client.plan_name);
+    const targetMeta = getPlanMeta(targetPlanName);
+    const modal = $('#modal-container');
+
+    // Real client usage calculation
+    const botsUsed = client.bots_used || 0;
+    const chatsUsed = client.chats_used || 0;
+    const botsExceeded = Math.max(0, botsUsed - targetMeta.bots);
+    const chatsExceeded = Math.max(0, chatsUsed - targetMeta.chats);
+    const hasWA = client.plan_name?.includes('WA') || client.plan_name?.includes('Pro');
+    const waBlocked = hasWA && !targetMeta.hasWA;
+    const isWL = client.deployment_type === 'White-Label';
+    const wlBlocked = isWL && !targetMeta.hasWL;
+
+    modal.innerHTML = `
+      <div class="modal-overlay open">
+        <div class="impact-modal-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <div style="font-size:1.15rem; font-weight:800; color:#9A3412; display:flex; align-items:center; gap:0.5rem;">
+                <span>⚠️ Admin Downgrade Impact Assessment</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748B;">Account: <strong>${client.name}</strong> (${client.email})</div>
+            </div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+          </div>
+
+          <!-- Alert Banner -->
+          <div class="impact-alert-banner">
+            <span style="font-size:1.3rem;">🚨</span>
+            <div>
+              <strong>Action Required:</strong> You are downgrading this account from a higher tier. SmatBot has evaluated the account's live usage and identified configurations that will be disrupted.
+            </div>
+          </div>
+
+          <!-- Plan Comparison Header -->
+          <div class="impact-comparison-header">
+            <div>
+              <div style="font-size:0.75rem; color:#64748B; margin-bottom:2px;">Current Active Plan</div>
+              <span class="impact-plan-pill current">${client.plan_name}</span>
+            </div>
+            <div style="font-size:1.2rem; color:#94A3B8; font-weight:700;">➔</div>
+            <div>
+              <div style="font-size:0.75rem; color:#64748B; margin-bottom:2px;">Target Downgraded Plan</div>
+              <span class="impact-plan-pill target">${targetPlanName}</span>
+            </div>
+          </div>
+
+          <!-- Section 1: Usage Limits Exceeded -->
+          <div class="impact-section-title">
+            <span>📊 Usage Limits Impact</span>
+          </div>
+
+          ${botsExceeded > 0 ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>Active Chatbots Exceeded (${botsUsed} / ${targetMeta.bots} allowed)</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Client currently has ${botsUsed} live bots. The new plan only permits ${targetMeta.bots} bots.</div>
+              </div>
+              <span class="impact-badge-tag exceeded">-${botsExceeded} Bots To Pause</span>
+            </div>
+          ` : `
+            <div class="impact-item-box safe">
+              <div><strong>Chatbot Allocation:</strong> ${botsUsed} of ${targetMeta.bots} bots used</div>
+              <span class="impact-badge-tag safe">Within Limit</span>
+            </div>
+          `}
+
+          ${chatsExceeded > 0 ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>Conversations Quota (${chatsUsed.toLocaleString()} / ${targetMeta.chats.toLocaleString()})</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Current month chats exceed new plan capacity. Live chats will pause unless quota add-on is purchased.</div>
+              </div>
+              <span class="impact-badge-tag exceeded">Exceeded by ${chatsExceeded.toLocaleString()}</span>
+            </div>
+          ` : `
+            <div class="impact-item-box safe">
+              <div><strong>Conversations Quota:</strong> ${chatsUsed.toLocaleString()} of ${targetMeta.chats.toLocaleString()} chats</div>
+              <span class="impact-badge-tag safe">Within Limit</span>
+            </div>
+          `}
+
+          <!-- Section 2: Features Becoming Unavailable -->
+          <div class="impact-section-title">
+            <span>🚫 Features Becoming Unavailable</span>
+          </div>
+
+          ${waBlocked ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>WhatsApp WABA Business Cloud API</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Meta webhook and WhatsApp bot message automation will be disconnected immediately.</div>
+              </div>
+              <span class="impact-badge-tag blocked">Disconnected</span>
+            </div>
+          ` : ''}
+
+          ${wlBlocked ? `
+            <div class="impact-item-box danger">
+              <div>
+                <strong>White-Label Domain & Reseller Hub (${client.custom_domain || 'Custom Domain'})</strong>
+                <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Custom domain will revert to default smatbot.com subdomain. Reseller sub-clients will be locked out.</div>
+              </div>
+              <span class="impact-badge-tag blocked">Reverted</span>
+            </div>
+          ` : ''}
+
+          <div class="impact-item-box warning">
+            <div>
+              <strong>AI Vector Embeddings & Custom LLM Fallback</strong>
+              <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Document training switched to read-only rule matching. Token consumption halted.</div>
+            </div>
+            <span class="impact-badge-tag exceeded">Restricted</span>
+          </div>
+
+          <!-- Section 3: Safe Features Continuing to Work -->
+          <div class="impact-section-title">
+            <span>✅ Features That Will Continue to Work</span>
+          </div>
+          <div class="impact-item-box safe">
+            <div>
+              <strong>Core Chatbot Automation & Web Widget</strong>
+              <div style="font-size:0.78rem; color:#64748B; margin-top:2px;">Web live chat widget, lead capture forms, and basic email notifications remain fully operational.</div>
+            </div>
+            <span class="impact-badge-tag safe">Active</span>
+          </div>
+
+          <!-- Section 4: Required Admin Actions -->
+          <div class="impact-section-title">
+            <span>📋 Required Pre-Downgrade Actions</span>
+          </div>
+          <ul class="impact-action-list">
+            ${botsExceeded > 0 ? `<li>⚠️ <strong>Archive ${botsExceeded} Bot(s):</strong> Confirm which bots to deactivate before final execution.</li>` : ''}
+            ${waBlocked ? `<li>⚠️ <strong>Export WhatsApp Data:</strong> Notify client to back up customer transcripts.</li>` : ''}
+            <li>⚠️ <strong>Audit Add-on Renewals:</strong> Confirm with client that recurring add-ons will align with the new plan tier.</li>
+          </ul>
+
+          <!-- Checkbox Confirmation -->
+          <label class="impact-ack-checkbox">
+            <input type="checkbox" id="impact-ack-check" onchange="document.getElementById('confirm-downgrade-btn').disabled = !this.checked;" />
+            <span>I have reviewed this Downgrade Impact Assessment with the client and verify that the required feature deactivations are accepted.</span>
+          </label>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
+            <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.openPlanModal(${client.id}, '${targetPlanName}')">
+              ← Back to Plan Selector
+            </button>
+            <button type="button" id="confirm-downgrade-btn" class="btn-table-action btn-action-warning" style="background:#EA580C; border-color:#EA580C; color:#FFFFFF;" disabled onclick="window.smatApp.executeDowngrade(${client.id}, '${targetPlanName}', ${durationMonths})">
+              🛡️ Confirm & Execute Downgrade
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function executeDowngrade(clientId, targetPlanName, durationMonths) {
+    const client = clientsData.find(c => c.id === clientId);
+    if (!client) return;
+
+    applyPlanActivation(client, targetPlanName, durationMonths, []);
+    showToast(`Downgrade applied to ${client.name} (${targetPlanName}). Impact logged in audit trail.`);
+  }
+
+  // =========================================================================
+  // POINT 5: AUTO-PAY MANAGEMENT MODAL
+  // =========================================================================
+  function openAutoPayModal(clientId) {
+    const client = clientsData.find(c => c.id === clientId) || clientsData[0];
+    const isEnabled = client.autopay_enabled !== false;
+    const modal = $('#modal-container');
+
+    const currClientObj = (client && client.id !== undefined) ? client : (clientsData.find(c => c.id === 10) || clientsData[0] || {});
+    const bAddr = currClientObj.billing_address || { company: currClientObj.company_name || 'feso', line1: 'test', line2: 'test', city: 'Hyderabad', pin: '500034', country: 'India' };
+    const sAddr = currClientObj.shipping_address || {};
+    const hasShipping = Boolean(sAddr.line1 || sAddr.city);
+
+    modal.innerHTML = `
+      <div class="modal-overlay open" style="z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.65); padding:1.5rem;">
+        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:960px; width:100%; max-height:92vh; overflow-y:auto; background:#FFFFFF; border-radius:8px; box-shadow:0 20px 40px rgba(0,0,0,0.25); padding:0;">
+          
+          <!-- Top Title Bar (Screenshot 1) -->
+          <div style="padding:1.25rem 2rem; border-bottom:1px solid #E5E7EB; background:#FFFFFF; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:20;">
+            <div>
+              <div style="font-size:1.25rem; font-weight:700; color:#111827; display:flex; align-items:center; gap:0.5rem;">
+                <span>Change Subscription</span>
+              </div>
+              <div style="font-size:0.8rem; color:#6B7280; margin-top:2px;">
+                Official Zoho Subscriptions Reference Layout • SmatBot Billing Engine
+              </div>
+            </div>
+            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.4rem; color:#6B7280; cursor:pointer; line-height:1;" title="Close Modal">✕</button>
+          </div>
+
+          <form id="plan-activation-form" style="padding:2rem;">
+
+            <!-- ======================================================== -->
+            <!-- SECTION 1: CUSTOMER & ADDRESS (SCREENSHOT 1)             -->
+            <!-- ======================================================== -->
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+              
+              <!-- 1. Customer Name Row -->
+              <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:flex-start;">
+                <label class="filter-item-label" style="font-size:0.88rem; font-weight:600; color:#DC2626; margin:0; padding-top:6px;">
+                  Customer Name*
+                </label>
+                <div>
+                  <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+                    
+                    <!-- Searchable Customer Dropdown -->
+                    <div style="position:relative; width:420px;">
+                      <select id="plan-target-client" class="custom-dropdown-trigger" style="width:100%; border-color:#93C5FD; font-size:0.86rem; padding:0.45rem 0.75rem;">
+                        <option value="NEW_CLIENT" ${isNewInitial ? 'selected' : ''}>➕ + Add New Client / Customer...</option>
+                        ${clientsData.map(c => `
+                          <option value="${c.id}" ${(!isNewInitial && c.id === currClientObj.id) ? 'selected' : ''}>
+                            ${escapeHtml(c.name)} - ${escapeHtml(c.email)}
+                          </option>
+                        `).join('')}
+                      </select>
+                    </div>
+
+                    <!-- Quick Search Glass Button [ 🔍 ] -->
+                    <button type="button" class="btn-table-action" style="background:#2563EB; border:1px solid #2563EB; color:#FFFFFF; padding:0.45rem 0.75rem; border-radius:4px; cursor:pointer;" onclick="document.getElementById('plan-target-client').focus();" title="Search Customer">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+
+                    <!-- Currency Pill [ 🟢 INR ] -->
+                    <span class="zoho-currency-pill" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#065F46; padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.8rem; display:inline-flex; align-items:center; gap:5px;">
+                      <span style="width:7px; height:7px; background:#10B981; border-radius:50%; display:inline-block;"></span> ${currClientObj.currency_type || 'INR'}
+                    </span>
+
+
+                  </div>
+
+                  <!-- New Client Quick Fields (only when NEW_CLIENT is selected) -->
+                  <div id="new-client-fields-box" style="display: ${isNewInitial ? 'block' : 'none'}; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:0.75rem; margin-top:0.75rem;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                      <div>
+                        <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Company / Client Name*</label>
+                        <input type="text" id="new-client-name" class="filter-search-box" placeholder="e.g. Acme Technologies" style="width:100%;" />
+                      </div>
+                      <div>
+                        <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Official Email Address*</label>
+                        <input type="email" id="new-client-email" class="filter-search-box" placeholder="e.g. billing@acme.com" style="width:100%;" />
+                      </div>
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                      <label style="font-size:0.75rem; color:#64748B; font-weight:600; display:block; margin-bottom:2px;">Phone Number (Optional)</label>
+                      <input type="tel" id="new-client-phone" class="filter-search-box" placeholder="+91 9876543210" style="width:100%;" />
+                    </div>
+                  </div>
+
+                  <!-- Billing & Shipping Address Cards (Screenshot 1) -->
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; max-width:620px; margin-top:1.25rem;">
+                    <!-- Billing Address Card -->
+                    <div style="font-size:0.85rem; color:#374151; line-height:1.45;">
+                      <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.4rem;">
+                        <span>BILLING ADDRESS</span>
+                        <span style="cursor:pointer;" title="Edit Billing Address">✏️</span>
+                      </div>
+                      <div style="font-weight:700; color:#111827;">${escapeHtml(bAddr.company || currClientObj.company_name || 'feso')}</div>
+                      <div>${escapeHtml(bAddr.line1 || 'test')}</div>
+                      <div>${escapeHtml(bAddr.line2 || 'test')}</div>
+                      <div>${escapeHtml(bAddr.city || 'Hyderabad')} ${escapeHtml(bAddr.pin || '500034')}</div>
+                      <div>${escapeHtml(bAddr.country || 'India')}</div>
+                    </div>
+
+                    <!-- Shipping Address Card -->
+                    <div style="font-size:0.85rem; color:#374151; line-height:1.45;">
+                      <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.4rem;">
+                        <span>SHIPPING ADDRESS</span>
+                        <span style="cursor:pointer;" title="Edit Shipping Address">✏️</span>
+                      </div>
+                      ${hasShipping ? `
+                        <div style="font-weight:700; color:#111827;">${escapeHtml(sAddr.company || currClientObj.name)}</div>
+                        <div>${escapeHtml(sAddr.line1 || '')}</div>
+                        <div>${escapeHtml(sAddr.city || '')} ${escapeHtml(sAddr.pin || '')}</div>
+                        <div>${escapeHtml(sAddr.country || 'India')}</div>
+                      ` : `
+                        <a href="javascript:void(0)" onclick="alert('Shipping address can be customized under Edit Customer')" style="color:#2563EB; text-decoration:none; font-size:0.84rem; font-weight:500;">New Address</a>
+                      `}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. E-MAIL TO Row (Screenshot 1) -->
+              <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:center;">
+                <label style="font-size:0.85rem; font-weight:600; color:#4B5563;">
+                  E-MAIL TO
+                </label>
+                <div style="display:flex; align-items:center; gap:1.25rem;">
+                  <button type="button" class="btn-table-action btn-action-secondary" style="border:none; color:#2563EB; font-weight:600; font-size:0.84rem; background:none; padding:0; cursor:pointer;" onclick="alert('Add Contact Person')">
+                    <span style="font-size:1.1rem; line-height:1;">⊕</span> New Contact Person
+                  </button>
+                  <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; color:#111827; cursor:pointer;">
+                    <input type="checkbox" checked style="accent-color:#2563EB;" />
+                    <span>${escapeHtml(currClientObj.email || 'suryadesigner1234@gmail.com')}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 3. GST Details Row (Screenshot 1: Billing & Shipping Recipient) -->
+              <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:flex-start;">
+                <div></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; max-width:620px; font-size:0.83rem;">
+                  <!-- Billing Recipient GST Details -->
+                  <div>
+                    <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; margin-bottom:0.35rem;">
+                      <span>BILLING RECIPIENT GST DETAILS</span>
+                      <span style="cursor:pointer;">✏️</span>
+                    </div>
+                    <div style="color:#374151;">
+                      GST Treatment: <span style="font-weight:600; color:#111827;">${escapeHtml(currClientObj.gst_treatment || 'Unregistered Business')}</span> ✏️
+                    </div>
+                  </div>
+
+                  <!-- Shipping Recipient GST Details -->
+                  <div>
+                    <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:#6B7280; text-transform:uppercase; margin-bottom:0.35rem;">
+                      <span>SHIPPING RECIPIENT GST DETAILS</span>
+                      <span style="cursor:pointer;">✏️</span>
+                    </div>
+                    <div style="color:#4B5563;">GSTIN: <span style="color:#111827; font-weight:500;">${escapeHtml(currClientObj.gst_number || '')}</span></div>
+                    <div style="color:#4B5563;">Business Legal Name: <span style="color:#111827; font-weight:500;">${escapeHtml(currClientObj.legal_name || '')}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Place of Supply* (Screenshot 1) -->
+              <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:center;">
+                <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">
+                  Place of Supply*
+                </label>
+                <div>
+                  <select id="modal-place-of-supply" class="custom-dropdown-trigger" style="max-width:320px; font-size:0.85rem; padding:0.45rem 0.75rem;">
+                    <option value="TS" selected>[TS] - Telangana</option>
+                    <option value="MH">[MH] - Maharashtra</option>
+                    <option value="KA">[KA] - Karnataka</option>
+                    <option value="DL">[DL] - Delhi</option>
+                    <option value="TN">[TN] - Tamil Nadu</option>
+                    <option value="AP">[AP] - Andhra Pradesh</option>
+                    <option value="UP">[UP] - Uttar Pradesh</option>
+                    <option value="GJ">[GJ] - Gujarat</option>
+                    <option value="WB">[WB] - West Bengal</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 5. Select Product* (Screenshot 1) -->
+              <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:center;">
+                <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">
+                  Select Product*
+                </label>
+                <div style="font-weight:600; color:#111827; font-size:0.9rem;">
+                  SmatBot
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION 2: PLAN & ADDONS TABLE (SCREENSHOT 2)            -->
+            <!-- ======================================================== -->
+            <div style="margin-top:2.25rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+              
+              <!-- Plan Header & Preferences Bar -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <h3 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0;">Plan</h3>
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                  <select class="custom-dropdown-trigger" style="max-width:140px; padding:0.35rem 0.65rem; font-size:0.8rem;">
+                    <option value="item-level" selected>(%) Item-Level</option>
+                    <option value="transaction-level">Transaction-Level</option>
+                    <option value="no-discount">No Discounts</option>
+                  </select>
+                  <select id="plan-duration-select" class="custom-dropdown-trigger" style="max-width:140px; padding:0.35rem 0.65rem; font-size:0.8rem;">
+                    <option value="1" ${!isClientYearly ? 'selected' : ''}>Every Renewal</option>
+                    <option value="12" ${isClientYearly ? 'selected' : ''}>Yearly Renewal (12 Mos)</option>
+                    <option value="2">2 Months</option>
+                    <option value="6">6 Months</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Plan Table (Screenshot 2) -->
+              <div style="border:1px solid #E5E7EB; border-radius:6px; overflow:hidden; margin-bottom:2rem;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                  <thead>
+                    <tr style="background:#F9FAFB; border-bottom:1px solid #E5E7EB; color:#6B7280; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
+                      <th style="padding:0.65rem 1rem; text-align:left; width:36%;">PLAN NAME</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:center; width:12%;">QUANTITY</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:right; width:14%;">PRICE</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:center; width:14%;">DISCOUNT</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:left; width:12%;">TAX</th>
+                      <th style="padding:0.65rem 1rem; text-align:right; width:12%;">AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid #F3F4F6; vertical-align:top;">
+                      <!-- Plan Name & SAC Badge -->
+                      <td style="padding:1rem;">
+                        <div style="display:flex; gap:0.75rem;">
+                          <div style="width:38px; height:38px; background:#F3F4F6; border:1px solid #E5E7EB; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#9CA3AF; flex-shrink:0;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          </div>
+                          <div style="flex:1;">
+                            <div style="display:flex; align-items:center; justify-content:space-between;">
+                              <select id="plan-tier-select" class="custom-dropdown-trigger" style="width:100%; font-weight:600; color:#111827; border:none; background:none; font-size:0.88rem; padding:0;">
+                                <optgroup label="── 📅 MONTHLY PLANS ──">
+                                  <option value="Starter New Monthly (Without WA)" ${(currClientObj.plan_name || '').includes('Starter') && !isClientYearly ? 'selected' : ''}>Starter New Monthly (Without WA)</option>
+                                  <option value="Pro_Monthly" ${selectedKey === 'Pro_Monthly' ? 'selected' : ''}>Pro - Monthly (₹6,500 / month)</option>
+                                  <option value="Broadcast_Monthly" ${selectedKey === 'Broadcast_Monthly' ? 'selected' : ''}>Broadcast - Monthly (₹1,499 / month)</option>
+                                  <option value="Standard_Monthly" ${selectedKey === 'Standard_Monthly' ? 'selected' : ''}>Standard - Monthly (₹3,500 / month)</option>
+                                  <option value="AI_Monthly" ${selectedKey === 'AI_Monthly' ? 'selected' : ''}>AI Enterprise - Monthly (₹8,999 / month)</option>
+                                </optgroup>
+                                <optgroup label="── ⭐ YEARLY PLANS (SAVE UP TO 20%) ──">
+                                  <option value="Starter New Yearly" ${(currClientObj.plan_name || '').includes('Starter') && isClientYearly ? 'selected' : ''}>Starter New Yearly (₹18,900 / year)</option>
+                                  <option value="Pro_Yearly" ${selectedKey === 'Pro_Yearly' ? 'selected' : ''}>Pro - Yearly (₹72,000 / year)</option>
+                                  <option value="Broadcast_Yearly" ${selectedKey === 'Broadcast_Yearly' ? 'selected' : ''}>Broadcast - Yearly (₹14,500 / year)</option>
+                                  <option value="Standard_Yearly" ${selectedKey === 'Standard_Yearly' ? 'selected' : ''}>Standard - Yearly (₹35,000 / year)</option>
+                                  <option value="AI_Yearly" ${selectedKey === 'AI_Yearly' ? 'selected' : ''}>AI Enterprise - Yearly (₹96,000 / year)</option>
+                                </optgroup>
+                                <optgroup label="── EVALUATION / TRIAL ──">
+                                  <option value="Pro Trial" ${selectedKey === 'Pro Trial' ? 'selected' : ''}>Pro Trial (₹0 / 14 Days Evaluation)</option>
+                                </optgroup>
+                              </select>
+                              <span style="color:#9CA3AF; cursor:pointer; font-size:0.9rem; margin-left:6px;" title="Reset Plan">✕</span>
+                            </div>
+                            <input type="text" placeholder="Add description to your plan" style="width:100%; border:none; background:#F9FAFB; padding:4px 8px; font-size:0.8rem; color:#4B5563; border-radius:4px; margin-top:4px; outline:none;" />
+                            <div style="margin-top:6px; display:inline-flex; align-items:center; gap:4px;">
+                              <span style="background:#059669; color:#FFFFFF; font-size:0.68rem; font-weight:700; padding:1px 5px; border-radius:3px;">SERVICE</span>
+                              <span style="font-size:0.75rem; color:#2563EB; font-weight:600;">SAC: 998314 ✏️</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Quantity -->
+                      <td style="padding:1rem 0.75rem; text-align:center;">
+                        <input type="number" id="plan-qty-input" value="1" min="1" style="width:55px; text-align:center; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" />
+                      </td>
+
+                      <!-- Price -->
+                      <td style="padding:1rem 0.75rem; text-align:right;">
+                        <div id="plan-unit-price-display" style="font-weight:600; color:#111827;">1890</div>
+                      </td>
+
+                      <!-- Point 1: Plan Discount (% / ₹) -->
+                      <td style="padding:1rem 0.75rem; text-align:center;">
+                        <div style="display:inline-flex; align-items:center; gap:2px; border:1px solid #D1D5DB; border-radius:4px; padding:1px 4px; background:#FFFFFF;">
+                          <input type="number" id="plan-discount-value" value="0" min="0" style="width:45px; border:none; text-align:center; font-size:0.85rem; outline:none;" />
+                          <select id="plan-discount-type" style="border:none; background:none; font-size:0.8rem; color:#4B5563; outline:none; cursor:pointer;">
+                            <option value="percent">% ⌄</option>
+                            <option value="flat">₹ ⌄</option>
+                          </select>
+                        </div>
+                      </td>
+
+                      <!-- Tax -->
+                      <td style="padding:1rem 0.75rem;">
+                        <select style="border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.8rem; width:100%;">
+                          <option value="18" selected>GST18 [18%]</option>
+                          <option value="12">GST12 [12%]</option>
+                          <option value="5">GST5 [5%]</option>
+                          <option value="0">None [0%]</option>
+                        </select>
+                      </td>
+
+                      <!-- Amount -->
+                      <td style="padding:1rem; text-align:right;">
+                        <div id="summary-plan-price" style="font-weight:700; color:#111827; font-size:0.92rem;">Rs. 1,890.00</div>
+                        <div style="font-size:0.74rem; color:#6B7280; margin-top:2px;">per month</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Addons Header (Screenshot 2) -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <h3 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0;">Addons</h3>
+              </div>
+
+              <!-- Addons Table (Screenshot 2) -->
+              <div style="border:1px solid #E5E7EB; border-radius:6px; overflow:hidden; margin-bottom:0.75rem;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                  <thead>
+                    <tr style="background:#F9FAFB; border-bottom:1px solid #E5E7EB; color:#6B7280; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
+                      <th style="padding:0.65rem 1rem; text-align:left; width:36%;">ADDON NAME</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:center; width:12%;">QUANTITY</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:right; width:14%;">PRICE</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:center; width:14%;">DISCOUNT</th>
+                      <th style="padding:0.65rem 0.75rem; text-align:left; width:12%;">TAX</th>
+                      <th style="padding:0.65rem 1rem; text-align:right; width:12%;">AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Row 1: Extra Chats OC NM (Screenshot 2) -->
+                    <tr style="border-bottom:1px solid #F3F4F6; vertical-align:top;">
+                      <td style="padding:1rem;">
+                        <div style="display:flex; gap:0.6rem; align-items:flex-start;">
+                          <span style="color:#9CA3AF; cursor:grab; font-size:1.1rem; line-height:1; padding-top:4px;">⠿</span>
+                          <div style="width:38px; height:38px; background:#F3F4F6; border:1px solid #E5E7EB; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#9CA3AF; flex-shrink:0;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          </div>
+                          <div style="flex:1;">
+                            <div style="display:flex; align-items:center; justify-content:space-between;">
+                              <span style="font-weight:600; color:#111827; font-size:0.86rem;">Extra Chats OC NM</span>
+                              <span style="color:#DC2626; cursor:pointer; font-size:0.95rem; margin-left:6px;" title="Remove Add-on">✕</span>
+                            </div>
+                            <div style="font-size:0.75rem; color:#6B7280; margin-top:3px;">
+                              1 UNIT : 1000 CHATS ( Excluding WhatsApp )
+                            </div>
+                            <div style="margin-top:6px; display:inline-flex; align-items:center; gap:4px;">
+                              <span style="background:#059669; color:#FFFFFF; font-size:0.68rem; font-weight:700; padding:1px 5px; border-radius:3px;">SERVICE</span>
+                              <span style="font-size:0.75rem; color:#2563EB; font-weight:600;">SAC: 998314 ✏️</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Quantity -->
+                      <td style="padding:1rem 0.75rem; text-align:center;">
+                        <input type="number" value="1" min="1" style="width:55px; text-align:center; border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.85rem;" />
+                        <div style="font-size:0.72rem; color:#6B7280; margin-top:4px;">Extra Chats OC NM</div>
+                      </td>
+
+                      <!-- Price -->
+                      <td style="padding:1rem 0.75rem; text-align:right;">
+                        <div style="font-weight:600; color:#111827;">600</div>
+                      </td>
+
+                      <!-- Point 2: Add-on Discount (% / ₹) -->
+                      <td style="padding:1rem 0.75rem; text-align:center;">
+                        <div style="display:inline-flex; align-items:center; gap:2px; border:1px solid #D1D5DB; border-radius:4px; padding:1px 4px; background:#FFFFFF;">
+                          <input type="number" id="addon-discount-value" value="0" min="0" style="width:45px; border:none; text-align:center; font-size:0.85rem; outline:none;" />
+                          <select id="addon-discount-type" style="border:none; background:none; font-size:0.8rem; color:#4B5563; outline:none; cursor:pointer;">
+                            <option value="percent">% ⌄</option>
+                            <option value="flat">₹ ⌄</option>
+                          </select>
+                        </div>
+                      </td>
+
+                      <!-- Tax -->
+                      <td style="padding:1rem 0.75rem;">
+                        <select style="border:1px solid #D1D5DB; border-radius:4px; padding:4px; font-size:0.8rem; width:100%;">
+                          <option value="18" selected>GST18 [18%]</option>
+                          <option value="12">GST12 [12%]</option>
+                          <option value="5">GST5 [5%]</option>
+                          <option value="0">None [0%]</option>
+                        </select>
+                      </td>
+
+                      <!-- Amount -->
+                      <td style="padding:1rem; text-align:right;">
+                        <div style="font-weight:700; color:#111827; font-size:0.92rem;">Rs. 600.00</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Add-on Boosters Selection (Preserves existing checkbox inputs for logic) -->
+              <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:0.75rem; margin-bottom:1rem;">
+                <div style="font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:0.4rem;">Select Additional Active Add-ons:</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem; font-size:0.8rem;">
+                  <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
+                    <input type="checkbox" id="addon-chats" />
+                    <span>+10K Chats (₹1,500)</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
+                    <input type="checkbox" id="addon-waba" />
+                    <span>Dedicated WABA (₹2,500)</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
+                    <input type="checkbox" id="addon-agent" />
+                    <span>Live Agent (₹800)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Add New Row Button (Screenshot 3) -->
+              <div style="margin-bottom:2rem;">
+                <button type="button" class="btn-table-action btn-action-secondary" style="font-size:0.84rem; display:inline-flex; align-items:center; gap:6px; color:#2563EB;">
+                  <span>⊕ Add New Row</span>
+                  <span style="font-size:0.75rem;">⌄</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION 3: SUBSCRIPTION TERM (EXACT USER SPECIFICATION)  -->
+            <!-- ======================================================== -->
+            <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+              <h3 style="font-size:1.15rem; font-weight:700; color:#111827; margin:0 0 1.25rem 0;">Subscription Term</h3>
+              
+              <div style="display:flex; flex-direction:column; gap:1.25rem; max-width:650px;">
+                <!-- Subscription Number* -->
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:center;">
+                  <label style="font-size:0.88rem; font-weight:600; color:#DC2626;">Subscription Number*</label>
+                  <input type="text" id="modal-sub-number" class="filter-search-box" value="${escapeHtml(currClientObj.subscription_id || 'SUB-01083')}" style="width:100%; border:1px solid #D1D5DB; border-radius:4px; padding:0.45rem 0.75rem;" />
+                </div>
+
+                <!-- Salesperson -->
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:1.5rem; align-items:center;">
+                  <label style="font-size:0.85rem; font-weight:600; color:#4B5563;">Salesperson</label>
+                  <select id="modal-sub-sales" class="custom-dropdown-trigger" style="width:100%;">
+                    <option value="">Select a salesperson</option>
+                    <option value="Rahul Sharma" ${currClientObj.sales_person === 'Rahul Sharma' ? 'selected' : ''}>Rahul Sharma</option>
+                    <option value="Sukanya Nagireddy" ${currClientObj.sales_person === 'Sukanya Nagireddy' ? 'selected' : ''}>Sukanya Nagireddy</option>
+                    <option value="Kiran Kumar" ${currClientObj.sales_person === 'Kiran Kumar' ? 'selected' : ''}>Kiran Kumar</option>
+                    <option value="Pooja Reddy" ${currClientObj.sales_person === 'Pooja Reddy' ? 'selected' : ''}>Pooja Reddy</option>
+                    <option value="Amit Patel" ${currClientObj.sales_person === 'Amit Patel' ? 'selected' : ''}>Amit Patel</option>
+                    <option value="Sameer Khan" ${currClientObj.sales_person === 'Sameer Khan' ? 'selected' : ''}>Sameer Khan</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION 5: POINT 3 LIVE FINAL BILLING & TAX SUMMARY     -->
+            <!-- ======================================================== -->
+            <div id="plan-billing-breakdown-card" style="margin-top:2.25rem; background:#F0F7FF; border:1px solid #BFDBFE; border-radius:8px; padding:1.25rem 1.5rem; max-width:650px;">
+              <div style="font-weight:700; color:#1E40AF; font-size:0.92rem; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+                <span>🧾 Final Billing & Tax Summary</span>
+                <span style="font-size:0.75rem; color:#2563EB; background:#DBEAFE; padding:3px 8px; border-radius:4px; font-weight:600;">SAC: 998314 • GST 18%</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:0.4rem; color:#334155; font-size:0.86rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span id="summary-plan-title">Plan Rate:</span>
+                  <span id="summary-plan-price" style="font-weight:600;">₹ 1,890.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span>Add-on Boosters Subtotal:</span>
+                  <span id="summary-addons-price" style="font-weight:600;">+ ₹ 600.00</span>
+                </div>
+                <div id="summary-discount-row" style="display:flex; justify-content:space-between; color:#DC2626;">
+                  <span id="summary-discount-label">Applicable Discounts Deducted:</span>
+                  <span id="summary-discount-price" style="font-weight:600;">- ₹ 0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding-top:0.4rem; border-top:1px dashed #BFDBFE;">
+                  <span>Taxable Amount (Net Base):</span>
+                  <span id="summary-taxable-price" style="font-weight:600;">₹ 2,490.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; color:#475569;">
+                  <span>GST (18% Software Services):</span>
+                  <span id="summary-tax-price" style="font-weight:600;">+ ₹ 448.20</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.6rem; margin-top:0.25rem; border-top:2px solid #93C5FD; font-size:1.02rem; font-weight:800; color:#1E3A8A;">
+                  <span>Customer Final Payable Amount:</span>
+                  <span id="summary-final-total" style="color:#1D4ED8; font-size:1.15rem;">₹ 2,938.20</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION 6: FOOTER ACTIONS (SCREENSHOT 4)                 -->
+            <!-- ======================================================== -->
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid #E5E7EB;">
+              <button type="submit" id="plan-submit-btn" class="zoho-btn-continue" style="background:#1877F2; border:1px solid #1877F2; color:#FFFFFF; padding:0.6rem 2rem; border-radius:4px; font-weight:600; font-size:0.9rem; cursor:pointer;">
+                Continue
+              </button>
+              <button type="button" class="zoho-btn-cancel" onclick="window.smatApp.closeModal()" style="background:#FFFFFF; border:1px solid #D1D5DB; color:#374151; padding:0.6rem 1.5rem; border-radius:4px; font-weight:500; font-size:0.9rem; cursor:pointer;">
+                Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    `;
+
+    // Helper to extract clean plan tier from selection value
+    function getCleanPlanName(val) {
+      if (!val) return 'Pro';
+      return val.replace('_Monthly', '').replace('_Yearly', '').trim();
+    }
+
+    let appliedCouponDiscount = 0;
+    let appliedCouponName = '';
+
+    // Dynamic price calculation updater (Points 1, 2, 3)
+    function updateCalcDisplay() {
+      const targetVal = $('#plan-target-client')?.value;
+      const isNew = targetVal === 'NEW_CLIENT';
+      const newBox = $('#new-client-fields-box');
+      if (newBox) newBox.style.display = isNew ? 'block' : 'none';
+
+      const targetId = isNew ? 0 : parseInt(targetVal || (client ? client.id : 0), 10);
+      const targetC = isNew ? { currency_type: 'INR', plan_name: 'None' } : (clientsData.find(c => c.id === targetId) || client || { currency_type: 'INR', plan_name: 'None' });
+      
+      const rawPlan = $('#plan-tier-select')?.value || 'Pro_Monthly';
+      const selectedPlan = getCleanPlanName(rawPlan);
+      const durationMonths = parseInt($('#plan-duration-select')?.value || '1', 10);
+      const meta = getPlanMeta(selectedPlan);
+
+      const baseMonthly = targetC.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
+      const currencySymbol = targetC.currency_type === 'USD' ? '$ ' : '₹ ';
+
+      // 1. Base Plan Rate
+      let basePlanPrice = 0;
+      if (durationMonths === 12) {
+        basePlanPrice = meta.yearlyINR ? (targetC.currency_type === 'USD' ? meta.yearlyUSD : meta.yearlyINR) : baseMonthly * 10;
+      } else {
+        basePlanPrice = baseMonthly * durationMonths;
+      }
+
+      // 2. Add-on Boosters Subtotal
+      let addonsSubtotal = 0;
+      if ($('#addon-chats')?.checked) addonsSubtotal += 1500;
+      if ($('#addon-waba')?.checked) addonsSubtotal += 2500;
+      if ($('#addon-agent')?.checked) addonsSubtotal += 800;
+
+      // 3. Point 1: Plan Discount
+      const planDiscType = $('#plan-discount-type')?.value || 'none';
+      const planDiscVal = parseFloat($('#plan-discount-value')?.value) || 0;
+      let planDiscountAmt = 0;
+      if (planDiscType === 'percent') {
+        planDiscountAmt = (basePlanPrice * Math.min(100, Math.max(0, planDiscVal))) / 100;
+      } else if (planDiscType === 'flat') {
+        planDiscountAmt = Math.min(basePlanPrice, Math.max(0, planDiscVal));
+      }
+
+      // 4. Point 2: Add-on Discount
+      const addonDiscType = $('#addon-discount-type')?.value || 'none';
+      const addonDiscVal = parseFloat($('#addon-discount-value')?.value) || 0;
+      let addonDiscountAmt = 0;
+      if (addonDiscType === 'percent') {
+        addonDiscountAmt = (addonsSubtotal * Math.min(100, Math.max(0, addonDiscVal))) / 100;
+      } else if (addonDiscType === 'flat') {
+        addonDiscountAmt = Math.min(addonsSubtotal, Math.max(0, addonDiscVal));
+      }
+
+      // Combined Discounts
+      const totalDiscount = Math.min(basePlanPrice + addonsSubtotal, planDiscountAmt + addonDiscountAmt + appliedCouponDiscount);
+
+      // 5. Point 3: Taxable Amount & GST 18%
+      const taxableAmount = Math.max(0, (basePlanPrice + addonsSubtotal) - totalDiscount);
+      const isTrial = selectedPlan.toLowerCase().includes('trial') || baseMonthly === 0;
+      const taxRate = isTrial ? 0 : 0.18;
+      const taxAmount = Math.round(taxableAmount * taxRate * 100) / 100;
+      const finalPayable = taxableAmount + taxAmount;
+
+      // Update Summary Elements
+      const planTitleEl = $('#summary-plan-title');
+      if (planTitleEl) planTitleEl.innerText = `Plan Rate (${selectedPlan} - ${durationMonths === 12 ? 'Yearly' : (durationMonths > 1 ? durationMonths + ' Mos' : 'Monthly')}):`;
+
+      const planPriceEl = $('#summary-plan-price');
+      if (planPriceEl) planPriceEl.innerText = `${currencySymbol}${basePlanPrice.toLocaleString('en-IN')}.00`;
+
+      const addonsPriceEl = $('#summary-addons-price');
+      if (addonsPriceEl) addonsPriceEl.innerText = `+ ${currencySymbol}${addonsSubtotal.toLocaleString('en-IN')}.00`;
+
+      const discPriceEl = $('#summary-discount-price');
+      if (discPriceEl) discPriceEl.innerText = `- ${currencySymbol}${totalDiscount.toLocaleString('en-IN')}.00`;
+
+      const taxablePriceEl = $('#summary-taxable-price');
+      if (taxablePriceEl) taxablePriceEl.innerText = `${currencySymbol}${taxableAmount.toLocaleString('en-IN')}.00`;
+
+      const taxPriceEl = $('#summary-tax-price');
+      if (taxPriceEl) taxPriceEl.innerText = `+ ${currencySymbol}${taxAmount.toLocaleString('en-IN')}.00`;
+
+      const finalTotalEl = $('#summary-final-total');
+      if (finalTotalEl) finalTotalEl.innerText = `${currencySymbol}${finalPayable.toLocaleString('en-IN')}.00`;
+
+      // Downgrade detection
+      const currentRank = isNew ? 0 : getPlanRank(targetC.plan_name);
+      const targetRank = meta.rank;
+      const submitBtn = $('#plan-submit-btn');
+
+      if (submitBtn) {
+        if (!isNew && targetRank < currentRank) {
+          submitBtn.className = 'btn-table-action btn-action-warning';
+          submitBtn.style.background = '#EA580C';
+          submitBtn.style.borderColor = '#EA580C';
+          submitBtn.style.color = '#FFFFFF';
+          submitBtn.innerHTML = '⚠️ Assess Downgrade Impact & Proceed';
+        } else {
+          submitBtn.className = 'btn-table-action btn-action-primary';
+          submitBtn.style.background = '#1877F2';
+          submitBtn.style.borderColor = '#1877F2';
+          submitBtn.style.color = '#FFFFFF';
+          submitBtn.innerHTML = isAddSubscription || isNew ? '⚡ Activate Subscription' : '⚡ Update Subscription';
+        }
+      }
+
+      return {
+        basePlanPrice,
+        addonsSubtotal,
+        totalDiscount,
+        taxableAmount,
+        taxAmount,
+        finalPayable,
+        currencySymbol
+      };
+    }
+
+    // Auto-sync between plan select and duration select
+    $('#plan-tier-select')?.addEventListener('change', (e) => {
+      const val = e.target.value;
+      const durationSelect = $('#plan-duration-select');
+      if (durationSelect) {
+        if (val.endsWith('_Yearly')) {
+          durationSelect.value = '12';
+        } else if (val.endsWith('_Monthly') && durationSelect.value === '12') {
+          durationSelect.value = '1';
+        }
+      }
+      updateCalcDisplay();
+    });
+
+    $('#plan-duration-select')?.addEventListener('change', (e) => {
+      const dur = e.target.value;
+      const planSelect = $('#plan-tier-select');
+      if (planSelect) {
+        const cur = planSelect.value;
+        const tier = getCleanPlanName(cur);
+        if (dur === '12' && cur.endsWith('_Monthly')) {
+          const yearlyVal = tier + '_Yearly';
+          if (planSelect.querySelector(`option[value="${yearlyVal}"]`)) {
+            planSelect.value = yearlyVal;
+          }
+        } else if (dur !== '12' && cur.endsWith('_Yearly')) {
+          const monthlyVal = tier + '_Monthly';
+          if (planSelect.querySelector(`option[value="${monthlyVal}"]`)) {
+            planSelect.value = monthlyVal;
+          }
+        }
+      }
+      updateCalcDisplay();
+    });
+
+    // Discount & Add-on event listeners
+    ['#plan-discount-type', '#plan-discount-value', '#addon-discount-type', '#addon-discount-value', '#addon-chats', '#addon-waba', '#addon-agent', '#plan-target-client'].forEach(sel => {
+      const el = $(sel);
+      if (el) {
+        el.addEventListener('input', updateCalcDisplay);
+        el.addEventListener('change', updateCalcDisplay);
+      }
+    });
+
+    // Coupon Apply Button
+    $('#btn-apply-coupon')?.addEventListener('click', () => {
+      const code = ($('#voucher-code-input')?.value || '').trim().toUpperCase();
+      const statusEl = $('#coupon-status-msg');
+      const calcNow = updateCalcDisplay();
+
+      if (!code) {
+        appliedCouponDiscount = 0;
+        appliedCouponName = '';
+        if (statusEl) statusEl.style.display = 'none';
+        updateCalcDisplay();
+        return;
+      }
+
+      if (code === 'SMAT50') {
+        appliedCouponDiscount = Math.round((calcNow.basePlanPrice * 50) / 100);
+        appliedCouponName = 'SMAT50';
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Coupon SMAT50 Applied! 50% discount on plan (-${calcNow.currencySymbol}${appliedCouponDiscount.toLocaleString('en-IN')})`;
+        }
+        showToast('Coupon SMAT50 Applied! 50% discount reflected.');
+      } else if (code === '30PERCENTADD') {
+        appliedCouponDiscount = Math.round((calcNow.addonsSubtotal * 30) / 100);
+        appliedCouponName = '30PERCENTADD';
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Coupon 30PERCENTADD Applied! 30% discount on addons (-${calcNow.currencySymbol}${appliedCouponDiscount.toLocaleString('en-IN')})`;
+        }
+        showToast('Coupon 30PERCENTADD Applied! Discount reflected on add-ons.');
+      } else {
+        appliedCouponDiscount = 500;
+        appliedCouponName = code;
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.style.color = '#10B981';
+          statusEl.innerText = `🎉 Promo code ${code} Applied! (-${calcNow.currencySymbol}500.00)`;
+        }
+        showToast(`Coupon ${code} Applied! Discount reflected.`);
+      }
+      updateCalcDisplay();
+    });
+
+    updateCalcDisplay();
+
+    // Form submit
+    $('#plan-activation-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const targetVal = $('#plan-target-client').value;
+      const rawPlan = $('#plan-tier-select').value;
+      const selectedPlan = getCleanPlanName(rawPlan);
+      const durationMonths = parseInt($('#plan-duration-select').value, 10);
+      const meta = getPlanMeta(selectedPlan);
+
+      const calcResult = updateCalcDisplay();
+      const finalAmountDisplay = `${calcResult.currencySymbol}${calcResult.finalPayable.toLocaleString('en-IN')}.00`;
+
+      const selectedAddons = [];
+      if ($('#addon-chats')?.checked) selectedAddons.push({ name: '+10,000 Conversations Quota', priceINR: 1500, type: 'recurring' });
+      if ($('#addon-waba')?.checked) selectedAddons.push({ name: '+1 Dedicated WhatsApp WABA Number', priceINR: 2500, type: 'recurring' });
+      if ($('#addon-agent')?.checked) selectedAddons.push({ name: '+1 Additional Live Agent Seat', priceINR: 800, type: 'one_time' });
+
+      if (targetVal === 'NEW_CLIENT') {
+        const newName = $('#new-client-name')?.value.trim() || '';
+        const newEmail = $('#new-client-email')?.value.trim() || '';
+        const newPhone = $('#new-client-phone')?.value.trim() || '';
+
+        if (!newName && !newEmail) {
+          showToast('⚠️ Please enter client company/name or email.');
+          return;
+        }
+
+        const isYearly = durationMonths === 12;
+        const newId = clientsData.length ? Math.max(...clientsData.map(c => c.id || 0)) + 1 : 101;
+        const now = new Date();
+        const endDate = new Date(now.getTime() + durationMonths * 30 * 24 * 60 * 60 * 1000);
+
+        const newClient = {
+          id: newId,
+          s_no: clientsData.length + 1,
+          name: newName || (newEmail ? newEmail.split('@')[0] : 'New Client'),
+          email: newEmail,
+          phone_number: newPhone || '+91 9705736759',
+          company_name: newName || 'Enterprise Account',
+          plan_name: selectedPlan,
+          plan_type: meta.monthlyINR > 0 ? 'Paid_plan' : 'Trial_plan',
+          billing_cycle: isYearly ? 'Yearly' : (durationMonths > 1 ? `Custom (${durationMonths} Mos)` : 'Monthly'),
+          subscription_status: 'Active',
+          days_left: durationMonths * 30,
+          bots_limit: meta.bots || 5,
+          chats_limit: meta.chats || '50,000',
+          end_date: `${String(endDate.getDate()).padStart(2, '0')}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${endDate.getFullYear()}`,
+          subscription_amount_display: finalAmountDisplay,
+          final_billing: {
+            base_plan_price: calcResult.basePlanPrice,
+            addons_subtotal: calcResult.addonsSubtotal,
+            discount_deducted: calcResult.totalDiscount,
+            taxable_amount: calcResult.taxableAmount,
+            tax_gst18: calcResult.taxAmount,
+            final_payable: calcResult.finalPayable,
+            sac_code: '998314'
+          },
+          subscription_id: `SUB-${10000 + newId}`,
+          zoho_customer_id: 'ZC-' + (900000 + newId),
+          currency_type: 'INR'
+        };
+
+        newClient.active_addons = selectedAddons.map(addon => {
+          const std30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+          const effectiveExpiry = endDate < std30 ? endDate : std30;
+          return {
+            id: `addon_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+            name: addon.name,
+            type: addon.type,
+            expiryDate: `${String(effectiveExpiry.getDate()).padStart(2, '0')}-${String(effectiveExpiry.getMonth() + 1).padStart(2, '0')}-${effectiveExpiry.getFullYear()}`,
+            cappedBySubscription: endDate < std30
+          };
+        });
+
+        clientsData.unshift(newClient);
+        localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+        showToast(`🎉 New subscription successfully created for ${newClient.name} (${selectedPlan} - ${finalAmountDisplay})!`);
+        closeModal();
+        if (currentRoute === 'subscriptions') renderClientSubscriptionsView($('#route-viewport'));
+        return;
+      }
+
+      const targetId = parseInt(targetVal, 10);
+      const targetClient = clientsData.find(c => c.id === targetId) || client;
+      const currentRank = getPlanRank(targetClient.plan_name);
+      const targetRank = meta.rank;
+
+      if (targetRank < currentRank) {
+        closeModal();
+        openDowngradeImpactModal(targetId, selectedPlan, durationMonths, selectedAddons);
+        return;
+      }
+
+      applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons, calcResult);
+    });
+  }
+
+  // Helper: Apply Subscription Update
+  function applyPlanActivation(targetClient, selectedPlan, durationMonths, selectedAddons, calcResult = null) {
+    const meta = getPlanMeta(selectedPlan);
+    const isYearly = durationMonths === 12;
+    const baseMonthly = targetClient.currency_type === 'USD' ? meta.monthlyUSD : meta.monthlyINR;
+    const totalAmount = isYearly ? baseMonthly * 10 : baseMonthly * durationMonths;
+
+    targetClient.plan_name = selectedPlan;
+    targetClient.plan_type = meta.monthlyINR > 0 ? 'Paid_plan' : 'Trial_plan';
+    targetClient.billing_cycle = isYearly ? 'Yearly' : (durationMonths > 1 ? `Custom (${durationMonths} Mos)` : 'Monthly');
+    targetClient.subscription_status = 'Active';
+    targetClient.days_left = durationMonths * 30;
+    targetClient.bots_limit = meta.bots;
+    targetClient.chats_limit = meta.chats;
+
+    // Calculate effective end date
+    const now = new Date();
+    const endDate = new Date(now.getTime() + durationMonths * 30 * 24 * 60 * 60 * 1000);
+    targetClient.end_date = `${String(endDate.getDate()).padStart(2, '0')}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${endDate.getFullYear()}`;
+    
+    if (calcResult && calcResult.finalPayable !== undefined) {
+      targetClient.subscription_amount_display = `${calcResult.currencySymbol}${calcResult.finalPayable.toLocaleString('en-IN')}.00`;
+      targetClient.final_billing = {
+        base_plan_price: calcResult.basePlanPrice,
+        addons_subtotal: calcResult.addonsSubtotal,
+        discount_deducted: calcResult.totalDiscount,
+        taxable_amount: calcResult.taxableAmount,
+        tax_gst18: calcResult.taxAmount,
+        final_payable: calcResult.finalPayable,
+        sac_code: '998314'
+      };
+    } else {
+      targetClient.subscription_amount_display = targetClient.currency_type === 'USD' ? `$ ${totalAmount.toFixed(2)}` : `₹ ${totalAmount.toLocaleString('en-IN')}.00`;
+    }
 
     // Process add-ons with Point 3 Expiry Priority
     targetClient.active_addons = selectedAddons.map(addon => {
@@ -7360,554 +12483,173 @@ function toggleAccordion(cardId) {
 
   let couponsData = [
     {
-      id: 1,
-      name: '30PERCENTADD',
-      code: '30PERCENTADD',
-      status: 'Expired',
-      discount_value: '30%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 2,
-      name: '50PERCENTADD',
-      code: '50PERCENTADD',
-      status: 'Expired',
-      discount_value: '50%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 3,
-      name: '90PERCENTADD',
-      code: '90PERCENTADD',
-      status: 'Expired',
-      discount_value: 'Rs.90.00',
-      discount_by: 'Flat',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 4,
-      name: '10PERCENTADD',
-      code: '10PERCENTADD',
-      status: 'Expired',
-      discount_value: '10%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 5,
-      name: '15PERCENTADD',
-      code: '15PERCENTADD',
-      status: 'Expired',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 6,
-      name: '20PERCENTADD',
-      code: '20PERCENTADD',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 7,
-      name: '25PERCENTADD',
-      code: '25PERCENTADD',
-      status: 'Expired',
-      discount_value: '25%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 8,
-      name: '99PERCENTD',
-      code: '99PERCENTD',
-      status: 'Expired',
-      discount_value: 'Rs.99.00',
-      discount_by: 'Flat',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 9,
-      name: '95PERCENTD',
-      code: '95PERCENTD',
-      status: 'Expired',
-      discount_value: '95%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 10,
-      name: '90PERCENTD',
-      code: '90PERCENTD',
-      status: 'Expired',
-      discount_value: '90%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 11,
-      name: '50PERCENTD',
-      code: '50PERCENTD',
-      status: 'Expired',
-      discount_value: '50%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 12,
-      name: '30PERCENTD',
-      code: '30PERCENTD',
-      status: 'Expired',
-      discount_value: '30%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 13,
-      name: '25PERCENTD',
-      code: '25PERCENTD',
-      status: 'Expired',
-      discount_value: '25%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 14,
-      name: '20PERCENTD',
-      code: '20PERCENTD',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 15,
-      name: '15PERCENTD',
-      code: '15PERCENTD',
-      status: 'Expired',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 16,
-      name: '10PERCENT',
-      code: '10PERCENT',
-      status: 'Expired',
-      discount_value: '10%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '31/12/2024'
-    },
-    {
-      id: 17,
-      name: 'SWAPNIL95',
-      code: 'SWAPNIL95',
-      status: 'Active',
-      discount_value: '95%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 50,
-      valid_upto: '-'
-    },
-    {
-      id: 18,
-      name: 'SWAPNIL98',
-      code: 'SWAPNIL98',
-      status: 'Active',
-      discount_value: '98%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 50,
-      valid_upto: '-'
-    },
-    {
-      id: 19,
-      name: 'Ismail_test',
-      code: 'test_ismail',
-      status: 'Active',
-      discount_value: '90%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: '-',
-      valid_upto: '-'
-    },
-    {
-      id: 20,
+      id: 101,
+      product: 'SmatBot',
       name: 'ismail2',
       code: 'test_ismail2',
       status: 'Active',
       discount_value: '90%',
       discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 2,
-      valid_upto: '-'
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
     },
     {
-      id: 21,
+      id: 102,
+      product: 'SmatBot',
       name: 'ismail_99',
       code: '99_ismail',
       status: 'Active',
       discount_value: '99%',
       discount_by: 'Percentage',
-      redemption_type: 'Forever',
-      max_redemption: '-',
-      valid_upto: '-'
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
     },
     {
-      id: 22,
-      name: 'TESTDEEPAK99',
-      code: 'TESTDEEPAK99',
-      status: 'Maxed Out',
-      discount_value: '99.6%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '13/07/2023'
-    },
-    {
-      id: 23,
-      name: 'TESTTWICE',
-      code: 'TESTTWICE',
-      status: 'Maxed Out',
-      discount_value: '98%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '04/08/2023'
-    },
-    {
-      id: 24,
-      name: 'SMATDEEPAK15',
-      code: 'SMATDEEPAK15',
-      status: 'Maxed Out',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '30/09/2023'
-    },
-    {
-      id: 25,
-      name: 'SMATDEEPAK10',
-      code: 'SMATDEEPAK10',
-      status: 'Maxed Out',
-      discount_value: '10%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '31/10/2023'
-    },
-    {
-      id: 26,
-      name: 'Reseller Discount',
-      code: 'ResellerDiscount',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'Forever',
-      max_redemption: '-',
-      valid_upto: '01/01/2024'
-    },
-    {
-      id: 27,
-      name: 'SMAT20OFF',
-      code: 'SMAT20OFF',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '13/02/2023'
-    },
-    {
-      id: 28,
-      name: 'SMATDINESH20',
-      code: 'SMATDINESH20',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'Forever',
-      max_redemption: 50,
-      valid_upto: '01/01/2024'
-    },
-    {
-      id: 29,
-      name: 'THUBSMAT15',
-      code: 'THUBSMAT15',
-      status: 'Expired',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 50,
-      valid_upto: '31/12/2023'
-    },
-    {
-      id: 30,
-      name: 'SMAT25NEW',
-      code: 'SMAT25NEW',
-      status: 'Expired',
-      discount_value: '25%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 20,
-      valid_upto: '30/04/2023'
-    },
-    {
-      id: 31,
-      name: 'SMATNEW10',
-      code: 'SMATNEW10',
-      status: 'Expired',
-      discount_value: '10%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 15,
-      valid_upto: '30/04/2023'
-    },
-    {
-      id: 32,
-      name: 'SMATBOT20',
-      code: 'SMATBOT20',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 200,
-      valid_upto: '30/04/2023'
-    },
-    {
-      id: 33,
-      name: 'SMATBOT15',
-      code: 'SMATBOT15',
-      status: 'Expired',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 200,
-      valid_upto: '30/04/2023'
-    },
-    {
-      id: 34,
-      name: 'SHAILESH20',
-      code: 'SHAILESH20',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 50,
-      valid_upto: '26/08/2023'
-    },
-    {
-      id: 35,
-      name: 'SMAT50OFF',
-      code: 'SMAT50OFF',
-      status: 'Expired',
-      discount_value: '50%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 20,
-      valid_upto: '31/12/2023'
-    },
-    {
-      id: 36,
-      name: 'SMAT100OFF',
-      code: 'SMAT100OFF',
-      status: 'Expired',
-      discount_value: '100%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '21/06/2023'
-    },
-    {
-      id: 37,
-      name: 'SMATADDON20',
-      code: 'SMATADDON20',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 50,
-      valid_upto: '01/01/2024'
-    },
-    {
-      id: 38,
-      name: 'DEEPAK95',
-      code: 'DEEPAK95',
-      status: 'Expired',
-      discount_value: '95%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 10,
-      valid_upto: '21/07/2023'
-    },
-    {
-      id: 39,
-      name: 'FESOTEST1230',
-      code: 'FESOTEST1230',
-      status: 'Expired',
-      discount_value: '95%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: '-',
-      valid_upto: '31/07/2023'
-    },
-    {
-      id: 40,
-      name: 'TESTONCE',
-      code: 'TESTONCE',
-      status: 'Expired',
+      id: 103,
+      product: 'SmatBot',
+      name: 'ismail_test',
+      code: 'test_ismail',
+      status: 'Active',
       discount_value: '90%',
       discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 1,
-      valid_upto: '04/08/2023'
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
     },
     {
-      id: 41,
-      name: 'SMATDEEP25',
-      code: 'SMATDEEP25',
-      status: 'Expired',
-      discount_value: '25%',
+      id: 104,
+      product: 'SmatBot',
+      name: 'SWAPNIL95',
+      code: 'SWAPNIL95',
+      status: 'Active',
+      discount_value: '95%',
       discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: '-',
-      valid_upto: '31/12/2023'
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 105,
+      product: 'SmatBot',
+      name: 'SWAPNIL98',
+      code: 'SWAPNIL98',
+      status: 'Active',
+      discount_value: '98%',
+      discount_by: 'Percentage',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 106,
+      product: 'SmatBot',
+      name: 'TESTCOUPONCHANGE',
+      code: 'TESTCOUPONCHANGE',
+      status: 'Active',
+      discount_value: '20%',
+      discount_by: 'Percentage',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 107,
+      product: 'SmatBot',
+      name: 'TESTCOUPONCHANGEUnlimited',
+      code: 'TESTCOUPONCHANGEUnlimited',
+      status: 'Active',
+      discount_value: '',
+      discount_by: 'Percentage',
+      redemption_type: 'Unlimited',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 9999,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 1,
+      product: 'SmatBot',
+      name: '30PERCENTADD',
+      code: '30PERCENTADD',
+      status: 'Active',
+      discount_value: '30%',
+      discount_by: 'Percentage',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 2,
+      product: 'WhatsApp Chatbot',
+      name: '50PERCENTADD',
+      code: '50PERCENTADD',
+      status: 'Active',
+      discount_value: '50%',
+      discount_by: 'Percentage',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 50,
+      valid_upto: '31/12/2026'
+    },
+    {
+      id: 3,
+      product: 'SmatBot',
+      name: '90PERCENTADD',
+      code: '90PERCENTADD',
+      status: 'Expired',
+      discount_value: 'Rs.90.00',
+      discount_by: 'Flat',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
+      max_redemption: 100,
+      valid_upto: '31/12/2024'
     },
     {
       id: 42,
+      product: 'SmatBot',
       name: 'SMATDEEP15',
       code: 'SMATDEEP15',
       status: 'Active',
       discount_value: '15%',
       discount_by: 'Percentage',
-      redemption_type: 'One Time',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
       max_redemption: 50,
-      valid_upto: '30/12/2023'
-    },
-    {
-      id: 43,
-      name: 'SmatUday',
-      code: 'SmatUday',
-      status: 'Expired',
-      discount_value: '5.882%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 1,
-      valid_upto: '30/09/2024'
-    },
-    {
-      id: 44,
-      name: 'SMATDEEPAKNEW10',
-      code: 'SMATDEEPAKNEW10',
-      status: 'Expired',
-      discount_value: '10%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 20,
-      valid_upto: '30/12/2023'
-    },
-    {
-      id: 45,
-      name: 'SMATDEEPAKNEW15',
-      code: 'SMATDEEPAKNEW15',
-      status: 'Expired',
-      discount_value: '15%',
-      discount_by: 'Percentage',
-      redemption_type: 'Duration',
-      max_redemption: 20,
-      valid_upto: '31/12/2023'
-    },
-    {
-      id: 46,
-      name: 'TESTDEEPAK75',
-      code: 'TESTDEEPAK75',
-      status: 'Expired',
-      discount_value: '75%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 20,
-      valid_upto: '30/11/2023'
-    },
-    {
-      id: 47,
-      name: 'DIWALI20',
-      code: 'DIWALI20',
-      status: 'Expired',
-      discount_value: '75%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '30/11/2023'
-    },
-    {
-      id: 48,
-      name: 'DIWALI5',
-      code: 'DIWALI5',
-      status: 'Expired',
-      discount_value: '75%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '30/11/2023'
-    },
-    {
-      id: 49,
-      name: 'XMASNY20',
-      code: 'XMASNY20',
-      status: 'Expired',
-      discount_value: '20%',
-      discount_by: 'Percentage',
-      redemption_type: 'One Time',
-      max_redemption: 100,
-      valid_upto: '01/01/2024'
+      valid_upto: '30/12/2023',
+      created_at: '2023-09-12'
     },
     {
       id: 50,
+      product: 'SmatBot',
       name: 'XMAS20',
       code: 'XMAS20',
-      status: 'Expired',
+      status: 'Maxed Out',
       discount_value: '20%',
       discount_by: 'Percentage',
-      redemption_type: 'One Time',
+      redemption_type: 'One-Time',
+      associate_plans: 'All Plans',
+      associate_addons: 'All Recurring Addons',
       max_redemption: 100,
-      valid_upto: '01/01/2024'
+      valid_upto: '01/01/2025'
     }
   ];
 
@@ -8175,110 +12917,407 @@ function toggleAccordion(cardId) {
     }
   }
 
+  const couponDropdownState = {
+    product: {
+      selected: 'Feltso test',
+      triggerText: 'Select Product',
+      options: ['Feltso test', 'SmatBot'],
+      hasNewAction: true
+    },
+    redemptionType: {
+      selected: 'One-Time',
+      triggerText: 'One-Time',
+      options: ['One-Time', 'Unlimited', 'Limited Cycles'],
+      hasNewAction: false
+    },
+    plans: {
+      selected: 'All Plans',
+      triggerText: 'All Plans',
+      options: ['All Plans', 'None', 'Selected Plans'],
+      hasNewAction: false
+    },
+    addons: {
+      selected: 'All Recurring Addons',
+      triggerText: 'All Recurring Addons',
+      options: ['All Addons', 'All Recurring Addons', 'All One-time Addons', 'None', 'Selected Addons'],
+      hasNewAction: false
+    }
+  };
+
+  function renderCouponDropdownOptions(key) {
+    const list = $(`#options-coupon-${key}`);
+    if (!list || !couponDropdownState[key]) return;
+    const { options, selected, hasNewAction } = couponDropdownState[key];
+
+    let html = options.map(opt => {
+      const isSelected = opt === selected;
+      return `
+        <div 
+          class="coupon-option-item ${isSelected ? 'selected' : ''}" 
+          onclick="window.smatApp.selectCouponDropdownOption('${key}', '${opt.replace(/'/g, "\\'")}')"
+        >
+          <span>${opt}</span>
+          ${isSelected ? `
+            <svg class="coupon-option-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    if (hasNewAction) {
+      html += `
+        <div class="coupon-action-new-product" onclick="window.smatApp.addNewProductFromCouponModal(event)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16" stroke="#fff" stroke-width="2.5"></line>
+            <line x1="8" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="2.5"></line>
+          </svg>
+          <span>New Product</span>
+        </div>
+      `;
+    }
+
+    list.innerHTML = html;
+  }
+
+  function toggleCouponDropdown(key, event) {
+    if (event) event.stopPropagation();
+    const popover = $(`#popover-coupon-${key}`);
+    const trigger = $(`#trigger-coupon-${key}`);
+    if (!popover || !trigger) return;
+
+    const isOpen = popover.style.display !== 'none';
+    closeAllCouponDropdowns();
+
+    if (!isOpen) {
+      popover.style.display = 'block';
+      trigger.classList.add('active');
+      renderCouponDropdownOptions(key);
+      const searchInput = popover.querySelector('.coupon-search-input');
+      if (searchInput) {
+        searchInput.value = '';
+        setTimeout(() => searchInput.focus(), 50);
+      }
+    }
+  }
+
+  function closeAllCouponDropdowns() {
+    ['product', 'redemptionType', 'plans', 'addons'].forEach(k => {
+      const popover = $(`#popover-coupon-${k}`);
+      const trigger = $(`#trigger-coupon-${k}`);
+      if (popover) popover.style.display = 'none';
+      if (trigger) trigger.classList.remove('active');
+    });
+  }
+
+  function selectCouponDropdownOption(key, value) {
+    if (!couponDropdownState[key]) return;
+    couponDropdownState[key].selected = value;
+    couponDropdownState[key].triggerText = value;
+
+    const inputMap = {
+      product: 'coupon-product-input',
+      redemptionType: 'coupon-redemption-type-input',
+      plans: 'coupon-associate-plans-input',
+      addons: 'coupon-associate-addons-input'
+    };
+    const inputId = inputMap[key];
+    const hiddenInput = $(`#${inputId}`);
+    if (hiddenInput) hiddenInput.value = value;
+
+    const labelEl = $(`#label-coupon-${key}`);
+    if (labelEl) {
+      labelEl.textContent = value;
+      if (key === 'product' && value === 'Select Product') {
+        labelEl.classList.add('placeholder');
+      } else {
+        labelEl.classList.remove('placeholder');
+      }
+    }
+
+    renderCouponDropdownOptions(key);
+    closeAllCouponDropdowns();
+  }
+
+  function filterCouponDropdown(key, query) {
+    const term = (query || '').trim().toLowerCase();
+    const list = $(`#options-coupon-${key}`);
+    if (!list) return;
+    const items = list.querySelectorAll('.coupon-option-item');
+    items.forEach(item => {
+      const text = (item.querySelector('span')?.textContent || '').toLowerCase();
+      item.style.display = text.includes(term) ? 'flex' : 'none';
+    });
+  }
+
+  function addNewProductFromCouponModal(event) {
+    if (event) event.stopPropagation();
+    const newProd = prompt('Enter new product name:');
+    if (!newProd || !newProd.trim()) return;
+    const prodName = newProd.trim();
+    if (!couponDropdownState.product.options.includes(prodName)) {
+      couponDropdownState.product.options.push(prodName);
+    }
+    selectCouponDropdownOption('product', prodName);
+    showToast(`Product "${prodName}" added`);
+  }
+
   function openAddCouponModal() {
+    // Reset dropdown states for new coupon creation
+    couponDropdownState.product.selected = 'Feltso test';
+    couponDropdownState.product.triggerText = 'Select Product';
+    couponDropdownState.redemptionType.selected = 'One-Time';
+    couponDropdownState.redemptionType.triggerText = 'One-Time';
+    couponDropdownState.plans.selected = 'All Plans';
+    couponDropdownState.plans.triggerText = 'All Plans';
+    couponDropdownState.addons.selected = 'All Recurring Addons';
+    couponDropdownState.addons.triggerText = 'All Recurring Addons';
+
     const modal = $('#modal-container');
     modal.innerHTML = `
-      <div class="modal-overlay open">
-        <div class="modal-box-card" style="border-top: 4px solid #1877F2; max-width:540px; border-radius:8px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid #F1F5F9; padding-bottom:0.75rem;">
-            <div style="font-size:1.15rem; font-weight:700; color:#0F172A;">+ New Coupon</div>
-            <button onclick="window.smatApp.closeModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748B;">✕</button>
+      <div class="modal-overlay open" onclick="if(event.target === this) window.smatApp.closeModal()" style="display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.45); position:fixed; inset:0; z-index:9999;">
+        <div class="coupon-create-modal-card" onclick="window.smatApp.closeAllCouponDropdowns(); event.stopPropagation();">
+          <!-- Top Header: New Coupon Title & Close Button -->
+          <div class="coupon-create-modal-header">
+            <h3 class="coupon-create-modal-title">New Coupon</h3>
+            <button type="button" class="coupon-create-modal-close" onclick="window.smatApp.closeModal()" title="Close">✕</button>
           </div>
 
           <form onsubmit="window.smatApp.handleAddCouponSubmit(event)">
-            <div style="display:flex; flex-direction:column; gap:1rem;">
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Name *</label>
-                  <input 
-                    type="text" 
-                    id="coupon-name-input" 
-                    class="filter-search-box" 
-                    placeholder="e.g. 30PERCENTADD" 
-                    required 
-                  />
+            <!-- Top Fields Grid (2 Columns) -->
+            <div class="coupon-modal-grid">
+              <!-- Row 1: Product* (Left) with Searchable Dropdown matching Screenshot 4 -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Product*</label>
+                <div class="coupon-field-control">
+                  <div class="coupon-searchable-select" id="coupon-searchable-product">
+                    <input type="hidden" id="coupon-product-input" value="Select Product" required />
+                    <div 
+                      class="coupon-select-trigger" 
+                      id="trigger-coupon-product" 
+                      onclick="window.smatApp.toggleCouponDropdown('product', event)"
+                    >
+                      <span class="coupon-select-trigger-text placeholder" id="label-coupon-product">Select Product</span>
+                      <svg class="coupon-select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+
+                    <div class="coupon-select-popover" id="popover-coupon-product" style="display:none;" onclick="event.stopPropagation()">
+                      <div class="coupon-search-box">
+                        <svg class="coupon-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input 
+                          type="text" 
+                          class="coupon-search-input" 
+                          placeholder="Search" 
+                          oninput="window.smatApp.filterCouponDropdown('product', this.value)" 
+                        />
+                      </div>
+                      <div class="coupon-options-list" id="options-coupon-product"></div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Coupon Code *</label>
-                  <input 
-                    type="text" 
-                    id="coupon-code-input" 
-                    class="filter-search-box" 
-                    style="text-transform:uppercase; font-family:monospace; font-weight:600;" 
-                    placeholder="e.g. 30PERCENTADD" 
-                    required 
-                  />
+              </div>
+              <div></div> <!-- Empty right column on row 1 -->
+
+              <!-- Row 2: Coupon Name* (Left), Coupon Code* (Right) -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Coupon Name*</label>
+                <div class="coupon-field-control">
+                  <input type="text" id="coupon-name-input" class="coupon-form-control" required />
+                </div>
+              </div>
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Coupon Code*</label>
+                <div class="coupon-field-control">
+                  <input type="text" id="coupon-code-input" class="coupon-form-control" style="text-transform:uppercase; font-family:monospace; font-weight:600;" required />
+                  <span class="coupon-info-tooltip" title="Unique code customers enter at checkout">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  </span>
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Discount By *</label>
-                  <select id="coupon-discount-by-input" class="filter-search-box" style="padding-left:0.75rem;" onchange="window.smatApp.handleCouponDiscountByChange()">
-                    <option value="Percentage">Percentage</option>
-                    <option value="Flat">Flat</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Discount Value *</label>
-                  <input type="text" id="coupon-discount-value-input" class="filter-search-box" placeholder="e.g. 30% or Rs.90.00" required />
-                </div>
-              </div>
-
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Redemption Type *</label>
-                  <select id="coupon-redemption-type-input" class="filter-search-box" style="padding-left:0.75rem;">
-                    <option value="One Time">One Time</option>
-                    <option value="Duration">Duration</option>
-                    <option value="Forever">Forever</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Maximum Redemption</label>
-                  <input type="number" id="coupon-max-redemption-input" class="filter-search-box" placeholder="e.g. 100" />
+              <!-- Row 3: Discount (INR) * (Left), Redemption Type* (Right) -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Discount (INR) *</label>
+                <div class="coupon-field-control">
+                  <div class="coupon-discount-group">
+                    <input type="text" id="coupon-discount-value-input" class="coupon-discount-input" required />
+                    <select id="coupon-discount-by-input" class="coupon-discount-select coupon-form-select" onchange="window.smatApp.handleCouponDiscountByChange()">
+                      <option value="Flat" selected>Flat</option>
+                      <option value="Percentage">%</option>
+                    </select>
+                  </div>
                 </div>
               </div>
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Redemption Type*</label>
+                <div class="coupon-field-control">
+                  <!-- Searchable Dropdown matching Screenshot 3 -->
+                  <div class="coupon-searchable-select" id="coupon-searchable-redemptionType">
+                    <input type="hidden" id="coupon-redemption-type-input" value="One-Time" required />
+                    <div 
+                      class="coupon-select-trigger" 
+                      id="trigger-coupon-redemptionType" 
+                      onclick="window.smatApp.toggleCouponDropdown('redemptionType', event)"
+                    >
+                      <span class="coupon-select-trigger-text" id="label-coupon-redemptionType">One-Time</span>
+                      <svg class="coupon-select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
 
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Valid Upto</label>
-                  <input type="text" id="coupon-valid-upto-input" class="filter-search-box" placeholder="DD/MM/YYYY e.g. 31/12/2024" />
-                </div>
-                <div>
-                  <label style="font-size:0.8rem; font-weight:600; color:#334155; display:block; margin-bottom:4px;">Status</label>
-                  <select id="coupon-status-input" class="filter-search-box" style="padding-left:0.75rem;">
-                    <option value="Active">Active</option>
-                    <option value="Expired">Expired</option>
-                    <option value="Maxed Out">Maxed Out</option>
-                  </select>
+                    <div class="coupon-select-popover" id="popover-coupon-redemptionType" style="display:none;" onclick="event.stopPropagation()">
+                      <div class="coupon-search-box">
+                        <svg class="coupon-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input 
+                          type="text" 
+                          class="coupon-search-input" 
+                          placeholder="Search" 
+                          oninput="window.smatApp.filterCouponDropdown('redemptionType', this.value)" 
+                        />
+                      </div>
+                      <div class="coupon-options-list" id="options-coupon-redemptionType"></div>
+                    </div>
+                  </div>
+
+                  <span class="coupon-info-tooltip" title="Controls how many times this coupon can be redeemed">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; border-top:1px solid #F1F5F9; padding-top:1rem;">
-              <button type="button" class="btn-table-action btn-action-secondary" onclick="window.smatApp.closeModal()" style="border-radius:4px; padding:6px 16px;">Cancel</button>
-              <button type="submit" class="btn-table-action btn-action-primary" style="background:#1877F2; border:none; border-radius:4px; padding:6px 18px; font-weight:600;">Save</button>
+            <!-- Applicability Section -->
+            <div class="coupon-section-title">Applicability</div>
+            <div class="coupon-modal-grid">
+              <!-- Row 4: Associate Plans* with Searchable Dropdown matching Screenshot 1 -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Associate Plans*</label>
+                <div class="coupon-field-control">
+                  <div class="coupon-searchable-select" id="coupon-searchable-plans">
+                    <input type="hidden" id="coupon-associate-plans-input" value="All Plans" required />
+                    <div 
+                      class="coupon-select-trigger" 
+                      id="trigger-coupon-plans" 
+                      onclick="window.smatApp.toggleCouponDropdown('plans', event)"
+                    >
+                      <span class="coupon-select-trigger-text" id="label-coupon-plans">All Plans</span>
+                      <svg class="coupon-select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+
+                    <div class="coupon-select-popover" id="popover-coupon-plans" style="display:none;" onclick="event.stopPropagation()">
+                      <div class="coupon-search-box">
+                        <svg class="coupon-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input 
+                          type="text" 
+                          class="coupon-search-input" 
+                          placeholder="Search" 
+                          oninput="window.smatApp.filterCouponDropdown('plans', this.value)" 
+                        />
+                      </div>
+                      <div class="coupon-options-list" id="options-coupon-plans"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div></div>
+
+              <!-- Row 5: Associate Addons* with Searchable Dropdown matching Screenshot 2 -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label required">Associate Addons*</label>
+                <div class="coupon-field-control">
+                  <div class="coupon-searchable-select" id="coupon-searchable-addons">
+                    <input type="hidden" id="coupon-associate-addons-input" value="All Recurring Addons" required />
+                    <div 
+                      class="coupon-select-trigger" 
+                      id="trigger-coupon-addons" 
+                      onclick="window.smatApp.toggleCouponDropdown('addons', event)"
+                    >
+                      <span class="coupon-select-trigger-text" id="label-coupon-addons">All Recurring Addons</span>
+                      <svg class="coupon-select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+
+                    <div class="coupon-select-popover" id="popover-coupon-addons" style="display:none;" onclick="event.stopPropagation()">
+                      <div class="coupon-search-box">
+                        <svg class="coupon-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input 
+                          type="text" 
+                          class="coupon-search-input" 
+                          placeholder="Search" 
+                          oninput="window.smatApp.filterCouponDropdown('addons', this.value)" 
+                        />
+                      </div>
+                      <div class="coupon-options-list" id="options-coupon-addons"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div></div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="coupon-modal-divider" />
+
+            <!-- Validity Section -->
+            <div class="coupon-section-title">Validity</div>
+            <div class="coupon-modal-grid">
+              <!-- Row 6: Expiration Date (Left), Maximum Redemptions (Right) -->
+              <div class="coupon-field-row">
+                <label class="coupon-field-label">Expiration Date</label>
+                <div class="coupon-field-control">
+                  <input 
+                    type="text" 
+                    id="coupon-expiration-date-input" 
+                    class="coupon-form-control" 
+                    placeholder="Click or Type to select" 
+                    onfocus="this.type='date'" 
+                    onblur="if(!this.value) this.type='text'" 
+                  />
+                </div>
+              </div>
+              <div class="coupon-field-row">
+                <label class="coupon-field-label">Maximum Redemptions</label>
+                <div class="coupon-field-control">
+                  <input type="number" id="coupon-max-redemption-input" class="coupon-form-control" placeholder="Enter a number" min="1" />
+                  <span class="coupon-info-tooltip" title="Total number of times this coupon can be redeemed across all customers">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons on Bottom-Left -->
+            <div class="coupon-modal-footer">
+              <button type="submit" class="coupon-btn-save">Save</button>
+              <button type="button" class="coupon-btn-cancel" onclick="window.smatApp.closeModal()">Cancel</button>
             </div>
           </form>
         </div>
       </div>
     `;
+
+    // Render option lists for the 4 searchable selects
+    renderCouponDropdownOptions('product');
+    renderCouponDropdownOptions('redemptionType');
+    renderCouponDropdownOptions('plans');
+    renderCouponDropdownOptions('addons');
   }
 
   function handleAddCouponSubmit(e) {
     e.preventDefault();
+    const product = ($('#coupon-product-input')?.value || 'Select Product').trim();
     const name = ($('#coupon-name-input')?.value || '').trim();
     const code = ($('#coupon-code-input')?.value || '').trim().toUpperCase();
-    const discountBy = $('#coupon-discount-by-input')?.value || 'Percentage';
+    const discountBy = $('#coupon-discount-by-input')?.value || 'Flat';
     let discountVal = ($('#coupon-discount-value-input')?.value || '').trim();
-    const redemptionType = $('#coupon-redemption-type-input')?.value || 'One Time';
-    const maxRedemption = $('#coupon-max-redemption-input')?.value ? Number($('#coupon-max-redemption-input').value) : '-';
-    const validUpto = ($('#coupon-valid-upto-input')?.value || '').trim() || '-';
-    const status = $('#coupon-status-input')?.value || 'Active';
+    const redemptionType = $('#coupon-redemption-type-input')?.value || 'One-Time';
+    const associatePlans = $('#coupon-associate-plans-input')?.value || 'All Plans';
+    const associateAddons = $('#coupon-associate-addons-input')?.value || 'All Recurring Addons';
+    const expirationDate = ($('#coupon-expiration-date-input')?.value || $('#coupon-valid-upto-input')?.value || '').trim() || '-';
+    const maxRedemptions = $('#coupon-max-redemption-input')?.value ? Number($('#coupon-max-redemption-input').value) : '-';
+    const status = 'Active';
 
     if (!name || !code || !discountVal) {
-      showToast('Please enter Name, Code, and Discount Value');
+      showToast('Please enter Coupon Name, Coupon Code, and Discount Value');
       return;
     }
 
@@ -8290,14 +13329,18 @@ function toggleAccordion(cardId) {
 
     const newCoupon = {
       id: Date.now(),
+      product: (product === 'Select Product' ? 'SmatBot' : product),
       name,
       code,
       status,
       discount_value: discountVal,
       discount_by: discountBy,
       redemption_type: redemptionType,
-      max_redemption: maxRedemption,
-      valid_upto: validUpto
+      associate_plans: associatePlans,
+      associate_addons: associateAddons,
+      max_redemption: maxRedemptions,
+      valid_upto: expirationDate,
+      created_at: new Date().toISOString().split('T')[0]
     };
 
     couponsData.unshift(newCoupon);
@@ -9771,7 +14814,8 @@ function toggleAccordion(cardId) {
   }
 
   // Public API
-  window.smatApp = {
+  
+window.smatApp = {
     init,
     navigateTo,
     handleLoginSubmit,
@@ -9826,6 +14870,86 @@ function toggleAccordion(cardId) {
     confirmDeleteUser,
     executeDeleteUser,
     openPlanModal,
+    openAddSubscriptionModal,
+    openZohoSubscription,
+    renderZohoSubscriptionView,
+    onZohoSubCustomerSelect,
+    onZohoPlanChange,
+    onZohoAddonChange,
+    openAddContactPersonModal,
+    saveContactPerson,
+    toggleAddressPopover,
+    closeAddressPopovers,
+    selectShippingAddress,
+    openEditAddressModal,
+    saveAddressModalData,
+    toggleSacPopover,
+    closeSacPopover,
+    saveSacCode,
+    togglePlanMoreTooltip,
+    toggleAddonMoreMenu,
+    closeAllMorePopovers,
+    toggleGstPreferencesPopover,
+    closeGstPreferencesPopover,
+    saveGstPreferences,
+    renderGstTreatmentOptions,
+    toggleGstTreatmentDropdown,
+    closeGstTreatmentDropdown,
+    selectGstTreatment,
+    filterGstTreatments,
+    toggleShippingGstPopover,
+    closeShippingGstPopover,
+    onShippingGstUnregChange,
+    saveShippingGstPreferences,
+    toggleSupplyStateDropdown,
+    closeSupplyStateDropdown,
+    selectSupplyState,
+    showPlanAdditionalInfo,
+    togglePlanAccountDropdown,
+    closePlanAccountDropdown,
+    selectPlanAccount,
+    filterPlanAccounts,
+    filterSupplyStates,
+    addZohoSubAddonRow,
+    removeZohoSubAddonRow,
+    showRemovePlanModal,
+    closeRemovePlanModal,
+    proceedRemovePlan,
+    togglePlanTaxDropdown,
+    closePlanTaxDropdown,
+    selectPlanTax,
+    filterPlanTaxes,
+    addNewPlanTax,
+    toggleAddonTaxDropdown,
+    closeAddonTaxDropdown,
+    closeAllAddonTaxDropdowns,
+    selectAddonTax,
+    filterAddonTaxes,
+    addNewAddonTax,
+    openZohoCouponDropdown,
+    toggleZohoCouponDropdown,
+    closeZohoCouponDropdown,
+    filterZohoCoupons,
+    selectZohoCoupon,
+    clearZohoCoupon,
+    openCustomerSidebar,
+    closeCustomerSidebar,
+    toggleCustomerSidebar,
+    toggleDrawerAccordion,
+    openPlanDropdown,
+    closePlanDropdown,
+    filterPlanDropdown,
+    selectZohoPlan,
+    clearZohoPlan,
+    renderPlanDropdownItems,
+    toggleDiscountPrefDropdown,
+    closeDiscountPrefDropdown,
+    selectDiscountPref,
+    filterDiscountPrefOptions,
+    renderDiscountPrefOptions,
+    onZohoDiscountPrefChange,
+    updateZohoSubCalculations,
+    saveZohoSubscription,
     toggleBillingFrequency,
     updateSubSearch,
     updateSubStatus,
@@ -9837,6 +14961,12 @@ function toggleAccordion(cardId) {
     goToRenewalPage,
     openAddCouponModal,
     handleAddCouponSubmit,
+    toggleCouponDropdown,
+    closeAllCouponDropdowns,
+    selectCouponDropdownOption,
+    filterCouponDropdown,
+    renderCouponDropdownOptions,
+    addNewProductFromCouponModal,
     toggleCouponStatus,
     deleteCoupon,
     openEditCouponModal,
@@ -9901,11 +15031,13 @@ function toggleAccordion(cardId) {
     setZohoEditTab,
     toggleMoreCustomerDetails,
     handleDocumentUpload,
+    removeUploadedDoc,
     handleZohoSaveAndSubscribe,
     prefillGSTDetails,
     toggleGSTPrefillPopover,
     executeGSTPrefillFromPopover,
     fetchTaxpayerDetails,
+    onGstinInputChange,
     copyBillingToShippingInEdit,
     handleZohoEditCustomerSubmit,
     toggleMatchingRecordsDropdown,

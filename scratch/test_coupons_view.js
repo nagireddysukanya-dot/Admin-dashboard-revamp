@@ -67,7 +67,7 @@ console.log('   - Eye icon button present:', html.includes('btn-action-view-coup
 console.log('4. Checking Footer & Pagination:');
 console.log('   - Total Count View:', html.includes('Total Count:') && html.includes('View') ? '✅ Present' : '❌ Missing');
 console.log('   - 25 per page dropdown:', html.includes('25 per page') ? '✅ Present' : '❌ Missing');
-console.log('   - Page navigation (1 - 25):', html.includes('1 - 25') ? '✅ Present' : '❌ Missing');
+console.log('   - Page navigation (1 - 5):', html.includes('1 - 5') ? '✅ Present' : '❌ Missing');
 
 if (html.includes('TOTAL REDEMPTIONS') && html.includes('TOTAL COUPONS') && html.includes('ACTIVE PROMOTIONS') && html.includes('30PERCENTADD') && html.includes('>ACTIONS</th>') && html.includes('btn-action-view-coupon')) {
   console.log('\n🎉 ALL METRICS RESTORED & COUPONS TABLE HAS ACTIONS EYE COLUMN!');

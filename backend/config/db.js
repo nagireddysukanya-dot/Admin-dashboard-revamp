@@ -1,7 +1,26 @@
 const mysql = require('mysql2/promise');
+const { Pool: PgPool } = require('pg');
 require('dotenv').config();
 
-const DB_CONFIG = {
+const DB_TYPE = (process.env.DB_TYPE || (process.env.DATABASE_URL ? 'postgres' : (process.env.DB_PORT === '5432' ? 'postgres' : 'postgres'))).toLowerCase();
+
+// PostgreSQL Configuration
+const PG_CONFIG = process.env.DATABASE_URL
+  ? {
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DB_SSL === 'false' ? false : (process.env.DB_SSL === 'true' || process.env.DATABASE_URL.includes('sslmode=require') ? { rejectUnauthorized: false } : false)
+  }
+  : {
+    host: process.env.DB_HOST || process.env.PGHOST || '127.0.0.1',
+    port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432', 10),
+    user: process.env.DB_USER || process.env.PGUSER || 'whatsapp',
+    password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'whatsapp',
+    database: process.env.DB_NAME || process.env.PGDATABASE || 'whatsapp_dev',
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+  };
+
+// MySQL Configuration
+const MYSQL_CONFIG = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
@@ -12,8 +31,10 @@ const DB_CONFIG = {
   queueLimit: 0
 };
 
-let pool = null;
-let isMysqlConnected = false;
+let pgPool = null;
+let mysqlPool = null;
+let isConnected = false;
+let activeDbType = null;
 
 // In-Memory Seed Storage for Instant Zero-Setup Dev Mode (Matching User References)
 let inMemoryClients = [
@@ -362,11 +383,13 @@ let inMemoryClients = [
   {
     id: 10,
     s_no: 10,
-    client_uuid: 'cli_solaris_010',
-    name: 'Solaris Green Energy #2',
+    client_uuid: 'cli_deepak_010',
+    name: 'deepak',
+    company_name: 'feso',
+    legal_name: 'FESO SOCIAL MEDIA PRIVATE LIMITED',
     phone_number: '+91-9800009460',
     alternate_phone: '+91-9100006220',
-    email: 'client20@solarisgre.com',
+    email: 'suryadesigner1234@gmail.com',
     customer_type: 'Direct',
     account_type: 'Client Accounts',
     plan_name: 'Pro NM',
@@ -395,7 +418,27 @@ let inMemoryClients = [
     url: 'solarisgre.com',
     test_account: 'No',
     zoho_customer_id: '3141005000009490020',
-    subscription_id: 'SUB-SOLARIS-2026'
+    subscription_id: 'SUB-01083',
+    billing_address: {
+      attention: 'deepak',
+      company: 'feso',
+      line1: 'test',
+      line2: 'test',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      pin: '500034',
+      country: 'India'
+    },
+    shipping_address: {
+      attention: '',
+      company: '',
+      line1: '',
+      line2: '',
+      city: '',
+      state: 'Telangana',
+      pin: '',
+      country: 'India'
+    }
   }
 ];
 
@@ -498,19 +541,45 @@ let inMemoryUsers = [
 ];
 
 async function initDb() {
-  try {
-    pool = mysql.createPool(DB_CONFIG);
-    const connection = await pool.getConnection();
-    console.log('✅ Connected successfully to MySQL server at', DB_CONFIG.host);
-    isMysqlConnected = true;
-    connection.release();
-  } catch (err) {
-    console.warn('⚠️ MySQL connection not active, using integrated fallback data store:', err.message);
-    isMysqlConnected = false;
+  if (DB_TYPE === 'postgres') {
+    try {
+      pgPool = new PgPool(PG_CONFIG);
+      const client = await pgPool.connect();
+      console.log('✅ Connected successfully to PostgreSQL server at', PG_CONFIG.host || 'remote connection URL');
+      isConnected = true;
+      activeDbType = 'postgres';
+      client.release();
+    } catch (err) {
+      console.warn('⚠️ PostgreSQL connection not active, using integrated fallback data store:', err.message);
+      isConnected = false;
+    }
+  } else {
+    try {
+      mysqlPool = mysql.createPool(MYSQL_CONFIG);
+      const connection = await mysqlPool.getConnection();
+      console.log('✅ Connected successfully to MySQL server at', MYSQL_CONFIG.host);
+      isConnected = true;
+      activeDbType = 'mysql';
+      connection.release();
+    } catch (err) {
+      console.warn('⚠️ MySQL connection not active, using integrated fallback data store:', err.message);
+      isConnected = false;
+    }
   }
 }
 
 initDb();
+
+// Helper query function that routes to whichever database is connected
+async function query(sql, params = []) {
+  if (activeDbType === 'postgres' && pgPool) {
+    return await pgPool.query(sql, params);
+  } else if (activeDbType === 'mysql' && mysqlPool) {
+    const [rows, fields] = await mysqlPool.query(sql, params);
+    return { rows, fields };
+  }
+  throw new Error('No active database connection available.');
+}
 
 // Initialize default billing and subscription properties for all seed clients
 inMemoryClients.forEach(c => {
@@ -539,8 +608,13 @@ inMemoryClients.forEach(c => {
 });
 
 module.exports = {
-  getPool: () => pool,
-  isMysqlConnected: () => isMysqlConnected,
+  getPgPool: () => pgPool,
+  getPool: () => mysqlPool || pgPool,
+  isDbConnected: () => isConnected,
+  isMysqlConnected: () => isConnected && activeDbType === 'mysql',
+  isPostgresConnected: () => isConnected && activeDbType === 'postgres',
+  activeDbType: () => activeDbType,
+  query,
   inMemoryClients,
   inMemoryMigrations,
   inMemoryUsers
