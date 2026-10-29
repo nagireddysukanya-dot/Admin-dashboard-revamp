@@ -2315,15 +2315,38 @@
     return client.plan_history;
   }
 
-  function toggleClientBotActive(clientId, botId) {
+  function toggleClientBotActive(clientId, botId, event) {
+    if (event) {
+      event.stopPropagation();
+    }
     const client = clientsData.find(c => c.id === clientId);
     if (!client) return;
     const bots = getClientBots(client);
     const bot = bots.find(b => b.id === botId);
     if (bot) {
-      bot.isActive = !bot.isActive;
+      const isNowActive = event && event.target && event.target.checked !== undefined ? event.target.checked : !bot.isActive;
+      bot.isActive = isNowActive;
+
+      // Update DOM in-place cleanly without re-rendering or collapsing the card!
+      const statusText = document.getElementById('bot-status-text-' + bot.id);
+      if (statusText) {
+        statusText.className = 'bot-status-text ' + (bot.isActive ? 'live' : 'paused');
+        statusText.innerText = bot.isActive ? '🟢 Live' : '⚪ Paused';
+      }
+
+      // Update card subtitle with active count
+      const subtitle = document.querySelector('#client-configured-bots-card .modular-card-subtitle');
+      if (subtitle) {
+        const activeCount = bots.filter(b => b.isActive).length;
+        const botsLimit = client.bots_limit !== undefined ? client.bots_limit : 10;
+        subtitle.innerText = `${activeCount} active bots configured out of ${botsLimit} quota allocation`;
+      }
+
+      try {
+        localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+      } catch (e) {}
+
       showToast('Bot "' + bot.name + '" is now ' + (bot.isActive ? 'Active (Live)' : 'Paused (Offline)'));
-      renderClientDetailsProfileView($('#route-viewport'));
     }
   }
 
@@ -2431,6 +2454,10 @@
       headerActions.style.display = 'none';
       headerActions.innerHTML = '';
     }
+
+    // Preserve card collapse states across renders
+    const existingBotsCard = document.getElementById('client-configured-bots-card');
+    const isBotsCardCollapsed = existingBotsCard ? existingBotsCard.classList.contains('collapsed') : false;
 
     const clientBots = getClientBots(client);
     const planHistory = getClientPlanHistory(client);
@@ -2876,7 +2903,7 @@
         </div>
 
         <!-- 4. User's Configured Chatbots (Replaces Clumsy Operations Hub!) -->
-        <div class="modular-card modular-card-full collapsed" id="client-configured-bots-card">
+        <div class="modular-card modular-card-full ${isBotsCardCollapsed ? 'collapsed' : ''}" id="client-configured-bots-card">
           <div class="modular-card-header" onclick="window.smatApp.toggleModularCard('client-configured-bots-card', event)">
             <div class="modular-title-group">
               <div class="modular-card-icon-wrap icon-blue">
@@ -2940,17 +2967,17 @@
                           <span style="font-size:0.75rem; color:#64748B;"> chats</span>
                         </td>
                         <td>
-                          <div class="bot-toggle-row">
-                            <label class="smat-switch-label">
+                          <div class="bot-toggle-row" onclick="event.stopPropagation()">
+                            <label class="smat-switch-label" onclick="event.stopPropagation()">
                               <input 
                                 type="checkbox" 
                                 class="smat-switch-input" 
                                 ${bot.isActive ? 'checked' : ''} 
-                                onchange="window.smatApp.toggleClientBotActive(${client.id}, '${bot.id}')"
+                                onchange="window.smatApp.toggleClientBotActive(${client.id}, '${bot.id}', event)"
                               />
                               <span class="smat-switch-slider"></span>
                             </label>
-                            <span class="bot-status-text ${bot.isActive ? 'live' : 'paused'}">
+                            <span class="bot-status-text ${bot.isActive ? 'live' : 'paused'}" id="bot-status-text-${bot.id}">
                               ${bot.isActive ? '🟢 Live' : '⚪ Paused'}
                             </span>
                           </div>
