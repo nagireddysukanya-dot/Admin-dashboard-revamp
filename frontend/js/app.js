@@ -522,19 +522,104 @@
     renderLoginPage();
   }
 
-  function resetToDefaultData() {
-    localStorage.removeItem('smatbot_clients_data');
-    clientsData = generateInitialSeedClients();
-    localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
-    showToast('Reset database to reference dummy dataset (218 clients).');
-    if (currentRoute === 'client-details') {
-      renderClientDetailsView($('#route-viewport'));
-    } else if (currentRoute === 'client-details-profile') {
-      renderClientDetailsProfileView($('#route-viewport'));
+  let liveDbStatus = {
+    isDbConnected: false,
+    isPostgresConnected: false,
+    dbEngine: 'checking...'
+  };
+
+  function updateHeaderDbBadge() {
+    const badge = $('#header-db-status-badge');
+    if (!badge) return;
+    if (liveDbStatus.isPostgresConnected) {
+      badge.innerHTML = `
+        <span class="badge-db-indicator live" title="Active Connection: PostgreSQL whatsapp_dev @ 127.0.0.1:5432" style="display:inline-flex; align-items:center; gap:6px; background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-size:0.75rem; padding:3px 10px; border-radius:12px; font-weight:600;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 6px #10B981;"></span>
+          Dev DB: PostgreSQL (whatsapp_dev)
+        </span>
+      `;
+    } else {
+      badge.innerHTML = `
+        <span class="badge-db-indicator fallback" title="Using local data fallback store" style="display:inline-flex; align-items:center; gap:6px; background:#F8FAFC; color:#64748B; border:1px solid #E2E8F0; font-size:0.75rem; padding:3px 10px; border-radius:12px; font-weight:600;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#94A3B8;"></span>
+          Data Store: ${liveDbStatus.dbEngine || 'Local'}
+        </span>
+      `;
     }
   }
 
+  async function fetchLiveClientsFromApi(renderAfter = true) {
+    try {
+      const res = await fetch('/api/clients');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.clients)) {
+        liveDbStatus = {
+          isDbConnected: !!data.isDbConnected,
+          isPostgresConnected: !!data.isPostgresConnected,
+          dbEngine: data.dbEngine || 'postgres'
+        };
+        updateHeaderDbBadge();
+        if (data.clients.length > 0) {
+          clientsData = data.clients;
+          clientsData.forEach((c, idx) => {
+            c.s_no = idx + 1;
+            if (c.autopay_enabled === undefined) c.autopay_enabled = true;
+            if (!c.payment_method) {
+              c.payment_method = {
+                brand: 'Visa',
+                last4: '4242',
+                expiry: '12/28',
+                holderName: c.name
+              };
+            }
+            if (!c.active_addons) c.active_addons = [];
+          });
+          localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+          localStorage.setItem('smatbot_data_source', 'live_db');
+          console.log(`✅ Loaded ${clientsData.length} live records from ${liveDbStatus.dbEngine} database!`);
+          if (renderAfter) {
+            if (currentRoute === 'client-details') {
+              const vp = $('#route-viewport');
+              if (vp) renderClientDetailsView(vp);
+            } else if (currentRoute === 'client-details-profile') {
+              const vp = $('#route-viewport');
+              if (vp) renderClientDetailsProfileView(vp);
+            }
+          }
+          return true;
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Could not fetch from live DB API:', err.message);
+    }
+    return false;
+  }
+
+  function resetToDefaultData() {
+    localStorage.removeItem('smatbot_clients_data');
+    localStorage.removeItem('smatbot_data_source');
+    fetchLiveClientsFromApi(true).then(loaded => {
+      if (loaded) {
+        showToast('✅ Synced latest live records from PostgreSQL Dev Database!');
+      } else {
+        clientsData = generateInitialSeedClients();
+        localStorage.setItem('smatbot_clients_data', JSON.stringify(clientsData));
+        showToast('Reset database to fallback dataset.');
+        if (currentRoute === 'client-details') {
+          renderClientDetailsView($('#route-viewport'));
+        }
+      }
+    });
+  }
+
   function init() {
+    // If the saved data was from the old 218 dummy generator, clear it to let live PostgreSQL take precedence
+    const savedSource = localStorage.getItem('smatbot_data_source');
+    if (savedSource !== 'live_db') {
+      localStorage.removeItem('smatbot_clients_data');
+    }
+
     try {
       const savedClients = localStorage.getItem('smatbot_clients_data');
       if (savedClients) {
@@ -555,6 +640,9 @@
     } catch (e) {
       clientsData = generateInitialSeedClients();
     }
+
+    // Automatically trigger live database sync from PostgreSQL dev backend
+    fetchLiveClientsFromApi(false);
 
     try {
       const savedUsers = localStorage.getItem('smatbot_users_data');
@@ -1252,6 +1340,7 @@
               <div id="header-page-title" style="font-weight: 700; font-size: 1.05rem; color: #1E293B;">
                 SmatBot Admin Control Center
               </div>
+              <div id="header-db-status-badge" style="margin-left:0.75rem;"></div>
             </div>
 
             <div class="header-right-group">
@@ -1302,6 +1391,8 @@
 
     const initialRoute = resolveInitialRoute();
     navigateTo(initialRoute, true);
+    updateHeaderDbBadge();
+    fetchLiveClientsFromApi(true);
   }
 
   // =========================================================================
