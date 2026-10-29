@@ -607,7 +607,7 @@
     window.addEventListener('hashchange', () => {
       if (!isAuthenticated) return;
       const targetRoute = resolveInitialRoute();
-      if (targetRoute !== currentRoute || targetRoute === 'client-details-profile') {
+      if (targetRoute !== currentRoute || targetRoute === 'client-details-profile' || targetRoute === 'change-subscription') {
         navigateTo(targetRoute, false);
       }
     });
@@ -1049,7 +1049,7 @@
   // ROUTE & CLIENT PERSISTENCE ENGINE (Preserves Page on F5 / Reload)
   // =========================================================================
   function resolveInitialRoute() {
-    // 1. Try URL Hash (e.g. #client-details-profile?id=0 or #overview or #users)
+    // 1. Try URL Hash (e.g. #client-details-profile?id=0 or #change-subscription?id=0 or #overview or #users)
     const rawHash = (window.location.hash || '').replace(/^#/, '').trim();
     if (rawHash) {
       if (rawHash.startsWith('client-details-profile')) {
@@ -1057,11 +1057,35 @@
         if (idMatch && idMatch[1] !== undefined) {
           const rawId = idMatch[1];
           selectedClientId = isNaN(rawId) ? rawId : Number(rawId);
+          zohoSubscriptionClientId = selectedClientId;
           try {
             localStorage.setItem('smatbot_selected_client_id', String(selectedClientId));
+            localStorage.setItem('smatbot_zoho_subscription_client_id', String(selectedClientId));
           } catch (e) {}
         }
         return 'client-details-profile';
+      }
+      if (rawHash.startsWith('change-subscription') || rawHash.startsWith('new-subscription')) {
+        const idMatch = rawHash.match(/id=([^&]+)/);
+        if (idMatch && idMatch[1] !== undefined) {
+          const rawId = idMatch[1];
+          zohoSubscriptionClientId = isNaN(rawId) ? rawId : Number(rawId);
+          selectedClientId = zohoSubscriptionClientId;
+          try {
+            localStorage.setItem('smatbot_zoho_subscription_client_id', String(zohoSubscriptionClientId));
+            localStorage.setItem('smatbot_selected_client_id', String(zohoSubscriptionClientId));
+          } catch (e) {}
+        } else {
+          try {
+            const savedZohoId = localStorage.getItem('smatbot_zoho_subscription_client_id') || localStorage.getItem('smatbot_selected_client_id');
+            if (savedZohoId !== null && savedZohoId !== undefined) {
+              zohoSubscriptionClientId = isNaN(savedZohoId) ? savedZohoId : Number(savedZohoId);
+              selectedClientId = zohoSubscriptionClientId;
+            }
+          } catch (e) {}
+        }
+        const cleanRoute = rawHash.split('?')[0];
+        return cleanRoute || 'change-subscription';
       }
       const cleanRoute = rawHash.split('?')[0];
       if (cleanRoute) {
@@ -1073,6 +1097,12 @@
     try {
       const savedRoute = localStorage.getItem('smatbot_active_route');
       const savedClientId = localStorage.getItem('smatbot_selected_client_id');
+      const savedZohoId = localStorage.getItem('smatbot_zoho_subscription_client_id');
+      if (savedZohoId !== null && savedZohoId !== undefined) {
+        zohoSubscriptionClientId = isNaN(savedZohoId) ? savedZohoId : Number(savedZohoId);
+      } else if (savedClientId !== null && savedClientId !== undefined) {
+        zohoSubscriptionClientId = isNaN(savedClientId) ? savedClientId : Number(savedClientId);
+      }
       if (savedClientId !== null && savedClientId !== undefined) {
         selectedClientId = isNaN(savedClientId) ? savedClientId : Number(savedClientId);
       }
@@ -1288,6 +1318,12 @@
       localStorage.setItem('smatbot_active_route', route);
       if (route === 'client-details-profile') {
         localStorage.setItem('smatbot_selected_client_id', String(selectedClientId));
+      } else if (route === 'change-subscription' || route === 'new-subscription' || route === 'subscriptions') {
+        const effId = (zohoSubscriptionClientId !== undefined && zohoSubscriptionClientId !== null) ? zohoSubscriptionClientId : selectedClientId;
+        if (effId !== undefined && effId !== null) {
+          localStorage.setItem('smatbot_zoho_subscription_client_id', String(effId));
+          localStorage.setItem('smatbot_selected_client_id', String(effId));
+        }
       }
     } catch (e) {}
 
@@ -1295,6 +1331,12 @@
     if (updateHash) {
       if (route === 'client-details-profile') {
         const targetHash = '#client-details-profile?id=' + selectedClientId;
+        if (window.location.hash !== targetHash) {
+          window.location.hash = targetHash;
+        }
+      } else if (route === 'change-subscription' || route === 'new-subscription') {
+        const effId = (zohoSubscriptionClientId !== undefined && zohoSubscriptionClientId !== null) ? zohoSubscriptionClientId : selectedClientId;
+        const targetHash = (effId !== undefined && effId !== null) ? `#${route}?id=${effId}` : `#${route}`;
         if (window.location.hash !== targetHash) {
           window.location.hash = targetHash;
         }
@@ -2583,6 +2625,9 @@
                 </div>
               </div>
               <div class="card-header-badges">
+                <button type="button" class="btn-action-primary" onclick="event.stopPropagation(); window.smatApp.openZohoSubscription(${client.id})" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:6px; padding:5px 12px; font-size:0.78rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; box-shadow:0 1px 2px rgba(37,99,235,0.25); transition:background 0.15s;" onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'" title="Change / Upgrade Plan">
+                  <span>⚡</span> Change Plan
+                </button>
                 <span class="plan-badge-pill">${escapeHtml(client.plan_name || 'Pro NY (WA)')}</span>
                 <span class="days-badge-pill">${client.days_left !== undefined ? client.days_left : 14} Days Left</span>
                 <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-plan-quotas', event)" title="Collapse / Expand">
@@ -2691,6 +2736,9 @@
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button type="button" class="btn-action-primary" onclick="event.stopPropagation(); window.smatApp.openZohoSubscription(${client.id})" style="background:#2563EB; color:#FFFFFF; border:none; border-radius:6px; padding:6px 14px; font-size:0.82rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(37,99,235,0.25); transition:background 0.15s;" onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'" title="Change subscription plan for this client">
+                <span>⚡</span> Change Subscription
+              </button>
               <span class="status-pill ${(client.subscription_status || 'Trial').toLowerCase()}">${client.subscription_status || 'Trial'}</span>
               <button class="btn-collapse-card" onclick="window.smatApp.toggleModularCard('card-billing-center', event)" title="Collapse / Expand">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
@@ -5891,7 +5939,15 @@ function toggleAccordion(cardId) {
   // 7A. ZOHO BILLING STYLE "CHANGE / NEW SUBSCRIPTION" FULL-PAGE MODULE
   // Exact 100% Pixel-Perfect Match with User's 4 Reference Screenshots
   // =========================================================================
-  let zohoSubscriptionClientId = 10; // Defaults to deepak - suryadesigner1234@gmail.com
+  let zohoSubscriptionClientId = (function() {
+    try {
+      const savedZohoId = localStorage.getItem('smatbot_zoho_subscription_client_id') || localStorage.getItem('smatbot_selected_client_id');
+      if (savedZohoId !== null && savedZohoId !== undefined) {
+        return isNaN(savedZohoId) ? savedZohoId : Number(savedZohoId);
+      }
+    } catch (e) {}
+    return 0; // Default to SMATBOT AI (Client 0)
+  })();
 
   const ALL_SUPPLY_STATES = [
     { code: 'AN', name: 'Andaman and Nicobar Islands' },
@@ -6271,15 +6327,26 @@ function toggleAccordion(cardId) {
 
   function openZohoSubscription(clientId) {
     if (clientId !== undefined && clientId !== null) {
-      zohoSubscriptionClientId = Number(clientId);
-    } else {
-      zohoSubscriptionClientId = 10; // Default to deepak (screenshot 1)
+      zohoSubscriptionClientId = isNaN(clientId) ? clientId : Number(clientId);
+      selectedClientId = zohoSubscriptionClientId;
+    } else if (selectedClientId !== undefined && selectedClientId !== null) {
+      zohoSubscriptionClientId = isNaN(selectedClientId) ? selectedClientId : Number(selectedClientId);
     }
+    try {
+      localStorage.setItem('smatbot_zoho_subscription_client_id', String(zohoSubscriptionClientId));
+      localStorage.setItem('smatbot_selected_client_id', String(zohoSubscriptionClientId));
+      localStorage.setItem('smatbot_active_route', 'change-subscription');
+    } catch (e) {}
     navigateTo('change-subscription');
   }
 
   function onZohoSubCustomerSelect(clientId) {
-    zohoSubscriptionClientId = Number(clientId);
+    zohoSubscriptionClientId = isNaN(clientId) ? clientId : Number(clientId);
+    selectedClientId = zohoSubscriptionClientId;
+    try {
+      localStorage.setItem('smatbot_zoho_subscription_client_id', String(zohoSubscriptionClientId));
+      localStorage.setItem('smatbot_selected_client_id', String(zohoSubscriptionClientId));
+    } catch (e) {}
     const viewport = document.getElementById('route-viewport');
     if (viewport) {
       renderZohoSubscriptionView(viewport);
@@ -6287,16 +6354,37 @@ function toggleAccordion(cardId) {
   }
 
   function renderZohoSubscriptionView(container) {
-    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || c.id === Number(zohoSubscriptionClientId)) || clientsData[0] || {
-      id: 10,
-      name: 'deepak',
-      email: 'suryadesigner1234@gmail.com',
-      company_name: 'feso',
-      subscription_id: 'SUB-01083',
-      plan_name: 'Starter New Monthly (Without WA)',
-      gst_treatment: 'Unregistered Business',
-      billing_address: { company: 'feso', line1: 'test', line2: 'test', city: 'Hyderabad', pin: '500034', country: 'India' }
-    };
+    if (zohoSubscriptionClientId === undefined || zohoSubscriptionClientId === null) {
+      try {
+        const savedZohoId = localStorage.getItem('smatbot_zoho_subscription_client_id') || localStorage.getItem('smatbot_selected_client_id');
+        if (savedZohoId !== null && savedZohoId !== undefined) {
+          zohoSubscriptionClientId = isNaN(savedZohoId) ? savedZohoId : Number(savedZohoId);
+        } else if (selectedClientId !== undefined && selectedClientId !== null) {
+          zohoSubscriptionClientId = selectedClientId;
+        }
+      } catch (e) {}
+    }
+
+    const currClient = clientsData.find(c => c.id === zohoSubscriptionClientId || String(c.id) === String(zohoSubscriptionClientId))
+      || (selectedClientId !== undefined ? clientsData.find(c => c.id === selectedClientId || String(c.id) === String(selectedClientId)) : null)
+      || clientsData[0]
+      || {
+        id: 0,
+        name: 'SMATBOT AI',
+        email: 'nagireddysukanya@gmail.com',
+        company_name: 'SMATBOT AI',
+        subscription_id: 'SUB-SMAT-AI',
+        plan_name: 'Starter New Monthly (Without WA)',
+        gst_treatment: 'Unregistered Business',
+        billing_address: { company: 'SMATBOT AI', line1: '2nd Floor, Ashoka HiTech Chambers', line2: 'Road No. 2, opp. KBR Park', city: 'Hyderabad', pin: '500034', country: 'India' }
+      };
+
+    zohoSubscriptionClientId = currClient.id;
+    selectedClientId = currClient.id;
+    try {
+      localStorage.setItem('smatbot_zoho_subscription_client_id', String(currClient.id));
+      localStorage.setItem('smatbot_selected_client_id', String(currClient.id));
+    } catch (e) {}
 
     const bAddress = currClient.billing_address || {
       company: currClient.company_name || 'feso',
@@ -6328,6 +6416,7 @@ function toggleAccordion(cardId) {
     // Find currently selected plan in list
     const currentPlanName = currClient.plan_name || 'Starter New Monthly (Without WA)';
     const matchedPlan = planOptions.find(p => p.label.toLowerCase().includes(currentPlanName.toLowerCase())) || planOptions[0];
+    zohoSelectedPlan = ZOHO_SUBSCRIPTION_PLANS.find(p => p.name.toLowerCase().includes(currentPlanName.toLowerCase()) || currentPlanName.toLowerCase().includes(p.name.toLowerCase())) || ZOHO_SUBSCRIPTION_PLANS[0];
 
     container.innerHTML = `
       <div class="zoho-sub-fullpage-wrap" style="background:#FFFFFF; min-height:100vh; padding-bottom:5rem;">
@@ -6582,7 +6671,7 @@ function toggleAccordion(cardId) {
           <!-- SECTION 1: CUSTOMER SELECTION & ADDRESS (SCREENSHOT 1) -->
           <div class="zoho-form-grid" style="display:flex; flex-direction:column; gap:1.75rem;">
             
-            <!-- 1. Customer Name Row -->
+            <!-- 1. Customer Name Row (Disabled/Locked for Safety - Prevents Accidental Client Switching) -->
             <div style="display:grid; grid-template-columns:190px 1fr; gap:1.5rem; align-items:flex-start;">
               <label style="font-size:0.88rem; font-weight:600; color:#DC2626; padding-top:6px;">
                 Customer Name*
@@ -6590,16 +6679,16 @@ function toggleAccordion(cardId) {
               <div>
                 <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
                   
-                  <!-- Disabled Customer Field (Fixed for Existing Subscription) -->
+                  <!-- Locked / Disabled Customer Select Field (Prevents accidental client change) -->
                   <div class="zoho-customer-disabled-wrap" style="position:relative; width:440px; cursor:not-allowed;" title="Customer cannot be changed for an existing subscription">
                     <select id="zoho-sub-client-select" class="zoho-select-dropdown" disabled style="width:100%; font-size:0.86rem; border:1px solid #CBD5E1; background:#F8FAFC; color:#334155; cursor:not-allowed; padding:7px 12px; border-radius:4px;" title="Customer cannot be changed for an existing subscription">
                       <option value="${currClient.id}" selected>
-                        ${escapeHtml(currClient.name)} - ${escapeHtml(currClient.email)}
+                        ${escapeHtml(currClient.name || 'Client #' + currClient.id)} - ${escapeHtml(currClient.email || '')}
                       </option>
                     </select>
                   </div>
 
-                  <!-- Quick Search Glass Button (Disabled) -->
+                  <!-- Quick Search Glass Button (Disabled / Muted) -->
                   <button type="button" class="zoho-btn-search" disabled style="background:#94A3B8; border:1px solid #94A3B8; border-radius:4px; padding:0.45rem 0.75rem; color:#FFFFFF; cursor:not-allowed; opacity:0.75;" title="Customer cannot be changed for an existing subscription">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                   </button>
@@ -6608,7 +6697,6 @@ function toggleAccordion(cardId) {
                   <span class="zoho-currency-pill" style="background:#FFFFFF; border:1px solid #CBD5E1; color:#111827; border-radius:4px; padding:3px 9px; font-size:0.8rem; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; width:12px; height:12px; border-radius:50%; border:2px solid #10B981; box-sizing:border-box;"><span style="width:4px; height:4px; background:#10B981; border-radius:50%;"></span></span> ${currClient.currency_type || 'INR'}
                   </span>
-
 
                 </div>
 
