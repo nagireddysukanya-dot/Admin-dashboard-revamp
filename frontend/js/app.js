@@ -528,26 +528,6 @@
     dbEngine: 'checking...'
   };
 
-  function updateHeaderDbBadge() {
-    const badge = $('#header-db-status-badge');
-    if (!badge) return;
-    if (liveDbStatus.isPostgresConnected) {
-      badge.innerHTML = `
-        <span class="badge-db-indicator live" title="Active Connection: PostgreSQL whatsapp_dev @ 127.0.0.1:5432" style="display:inline-flex; align-items:center; gap:6px; background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-size:0.75rem; padding:3px 10px; border-radius:12px; font-weight:600;">
-          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 6px #10B981;"></span>
-          Dev DB: PostgreSQL (whatsapp_dev)
-        </span>
-      `;
-    } else {
-      badge.innerHTML = `
-        <span class="badge-db-indicator fallback" title="Using local data fallback store" style="display:inline-flex; align-items:center; gap:6px; background:#F8FAFC; color:#64748B; border:1px solid #E2E8F0; font-size:0.75rem; padding:3px 10px; border-radius:12px; font-weight:600;">
-          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#94A3B8;"></span>
-          Data Store: ${liveDbStatus.dbEngine || 'Local'}
-        </span>
-      `;
-    }
-  }
-
   async function fetchLiveClientsFromApi(renderAfter = true) {
     try {
       const res = await fetch('/api/clients');
@@ -559,7 +539,6 @@
           isPostgresConnected: !!data.isPostgresConnected,
           dbEngine: data.dbEngine || 'postgres'
         };
-        updateHeaderDbBadge();
         if (data.clients.length > 0) {
           clientsData = data.clients;
           clientsData.forEach((c, idx) => {
@@ -1340,7 +1319,6 @@
               <div id="header-page-title" style="font-weight: 700; font-size: 1.05rem; color: #1E293B;">
                 SmatBot Admin Control Center
               </div>
-              <div id="header-db-status-badge" style="margin-left:0.75rem;"></div>
             </div>
 
             <div class="header-right-group">
@@ -1391,7 +1369,6 @@
 
     const initialRoute = resolveInitialRoute();
     navigateTo(initialRoute, true);
-    updateHeaderDbBadge();
     fetchLiveClientsFromApi(true);
   }
 
