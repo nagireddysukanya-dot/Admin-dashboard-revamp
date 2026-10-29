@@ -21,12 +21,13 @@ function test(name, fn) {
   }
 }
 
-// 1. Drawer Footer: Plan / Add-ons button removed
-test('Plan / Add-ons button is removed from drawer footer', () => {
+// 1. Drawer Footer: Plan / Add-ons button removed and styled in 2 equal grid columns
+test('Plan / Add-ons button is removed and footer has 2-column grid layout', () => {
   const drawerFooterIdx = appJs.indexOf('class="drawer-footer"');
   assert(drawerFooterIdx !== -1, 'drawer-footer not found');
   const drawerFooterSnippet = appJs.substring(drawerFooterIdx, drawerFooterIdx + 1200);
   assert(!drawerFooterSnippet.includes('⚡ Plan / Add-ons'), 'Drawer footer must NOT contain Plan / Add-ons');
+  assert(drawerFooterSnippet.includes('grid-template-columns:1fr 1fr'), 'Drawer footer must use 1fr 1fr 2-column grid');
   assert(drawerFooterSnippet.includes('1-Click Login'), 'Drawer footer must contain 1-Click Login');
   assert(drawerFooterSnippet.includes('Full Profile'), 'Drawer footer must contain Full Profile');
 });
@@ -56,9 +57,9 @@ test('openAddSubscriptionModal routes to openZohoSubscription', () => {
 });
 
 // 4. Cache Versioning
-test('Cache version bumped to v=12.5 in index.html', () => {
-  assert(indexHtml.includes('app.js?v=12.5'), 'app.js must be v=12.5 in index.html');
-  assert(indexHtml.includes('styles.css?v=12.5'), 'styles.css must be v=12.5 in index.html');
+test('Cache version bumped to v=12.6 in index.html', () => {
+  assert(indexHtml.includes('app.js?v=12.6'), 'app.js must be v=12.6 in index.html');
+  assert(indexHtml.includes('styles.css?v=12.6'), 'styles.css must be v=12.6 in index.html');
 });
 
 console.log(`\nResults: ${passed} passed, ${failed} failed.`);

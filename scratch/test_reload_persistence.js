@@ -61,10 +61,10 @@ test('renderZohoSubscriptionView resolves currClient using zohoSubscriptionClien
     'Must resolve currClient using zohoSubscriptionClientId');
 });
 
-// 7. Cache version bumped to v=12.5
-test('Cache bust version bumped to v=12.5 in index.html', () => {
-  assert(indexHtml.includes('app.js?v=12.5'), 'app.js must be v=12.5');
-  assert(indexHtml.includes('styles.css?v=12.5'), 'styles.css must be v=12.5');
+// 7. Cache version bumped to v=12.6
+test('Cache bust version bumped to v=12.6 in index.html', () => {
+  assert(indexHtml.includes('app.js?v=12.6'), 'app.js must be v=12.6');
+  assert(indexHtml.includes('styles.css?v=12.6'), 'styles.css must be v=12.6');
 });
 
 console.log(`\nResults: ${passed} passed, ${failed} failed.`);

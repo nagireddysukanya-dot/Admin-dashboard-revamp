@@ -12291,11 +12291,11 @@ function toggleAccordion(cardId) {
           </div>
         </div>
 
-        <div class="drawer-footer" style="display:flex; gap:0.75rem; justify-content:flex-end;">
-          <button class="client-mini-action-btn login-btn" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openLoginConfirmModal(${client.id});" style="padding:8px 16px; font-size:0.84rem; background:#16A34A; color:#FFFFFF; border-color:#16A34A; display:inline-flex; align-items:center; gap:6px;">
+        <div class="drawer-footer" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; padding:1rem 1.25rem; background:#F8FAFC; border-top:1px solid #E2E8F0;">
+          <button class="client-mini-action-btn login-btn" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openLoginConfirmModal(${client.id});" style="width:100%; height:42px; border-radius:8px; font-size:0.88rem; font-weight:600; background:#16A34A; color:#FFFFFF; border:1px solid #16A34A; display:inline-flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 1px 3px rgba(22,163,74,0.25); cursor:pointer; transition:all 0.15s ease;">
             🔐 1-Click Login
           </button>
-          <button class="btn-action-primary" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openClientDetailsPage(${client.id});" style="padding:8px 16px; font-size:0.84rem; display:inline-flex; align-items:center; gap:6px;">
+          <button class="btn-action-primary" onclick="window.smatApp.closeClientDrawer(); window.smatApp.openClientDetailsPage(${client.id});" style="width:100%; height:42px; border-radius:8px; font-size:0.88rem; font-weight:600; background:#1877F2; color:#FFFFFF; border:1px solid #1877F2; display:inline-flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 1px 3px rgba(24,119,242,0.25); cursor:pointer; transition:all 0.15s ease;">
             Full Profile 👁️
           </button>
         </div>

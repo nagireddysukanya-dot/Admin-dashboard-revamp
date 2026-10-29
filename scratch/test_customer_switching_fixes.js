@@ -61,9 +61,9 @@ test('openZohoSubscription is exported on window.smatApp', () => {
 });
 
 // 4. Cache Versioning
-test('Cache version bumped to v=12.5 in index.html', () => {
-  assert(indexHtml.includes('app.js?v=12.5'), 'app.js must be v=12.5 in index.html');
-  assert(indexHtml.includes('styles.css?v=12.5'), 'styles.css must be v=12.5 in index.html');
+test('Cache version bumped to v=12.6 in index.html', () => {
+  assert(indexHtml.includes('app.js?v=12.6'), 'app.js must be v=12.6 in index.html');
+  assert(indexHtml.includes('styles.css?v=12.6'), 'styles.css must be v=12.6 in index.html');
 });
 
 console.log(`\nResults: ${passed} passed, ${failed} failed.`);
