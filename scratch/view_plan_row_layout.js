@@ -1,0 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+
+const appJs = fs.readFileSync(path.join(__dirname, '..', 'frontend', 'js', 'app.js'), 'utf8');
+const start = appJs.indexOf('id="zoho-plan-row"');
+const end = appJs.indexOf('</tr>', start);
+console.log(appJs.substring(start, end + 5));

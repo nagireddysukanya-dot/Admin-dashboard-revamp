@@ -87,5 +87,5 @@ Then open **`http://localhost:5000`** in your browser!
 3. **Action Modals & Workflows**:
    - **Login to Dashboard**: Direct 1-click client impersonation session.
    - **Migrate Bot**: 4-step Bot Migration Wizard.
-   - **Plan Activation**: Plan tier upgrades, billing frequency toggles & add-ons.
+   - **Subscription Management**: Client subscription tiers, billing duration & renewal management.
    - **Add Users**: Add and invite team members.
