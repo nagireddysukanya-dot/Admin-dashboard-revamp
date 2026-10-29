@@ -550,43 +550,6 @@ async function initDb() {
       activeDbType = 'postgres';
       client.release();
     } catch (err) {
-      if (err.code === 'ECONNREFUSED' && (PG_CONFIG.host === '127.0.0.1' || PG_CONFIG.host === 'localhost')) {
-        console.log('⚡ Starting local embedded PostgreSQL cluster on port 5432...');
-        try {
-          const path = require('path');
-          const fs = require('fs');
-          const { default: EmbeddedPostgres } = await import('embedded-postgres');
-          const dataDir = path.join(__dirname, '..', '..', 'database', 'pgdata');
-          if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-          const embeddedPg = new EmbeddedPostgres({
-            databaseDir: dataDir,
-            port: 5432,
-            user: 'whatsapp',
-            password: 'whatsapp',
-            authMethod: 'password',
-            persistent: true
-          });
-          try {
-            await embeddedPg.start();
-          } catch (e) {
-            await embeddedPg.initialise();
-            await embeddedPg.start();
-          }
-          try {
-            await embeddedPg.createDatabase('whatsapp_dev');
-          } catch (e) {}
-
-          pgPool = new PgPool(PG_CONFIG);
-          const client = await pgPool.connect();
-          console.log('✅ Connected successfully to auto-started PostgreSQL at 127.0.0.1:5432');
-          isConnected = true;
-          activeDbType = 'postgres';
-          client.release();
-          return;
-        } catch (embeddedErr) {
-          console.warn('⚠️ Could not auto-start embedded PostgreSQL:', embeddedErr.message);
-        }
-      }
       console.warn('⚠️ PostgreSQL connection not active, using integrated fallback data store:', err.message);
       isConnected = false;
     }
